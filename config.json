@@ -50,6 +50,10 @@
 			"SecretToken": "your-session-secret-token"
 		},
 		"applicationKey": "your-application-key",
-		"hostAccessKey": "your-access-key"
+		"hostAccessKey": "your-access-key",
+		"reCAPTCHA": {
+			"siteKey": "your-reCAPTCHA-site-key",
+			"secretKey": "your-reCAPTCHA-secret-key"
+		}
 	}
 }
