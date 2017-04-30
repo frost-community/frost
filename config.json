@@ -1,17 +1,14 @@
 {
 	"api": {
-		"host": "localhost",
 		"port": 8000,
 		"database": {
-			"host": "localhost",
-			"port": 27017,
+			"host": "localhost:27017",
 			"database": "frost",
 			"username": "frost-api",
 			"password": "frost-api"
 		},
 		"testDatabase": {
 			"host": "localhost",
-			"port": null,
 			"database": "test",
 			"username": "root",
 			"password": null
@@ -46,7 +43,6 @@
 		]
 	},
 	"web": {
-		"host": "localhost",
 		"port": 8001,
 		"apiBaseUrl": "https://localhost:8000",
 		"session": {
