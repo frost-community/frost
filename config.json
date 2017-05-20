@@ -46,6 +46,7 @@
 		"port": 8001,
 		"apiBaseUrl": "https://localhost:8000",
 		"session": {
+			"name": "sid",
 			"SecretToken": "your-session-secret-token"
 		},
 		"applicationKey": "your-application-key",
