@@ -18,6 +18,9 @@
 			"applicationAccess": "your-application-access-secret-token",
 			"authorizeRequest": "your-authorize-request-secret-token"
 		},
+		"storage": {
+			"spaceSize": 10485760
+		},
 		"additionDisabledPermissions": [
 			"iceAuthHost",
 			"ApplicationSpecial",
