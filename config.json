@@ -24,7 +24,8 @@
 		"additionDisabledPermissions": [
 			"iceAuthHost",
 			"ApplicationSpecial",
-			"accountSpecial"
+			"accountSpecial",
+			"userSpecial"
 		],
 		"invalidScreenNames": [
 			"frost",
