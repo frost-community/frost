@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "frost",
+  "version": "0.0.1",
+  "description": "The server core of the Frost",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ."
+  },
+  "author": "marihachi",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^10.12.15",
+    "frost-component": "git://github.com/Frost-Dev/Frost-Component.git",
+    "frost-component-api": "git://github.com/Frost-Dev/Frost-Component-API.git",
+    "frost-component-webapp": "git://github.com/Frost-Dev/Frost-Component-WebApp.git",
+    "typescript": "^3.2.2"
+  }
+}
