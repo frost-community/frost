@@ -6,9 +6,12 @@ console.log('===========');
 console.log('  * Frost  ');
 console.log('===========');
 
-const engine = new ComponentEngine();
+const engine = new ComponentEngine({ httpPort: 8080 });
 
 engine.use(frostApi());
 engine.use(frostWeb());
 
-engine.start();
+engine.start()
+.catch(err => {
+	console.log(err);
+});
