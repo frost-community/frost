@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "@frost/server",
+  "version": "0.0.1",
+  "description": "The server core of the Frost",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "tsc",
+    "setup": "npm i && npm run build",
+    "start": "node ."
+  },
+  "author": "marihachi",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^10.12.15",
+    "@frost/component": "../component",
+    "@frost/component-api": "../component-api",
+    "@frost/component-webapp": "../component-webapp",
+    "typescript": "^3.2.2"
+  },
+  "files": [
+    "built"
+  ]
+}

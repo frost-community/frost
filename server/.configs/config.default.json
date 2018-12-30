@@ -1,0 +1,11 @@
+{
+  "server": {
+    "httpPort": 3000
+  },
+  "api": {
+    "enable": true
+  },
+  "webapp": {
+    "enable": true
+  }
+}
