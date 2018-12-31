@@ -3,5 +3,5 @@ import { define, AuthScopes, ApiResultType, ApiErrorSources } from '../../module
 export default define({
 	scopes: [AuthScopes.postingWrite]
 }, async (manager) => {
-	manager.ok({ resultType: ApiResultType.Message, result: 'create posting' });
+	manager.ok({ resultType: ApiResultType.Message, result: 'create chat posting' });
 });
