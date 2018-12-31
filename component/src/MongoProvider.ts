@@ -1,4 +1,6 @@
-import { MongoClient, ObjectId, Db, FilterQuery, UpdateManyOptions, UpdateOneOptions, CommonOptions as MongoCommonOptions, WriteOpResult } from 'mongodb';
+import {
+	MongoClient, ObjectId, Db, FilterQuery, UpdateManyOptions, UpdateOneOptions, CommonOptions as MongoCommonOptions, WriteOpResult
+} from 'mongodb';
 
 interface IFindArrayOptions {
 	isAscending?: boolean;

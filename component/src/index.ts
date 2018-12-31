@@ -13,7 +13,7 @@ export interface IComponentEngineManagerOptions {
 	http?: IComponentEngineHttpManagerOptions;
 }
 
-export interface MongoInfo {
+export interface IMongoInfo {
 	url: string;
 	dbName: string;
 }
@@ -65,7 +65,7 @@ export class ComponentEngineManager {
 }
 
 export class ComponentEngine {
-	constructor(httpPort: number, mongoInfo: MongoInfo, options?: IComponentEngineOptions) {
+	constructor(httpPort: number, mongoInfo: IMongoInfo, options?: IComponentEngineOptions) {
 		options = options || {};
 
 		this.components = [];
@@ -76,7 +76,7 @@ export class ComponentEngine {
 
 	private httpPort: number;
 
-	private mongoInfo: MongoInfo;
+	private mongoInfo: IMongoInfo;
 
 	private components: IComponent[];
 
@@ -101,7 +101,7 @@ export class ComponentEngine {
 
 		const app = Express();
 
-		log('connecting database ...');
+		log('database: connecting ...');
 		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
 
 		const manager = new ComponentEngineManager(this, db, { });

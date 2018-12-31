@@ -1,8 +1,24 @@
 import { ComponentEngine, IComponentEngineOptions } from '@frost/component';
-import frostApi, { IApiOptions } from '@frost/component-api';
-import frostWeb, { IWebOptions } from '@frost/component-webapp';
-import IConfig from './IConfig';
-import verifyConfig from './modules/verifyConfig';
+import frostApi, { IApiOptions, IApiConfig } from '@frost/component-api';
+import frostWeb, { IWebOptions, IWebAppConfig } from '@frost/component-webapp';
+import IServerConfig from './modules/IServerConfig';
+import verifyServerConfig from './modules/verifyServerConfig';
+
+function loadConfig(configName: string, envName: string, fileName: string): any {
+	try {
+		if (process.env[envName] != null) {
+			console.log(`loading ${configName} config from ${envName} env variable ...`);
+			return JSON.parse(process.env[envName]!);
+		}
+		else {
+			console.log(`loading ${configName} config from ${fileName} ...`);
+			return require(`../.configs/${fileName}`);
+		}
+	}
+	catch (err) {
+		throw new Error(`a valid ${configName} config not found`);
+	}
+}
 
 async function entryPoint() {
 
@@ -10,26 +26,26 @@ async function entryPoint() {
 	console.log('  * Frost  ');
 	console.log('===========');
 
-	const config: IConfig = require('../.configs/config.json');
-	verifyConfig(config);
+	const serverConfig: IServerConfig = loadConfig('server', 'FROST_SERVER', 'server-config.json');
+	verifyServerConfig(serverConfig);
 
 	const engineOptions: IComponentEngineOptions = {
 	};
-	const engine = new ComponentEngine(config.server.httpPort, config.server.mongo, engineOptions);
+	const engine = new ComponentEngine(serverConfig.httpPort, serverConfig.mongo, engineOptions);
 
-	if (config.api.enable) {
+	if (serverConfig.enableApi) {
 		console.log('enable API component');
-		const apiOptions: IApiOptions = {};
-		engine.use(frostApi(apiOptions));
+		const apiConfig: IApiConfig = loadConfig('api', 'FROST_API', 'api-config.json');
+		engine.use(frostApi(apiConfig, { }));
 	}
 
-	if (config.webapp.enable) {
+	if (serverConfig.enableWebApp) {
 		console.log('enable WebApp component');
-		const webOptions: IWebOptions = {};
-		engine.use(frostWeb(webOptions));
+		const webappConfig: IWebAppConfig = loadConfig('webapp', 'FROST_WEBAPP', 'webapp-config.json');
+		engine.use(frostWeb(webappConfig, { }));
 	}
 
-	console.log('starting server...');
+	console.log('starting server ...');
 	await engine.start();
 }
 

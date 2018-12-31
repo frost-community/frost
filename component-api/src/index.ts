@@ -4,11 +4,19 @@ import glob from 'glob';
 import { ComponentEngineManager, IComponent } from '@frost/component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/Endpoint';
 import { ApiResponseManager } from './modules/ApiResponse';
+import IApiConfig from './modules/IApiConfig';
+import verifyApiConfig from './modules/verifyApiConfig';
+
+export {
+	IApiConfig
+};
 
 export interface IApiOptions {
 }
 
-export default (options?: IApiOptions): IComponent => {
+export default (config: IApiConfig, options?: IApiOptions): IComponent => {
+	verifyApiConfig(config);
+
 	async function handler(manager: ComponentEngineManager) {
 		// get file paths of endpoint
 		const endpointPaths = await promisify(glob)('**/*.js', {
