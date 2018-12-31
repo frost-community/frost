@@ -13,8 +13,12 @@ export interface IComponentEngineManagerOptions {
 	http?: IComponentEngineHttpManagerOptions;
 }
 
+export interface MongoInfo {
+	url: string;
+	dbName: string;
+}
+
 export interface IComponentEngineOptions {
-	httpPort?: number;
 }
 
 export type HttpComponentHandler = (app: Express.Application) => void;
@@ -61,15 +65,18 @@ export class ComponentEngineManager {
 }
 
 export class ComponentEngine {
-	constructor(options?: IComponentEngineOptions) {
+	constructor(httpPort: number, mongoInfo: MongoInfo, options?: IComponentEngineOptions) {
 		options = options || {};
 
 		this.components = [];
 
-		this.httpPort = options.httpPort || 3000;
+		this.httpPort = httpPort;
+		this.mongoInfo = mongoInfo;
 	}
 
 	private httpPort: number;
+
+	private mongoInfo: MongoInfo;
 
 	private components: IComponent[];
 
@@ -95,7 +102,7 @@ export class ComponentEngine {
 		const app = Express();
 
 		log('connecting database ...');
-		const db = await MongoProvider.connect('mongodb://localhost:27017', 'frost_1');
+		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
 
 		const manager = new ComponentEngineManager(this, db, { });
 
