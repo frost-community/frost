@@ -1,8 +1,8 @@
 ---
-name: API Bug report
+name: WebApp Bug report
 about: Create a report to help us improve
 title: ''
-labels: API, bug
+labels: bug, WebApp
 assignees: ''
 
 ---
