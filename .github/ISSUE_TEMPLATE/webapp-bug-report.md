@@ -2,7 +2,7 @@
 name: WebApp Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug, WebApp
+labels: WebApp, bug
 assignees: ''
 
 ---
