@@ -1,4 +1,5 @@
 import Express from 'express';
+import MongoProvider from './MongoProvider';
 
 export interface IComponent {
 	name: string;
@@ -40,14 +41,17 @@ export class ComponentEngineHttpManager {
 }
 
 export class ComponentEngineManager {
-	constructor(engine: ComponentEngine, options?: IComponentEngineManagerOptions) {
+	constructor(engine: ComponentEngine, db: MongoProvider, options?: IComponentEngineManagerOptions) {
 		options = options || {};
 
 		this.engine = engine;
+		this.db = db;
 		this.http = new ComponentEngineHttpManager(options.http);
 	}
 
 	http: ComponentEngineHttpManager;
+
+	db: MongoProvider;
 
 	private engine: ComponentEngine;
 
@@ -62,20 +66,12 @@ export class ComponentEngine {
 
 		this.components = [];
 
-		this.manager = new ComponentEngineManager(this, { });
-
-		this.app = Express();
-
 		this.httpPort = options.httpPort || 3000;
 	}
 
 	private httpPort: number;
 
 	private components: IComponent[];
-
-	private manager: ComponentEngineManager;
-
-	private app: Express.Application;
 
 	has(componentName: string): boolean {
 		return this.components.find(component => component.name == componentName) != null;
@@ -96,27 +92,34 @@ export class ComponentEngine {
 
 		// general
 
+		const app = Express();
+
+		log('connecting database ...');
+		const db = await MongoProvider.connect('mongodb://localhost:27017', 'frost_1');
+
+		const manager = new ComponentEngineManager(this, db, { });
+
 		log('starting components ...');
 
 		for (const component of this.components) {
-			await component.handler(this.manager);
+			await component.handler(manager);
 		}
 
 		// http
 
 		log('http: registering init handlers ...');
 
-		for (const initHandler of this.manager.http.initHandlers) {
-			await initHandler(this.app);
+		for (const initHandler of manager.http.initHandlers) {
+			await initHandler(app);
 		}
 
 		log('http: registering route handlers ...');
 
-		for (const routeHandler of this.manager.http.routeHandlers) {
-			await routeHandler(this.app);
+		for (const routeHandler of manager.http.routeHandlers) {
+			await routeHandler(app);
 		}
 
-		this.app.listen(this.httpPort, () => {
+		app.listen(this.httpPort, () => {
 			log('http: started server.');
 		});
 

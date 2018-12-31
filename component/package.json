@@ -11,10 +11,12 @@
   "author": "marihachi",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "mongodb": "^3.1.10"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",
+    "@types/mongodb": "^3.1.18",
     "@types/node": "^10.12.15",
     "typescript": "^3.2.2"
   },
