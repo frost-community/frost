@@ -1,5 +1,6 @@
-import { define, AuthScopes, ApiResultType, ApiErrorSources } from '../../modules/Endpoint';
+import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
+import { MessageObject } from '../../modules/ApiResponse/ResponseObject';
 
 export default define({ }, async (manager) => {
-	manager.ok({ resultType: ApiResultType.Message, result: 'info' });
+	manager.ok(new MessageObject('info'));
 });

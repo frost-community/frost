@@ -1,12 +1,12 @@
 import Express from 'express';
-import { ComponentEngineManager } from '@frost/component';
+import { ComponentEngineManager, MongoProvider } from '@frost/component';
 import { IAuthScope, AuthScopes } from './AuthScope';
-import { ApiResponseManager, ApiResultType, ApiErrorSources } from './ApiResponse';
+import ApiResponseManager from './ApiResponse/ApiResponseManager';
+import { ApiErrorSources } from './ApiResponse/ApiError';
 
 export {
 	AuthScopes,
 	ApiErrorSources,
-	ApiResultType,
 };
 
 export interface IEndpointContextOptions {
@@ -14,14 +14,17 @@ export interface IEndpointContextOptions {
 }
 
 export class EndpointManager extends ApiResponseManager {
-	constructor(options?: IEndpointContextOptions) {
+	constructor(db: MongoProvider, options?: IEndpointContextOptions) {
 		super();
 		options = options || { };
 
 		this.params = options.params || {};
+		this.db = db;
 	}
 
 	params: { [x: string]: any };
+
+	db: MongoProvider;
 }
 
 export type EndpointHandler = (ctx: EndpointManager) => (Promise<void> | void);
@@ -45,7 +48,7 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engineManager: ComponentEngineManager): void {
 	engineManager.http.addRoute((app: Express.Application) => {
 		app.post(`/api/${endpointPath}`, async (req, res) => {
-			const endpointManager = new EndpointManager({ params: req.body });
+			const endpointManager = new EndpointManager(engineManager.db, { params: req.body });
 
 			try {
 				// TODO: check scopes
@@ -53,13 +56,13 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engi
 				// process endpoint
 				await endpoint.handler(endpointManager);
 
-				endpointManager.respond(res);
+				endpointManager.transport(res);
 			}
 			catch (err) {
 				console.log(err);
 				endpointManager.error(ApiErrorSources.ServerError);
 
-				endpointManager.respond(res);
+				endpointManager.transport(res);
 			}
 		});
 	});

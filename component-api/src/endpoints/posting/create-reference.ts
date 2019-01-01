@@ -1,7 +1,8 @@
-import { define, AuthScopes, ApiResultType, ApiErrorSources } from '../../modules/Endpoint';
+import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
+import { MessageObject } from '../../modules/ApiResponse/ResponseObject';
 
 export default define({
 	scopes: [AuthScopes.postingWrite]
 }, async (manager) => {
-	manager.ok({ resultType: ApiResultType.Message, result: 'create article posting' });
+	manager.ok(new MessageObject('create reference posting'));
 });
