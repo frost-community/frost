@@ -1,6 +1,10 @@
 import Express from 'express';
 import MongoProvider from './MongoProvider';
 
+export {
+	MongoProvider
+};
+
 export interface IComponent {
 	name: string;
 	handler: (ctx: ComponentEngineManager) => void;
