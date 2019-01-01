@@ -9,13 +9,7 @@
     "setup-component-webapp": "cd component-webapp && npm run setup",
     "setup-server": "cd server && npm run setup",
     "setup": "npm run setup-component && npm run setup-component-api && npm run setup-component-webapp && npm run setup-server",
-    "build-component": "cd component && npm run build",
-    "build-component-api": "cd component-api && npm run build",
-    "build-component-webapp": "cd component-webapp && npm run build",
-    "build-server": "cd server && npm run build",
-    "build": "npm run build-component && npm run build-component-api && npm run build-component-webapp && npm run build-server",
-    "start": "cd server && npm run start",
-    "heroku-prebuild": "npm run build"
+    "start": "cd server && npm run start"
   },
   "author": "marihachi",
   "license": "MIT"
