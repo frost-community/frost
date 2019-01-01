@@ -9,6 +9,9 @@
     "setup": "npm i && npm run build",
     "start": "node ."
   },
+  "engines": {
+    "node": "10.15.0"
+  },
   "author": "marihachi",
   "license": "MIT",
   "dependencies": {
