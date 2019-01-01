@@ -3,9 +3,6 @@
   "name": "frost",
   "version": "0.0.1",
   "description": "A cool and cool social-media",
-  "engines": {
-    "node": "10.15.0"
-  },
   "scripts": {
     "setup-component": "cd component && npm run setup",
     "setup-component-api": "cd component-api && npm run setup",
