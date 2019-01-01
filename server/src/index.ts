@@ -29,6 +29,16 @@ async function entryPoint() {
 	const serverConfig: IServerConfig = loadConfig('server', 'FROST_SERVER', 'server-config.json');
 	verifyServerConfig(serverConfig);
 
+	if (process.env.PORT != null) {
+		serverConfig.httpPort = parseInt(process.env.PORT);
+	}
+	else if (serverConfig.httpPort != null) {
+		serverConfig.httpPort = serverConfig.httpPort;
+	}
+	else {
+		throw new Error('httpPort is not configured');
+	}
+
 	const engineOptions: IComponentEngineOptions = {
 	};
 	const engine = new ComponentEngine(serverConfig.httpPort, serverConfig.mongo, engineOptions);
