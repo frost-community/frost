@@ -1,4 +1,4 @@
-import { ComponentEngineManager, IComponent } from '@frost/component';
+import { ComponentEngineManager, IComponent } from 'frost-component';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
 
