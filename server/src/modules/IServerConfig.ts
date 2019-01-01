@@ -1,4 +1,4 @@
-import { IMongoInfo } from '@frost/component';
+import { IMongoInfo } from 'frost-component';
 
 export default interface IServerConfig {
 	httpPort: number,

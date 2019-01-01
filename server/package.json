@@ -1,7 +1,7 @@
 {
   "private": true,
-  "name": "@frost/server",
-  "version": "0.0.1",
+  "name": "frost-server",
+  "version": "0.0.0",
   "description": "The server core of the Frost",
   "main": "built/index.js",
   "scripts": {
@@ -9,22 +9,20 @@
     "setup": "npm i && npm run build",
     "start": "node ."
   },
-  "engines": {
-    "node": "10.15.0"
-  },
   "author": "marihachi",
+  "repository": {
+    "type" : "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
   "license": "MIT",
   "dependencies": {
-    "@frost/component": "../component",
-    "@frost/component-api": "../component-api",
-    "@frost/component-webapp": "../component-webapp",
+    "@types/node": "^10.12.15",
+    "frost-component": "0.0.2",
+    "frost-component-api": "0.0.1",
+    "frost-component-webapp": "0.0.1",
     "cafy": "^12.0.0"
   },
   "devDependencies": {
-    "@types/node": "^10.12.15",
     "typescript": "^3.2.2"
-  },
-  "files": [
-    "built"
-  ]
+  }
 }

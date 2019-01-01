@@ -1,6 +1,6 @@
-import { ComponentEngine, IComponentEngineOptions } from '@frost/component';
-import frostApi, { IApiOptions, IApiConfig } from '@frost/component-api';
-import frostWeb, { IWebOptions, IWebAppConfig } from '@frost/component-webapp';
+import { ComponentEngine, IComponentEngineOptions } from 'frost-component';
+import frostApi, { IApiOptions, IApiConfig } from 'frost-component-api';
+import frostWeb, { IWebOptions, IWebAppConfig } from 'frost-component-webapp';
 import IServerConfig from './modules/IServerConfig';
 import verifyServerConfig from './modules/verifyServerConfig';
 
