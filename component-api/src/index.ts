@@ -1,7 +1,7 @@
 import { promisify } from 'util'
 import path from 'path';
 import glob from 'glob';
-import { ComponentEngineManager, IComponent } from '@frost/component';
+import { ComponentEngineManager, IComponent } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/Endpoint';
 import ApiResponseManager from './modules/ApiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';

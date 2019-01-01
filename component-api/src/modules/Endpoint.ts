@@ -1,5 +1,5 @@
 import Express from 'express';
-import { ComponentEngineManager, MongoProvider } from '@frost/component';
+import { ComponentEngineManager, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './AuthScope';
 import ApiResponseManager from './ApiResponse/ApiResponseManager';
 import { ApiErrorSources } from './ApiResponse/ApiError';
