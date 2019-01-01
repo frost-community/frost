@@ -4,8 +4,7 @@
   "description": "The component system of the Frost",
   "main": "built/index.js",
   "scripts": {
-    "build": "tsc",
-    "setup": "npm i && npm run build"
+    "build": "tsc"
   },
   "author": "marihachi",
   "repository": {
