@@ -1,7 +1,6 @@
 {
-  "private": true,
-  "name": "@frost/component",
-  "version": "0.0.1",
+  "name": "frost-component",
+  "version": "0.0.2",
   "description": "The component system of the Frost",
   "main": "built/index.js",
   "scripts": {
@@ -9,15 +8,19 @@
     "setup": "npm i && npm run build"
   },
   "author": "marihachi",
+  "repository": {
+    "type" : "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
   "license": "MIT",
   "dependencies": {
+    "@types/express": "^4.16.0",
+    "@types/mongodb": "^3.1.18",
+    "@types/node": "^10.12.15",
     "express": "^4.16.4",
     "mongodb": "^3.1.10"
   },
   "devDependencies": {
-    "@types/express": "^4.16.0",
-    "@types/mongodb": "^3.1.18",
-    "@types/node": "^10.12.15",
     "typescript": "^3.2.2"
   },
   "files": [
