@@ -42,9 +42,13 @@ export default class UserService {
 			screenName,
 			passwordHash,
 			name,
-			description,
-			root: options.root
+			description
 		};
+
+		if (options.root) {
+			source.root = true;
+		}
+
 		const rawDocument: IUserDocument = await this.db.create('api.users', source);
 
 		return new UserDocument(rawDocument);

@@ -12,9 +12,13 @@ export default class PostingService {
 	async createChatPosting(userId: ObjectId, text: string, attachmentIds?: ObjectId[]): Promise<ChatPostingDocument> {
 		const source: IChatPostingDocumentSoruce = {
 			userId,
-			text,
-			attachmentIds
+			text
 		};
+
+		if (attachmentIds) {
+			source.attachmentIds = attachmentIds;
+		}
+
 		const documentRaw: IChatPostingDocument = await this.db.create('api.postings', source);
 
 		return new ChatPostingDocument(documentRaw);
