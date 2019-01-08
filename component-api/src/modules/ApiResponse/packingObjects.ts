@@ -1,6 +1,10 @@
+/*
+	レスポンスとしてパックされるデータオブジェクトを定義します
+*/
+
 export interface IUser {
 	id: string;
-	passwordHash?: string;
+	createdAt: string;
 	screenName: string;
 	name: string;
 	description: string;
@@ -12,8 +16,9 @@ export interface IUser {
 }
 
 export interface IPosting {
-	type: string;
+	id: string;
 	createdAt: string;
+	type: string;
 	user: IUser;
 }
 
@@ -23,6 +28,8 @@ export interface IChatPosting extends IPosting {
 }
 
 export interface IApp {
+	id: string;
+	createdAt: string;
 	name: string;
 	creatorId: string;
 	description: string;

@@ -1,4 +1,8 @@
-import { IUser, IPosting, IApp, IUserRelation } from './entity';
+/*
+	define typing of API response
+*/
+
+import { IUser, IPosting, IApp, IUserRelation } from './packingObjects';
 
 const enum ResultType {
 	message = 'message',
@@ -16,7 +20,7 @@ export interface IResponseObject<T> {
 	result: T;
 }
 
-export class ResponseObjectBase<T> implements IResponseObject<T> {
+export abstract class ResponseObject<T> implements IResponseObject<T> {
 	constructor(resultType: ResultType, result: T) {
 		this.resultType = resultType;
 		this.result = result;
@@ -27,7 +31,7 @@ export class ResponseObjectBase<T> implements IResponseObject<T> {
 
 // message
 
-export class MessageObject extends ResponseObjectBase<string> {
+export class MessageResponseObject extends ResponseObject<string> {
 	constructor(result: string) {
 		super(ResultType.message, result);
 	}
@@ -35,13 +39,13 @@ export class MessageObject extends ResponseObjectBase<string> {
 
 // user
 
-export class UserObject extends ResponseObjectBase<IUser> {
+export class UserResponseObject extends ResponseObject<IUser> {
 	constructor(result: IUser) {
 		super(ResultType.user, result);
 	}
 }
 
-export class UsersObject extends ResponseObjectBase<IUser[]> {
+export class UsersResponseObject extends ResponseObject<IUser[]> {
 	constructor(result: IUser[]) {
 		super(ResultType.users, result);
 	}
@@ -49,13 +53,13 @@ export class UsersObject extends ResponseObjectBase<IUser[]> {
 
 // posting
 
-export class PostingObject extends ResponseObjectBase<IPosting> {
+export class PostingResponseObject extends ResponseObject<IPosting> {
 	constructor(result: IPosting) {
 		super(ResultType.posting, result);
 	}
 }
 
-export class PostingsObject extends ResponseObjectBase<IPosting[]> {
+export class PostingsResponseObject extends ResponseObject<IPosting[]> {
 	constructor(result: IPosting[]) {
 		super(ResultType.postings, result);
 	}
@@ -63,13 +67,13 @@ export class PostingsObject extends ResponseObjectBase<IPosting[]> {
 
 // app
 
-export class AppObject extends ResponseObjectBase<IApp> {
+export class AppResponseObject extends ResponseObject<IApp> {
 	constructor(result: IApp) {
 		super(ResultType.app, result);
 	}
 }
 
-export class AppsObject extends ResponseObjectBase<IApp[]> {
+export class AppsResponseObject extends ResponseObject<IApp[]> {
 	constructor(result: IApp[]) {
 		super(ResultType.apps, result);
 	}
@@ -77,7 +81,7 @@ export class AppsObject extends ResponseObjectBase<IApp[]> {
 
 // UserRelation
 
-export class UserRelationObject extends ResponseObjectBase<IUserRelation> {
+export class UserRelationResponseObject extends ResponseObject<IUserRelation> {
 	constructor(result: IUserRelation) {
 		super(ResultType.userRelation, result);
 	}

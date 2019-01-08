@@ -21,6 +21,7 @@
     "cafy": "^12.0.0",
     "frost-component": "../component",
     "glob": "^7.1.3",
+    "moment": "^2.23.0",
     "redis": "^2.8.0",
     "xev": "^2.0.1"
   },

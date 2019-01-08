@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { MongoProvider } from 'frost-component';
-import { UserDocument } from '../modules/documents';
+import { IUserDocumentSoruce, IUserDocument, UserDocument } from '../modules/documents';
 
 function randomRange(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -38,9 +38,15 @@ export default class UserService {
 			passwordHash = `${hash}.${salt}`;
 		}
 
-		const userDoc = new UserDocument(screenName, passwordHash, name, description, options.root);
-		const result: UserDocument = await this.db.create('api.users', userDoc);
+		const source: IUserDocumentSoruce = {
+			screenName,
+			passwordHash,
+			name,
+			description,
+			root: options.root
+		};
+		const rawDocument: IUserDocument = await this.db.create('api.users', source);
 
-		return result;
+		return new UserDocument(rawDocument);
 	}
 }

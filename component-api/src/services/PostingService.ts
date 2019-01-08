@@ -1,6 +1,6 @@
 import { MongoProvider } from 'frost-component';
 import { ObjectId } from 'mongodb';
-import { ChatPostingDocument } from "../modules/documents";
+import { ChatPostingDocument, IChatPostingDocumentSoruce, IChatPostingDocument } from "../modules/documents";
 
 export default class PostingService {
 	constructor(db: MongoProvider) {
@@ -10,9 +10,13 @@ export default class PostingService {
 	db: MongoProvider;
 
 	async createChatPosting(userId: ObjectId, text: string, attachmentIds?: ObjectId[]): Promise<ChatPostingDocument> {
-		const postingDoc = new ChatPostingDocument(userId, text, attachmentIds);
-		const result: ChatPostingDocument = await this.db.create('api.postings', postingDoc);
+		const source: IChatPostingDocumentSoruce = {
+			userId,
+			text,
+			attachmentIds
+		};
+		const documentRaw: IChatPostingDocument = await this.db.create('api.postings', source);
 
-		return result;
+		return new ChatPostingDocument(documentRaw);
 	}
 }

@@ -1,5 +1,5 @@
 import Express from 'express';
-import { IResponseObject, MessageObject } from './ResponseObject';
+import { IResponseObject, MessageResponseObject } from './ResponseObject';
 import { ApiErrorUtil, ApiErrorSources, IApiErrorSource } from './ApiError';
 
 export default class ApiResponseManager {
@@ -16,7 +16,7 @@ export default class ApiResponseManager {
 		}
 
 		if (typeof data == 'string') {
-			this.resultData = new MessageObject(data);
+			this.resultData = new MessageResponseObject(data);
 		}
 		else {
 			this.resultData = data;
