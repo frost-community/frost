@@ -37,15 +37,11 @@ export class ChatPostingDocument implements IDocument<IChatPosting> {
 	attachmentIds?: ObjectId[];
 
 	async pack(db: MongoProvider): Promise<IChatPosting> {
-		if (this._id == null) {
-			throw new Error('the document has not registered yet');
-		}
-
 		const userSource = await db.findById('api.users', this.userId);
 		const userEntity = await new UserDocument(userSource).pack(db);
 
 		let attachmentIds: string[] | undefined;
-		if (this.attachmentIds != null) {
+		if (this.attachmentIds) {
 			attachmentIds = this.attachmentIds.map(attachmentId => attachmentId.toHexString());
 		}
 
@@ -88,10 +84,6 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 	scopes: string[];
 
 	async pack(db: MongoProvider): Promise<IApp> {
-		if (this._id == null) {
-			throw new Error('the document has not registered yet');
-		}
-
 		return {
 			id: this._id.toHexString(),
 			createdAt: moment(this._id.getTimestamp()).format('X'),
@@ -134,10 +126,6 @@ export class UserDocument implements IUserDocument, IDocument<IUser> {
 	root?: boolean;
 
 	async pack(db: MongoProvider): Promise<IUser> {
-		if (this._id == null) {
-			throw new Error('the document has not registered yet');
-		}
-
 		let followingsCount: number;
 		let followersCount: number;
 		let postingsCount: { chat?: number };
