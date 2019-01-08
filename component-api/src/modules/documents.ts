@@ -90,7 +90,7 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 			name: this.name,
 			creatorId: moment(this.creatorId.getTimestamp()).format('X'),
 			description: this.description,
-			scopes: []
+			scopes: this.scopes
 		};
 	}
 }
