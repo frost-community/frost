@@ -36,7 +36,7 @@ export default class MongoProvider {
 	/**
 	 * ドキュメントIDによりドキュメントを検索して1つの項目を取得します
 	*/
-	findById(collectionName: string, id: string | ObjectId, options: { [x: string]: any }): Promise<any> {
+	findById(collectionName: string, id: string | ObjectId, options?: { [x: string]: any }): Promise<any> {
 		return this.find(collectionName, { _id: MongoProvider.buildId(id) }, options);
 	}
 
