@@ -73,7 +73,7 @@ export default class MongoProvider {
 	 * クエリに一致するドキュメントの個数を取得します
 	*/
 	async count(collectionName: string, query: { [x: string]: any }): Promise<number> {
-		return this.db.collection(collectionName).count(query);
+		return this.db.collection(collectionName).countDocuments(query);
 	}
 
 	/**
