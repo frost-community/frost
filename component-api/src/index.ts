@@ -6,6 +6,8 @@ import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/Endpoint
 import ApiResponseManager from './modules/ApiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
+import bodyParser from 'body-parser';
+import { ErrorRequestHandler, Request, Response, NextFunction } from '../../component/node_modules/@types/express';
 
 export {
 	IApiConfig
@@ -23,6 +25,10 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 			cwd: path.resolve(__dirname, 'endpoints')
 		});
 
+		manager.http.addInit((app) => {
+			app.use(bodyParser.json());
+		});
+
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
@@ -33,6 +39,29 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 			app.use('/api', (req, res) => {
 				const apiRes = new ApiResponseManager();
 				apiRes.error(ApiErrorSources.EndpointNotFound);
+				apiRes.transport(res);
+			});
+
+			// json parsing error handler
+			app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+
+				if (err instanceof SyntaxError && err.message.indexOf('JSON') != -1) {
+					const apiRes = new ApiResponseManager();
+					apiRes.error(ApiErrorSources.InvalidJson);
+					apiRes.transport(res);
+					return;
+				}
+
+				next();
+			});
+
+			// server error handler
+			app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+				console.error('Server error:');
+				console.error(err);
+
+				const apiRes = new ApiResponseManager();
+				apiRes.error(ApiErrorSources.ServerError);
 				apiRes.transport(res);
 			});
 		});

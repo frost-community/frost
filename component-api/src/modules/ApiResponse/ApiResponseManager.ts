@@ -5,6 +5,7 @@ import { ApiErrorUtil, ApiErrorSources, IApiErrorSource } from './ApiError';
 export default class ApiResponseManager {
 	resultData?: IResponseObject<any>;
 	errorSource?: IApiErrorSource;
+	errorDetail?: { [x: string]: any }
 
 	get responded(): boolean {
 		return (this.resultData != null || this.errorSource != null);
@@ -23,12 +24,13 @@ export default class ApiResponseManager {
 		}
 	}
 
-	error(errorSource: IApiErrorSource): void {
+	error(errorSource: IApiErrorSource, errorDetail?: { [x: string]: any }): void {
 		if (this.responded) {
 			throw new Error('already responded');
 		}
 
 		this.errorSource = errorSource;
+		this.errorDetail = errorDetail;
 	}
 
 	transport(res: Express.Response): void {
@@ -42,7 +44,7 @@ export default class ApiResponseManager {
 		}
 		else if (this.errorSource != null) {
 			const statusCode = this.errorSource.httpStatusCode;
-			res.status(statusCode).json(ApiErrorUtil.build(this.errorSource));
+			res.status(statusCode).json(ApiErrorUtil.build(this.errorSource, this.errorDetail));
 		}
 	}
 }
