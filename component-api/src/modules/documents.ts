@@ -5,7 +5,7 @@
 import { ObjectId } from 'mongodb';
 import moment from 'moment';
 import { MongoProvider } from 'frost-component';
-import { IChatPosting, IUser, IApp } from './ApiResponse/packingObjects';
+import { IChatPosting, IUser, IUserRelation, IApp } from './ApiResponse/packingObjects';
 
 export interface IDocument<PackingObject> {
 	pack(db: MongoProvider): Promise<PackingObject>;
@@ -14,6 +14,7 @@ export interface IDocument<PackingObject> {
 // posting
 
 export interface IChatPostingDocumentSoruce {
+	type: 'chat';
 	userId: ObjectId;
 	text: string;
 	attachmentIds?: ObjectId[];
@@ -41,7 +42,7 @@ export class ChatPostingDocument implements IDocument<IChatPosting> {
 		const userEntity = await new UserDocument(userSource).pack(db);
 
 		let attachmentIds: string[] | undefined;
-		if (this.attachmentIds) {
+		if (this.attachmentIds && this.attachmentIds.length > 0) {
 			attachmentIds = this.attachmentIds.map(attachmentId => attachmentId.toHexString());
 		}
 
@@ -147,5 +148,47 @@ export class UserDocument implements IUserDocument, IDocument<IUser> {
 			followersCount: followersCount,
 			postingsCount: postingsCount
 		};
+	}
+}
+
+// userRelation
+
+export interface IUserRelationDocumentSoruce {
+	sourceUserId: ObjectId;
+	targetUserId: ObjectId;
+	status: 'following' | 'notFollowing';
+	message?: string;
+}
+
+export interface IUserRelationDocument extends IUserRelationDocumentSoruce {
+	_id: ObjectId;
+}
+
+export class UserRelationDocument implements IUserRelationDocument, IDocument<IUserRelation> {
+	constructor(raw: IUserRelationDocument) {
+		this._id = raw._id;
+		this.sourceUserId = raw.sourceUserId;
+		this.targetUserId = raw.targetUserId;
+		this.status = raw.status;
+		this.message = raw.message;
+	}
+	_id: ObjectId;
+	sourceUserId: ObjectId;
+	targetUserId: ObjectId;
+	status: 'following' | 'notFollowing';
+	message?: string;
+
+	async pack(db: MongoProvider): Promise<IUserRelation> {
+		const packed: IUserRelation = {
+			sourceUserId: this.sourceUserId.toHexString(),
+			targetUserId: this.targetUserId.toHexString(),
+			status: this.status
+		};
+
+		if (this.message) {
+			packed.message = this.message;
+		}
+
+		return packed;
 	}
 }

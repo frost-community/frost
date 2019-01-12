@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { ObjectId } from 'mongodb';
 import { MongoProvider } from 'frost-component';
 import { IUserDocumentSoruce, IUserDocument, UserDocument } from '../modules/documents';
 
@@ -54,9 +55,16 @@ export default class UserService {
 		return new UserDocument(rawDocument);
 	}
 
-	async findByScreenName(screenName: string): Promise<IUserDocument | null> {
+	async findByScreenName(screenName: string): Promise<UserDocument | null> {
 		// find (ignore case)
-		const user = this.db.find('api.users', { screenName: new RegExp(`^${screenName}$`, 'i') });
-		return user;
+		const rawDocument: IUserDocument | null = await this.db.find('api.users', { screenName: new RegExp(`^${screenName}$`, 'i') });
+
+		return rawDocument ? new UserDocument(rawDocument) : null;
+	}
+
+	async findById(userId: string | ObjectId): Promise<UserDocument | null> {
+		const rawDocument: IUserDocument | null = await this.db.findById('api.users', userId);
+
+		return rawDocument ? new UserDocument(rawDocument) : null;
 	}
 }

@@ -37,7 +37,8 @@ export interface IApp {
 }
 
 export interface IUserRelation {
-	sourceId: string;
-	targetId: string;
-	following: boolean;
+	sourceUserId: string;
+	targetUserId: string;
+	status: 'following' | 'notFollowing';
+	message?: string;
 }

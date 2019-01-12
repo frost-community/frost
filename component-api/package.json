@@ -19,7 +19,7 @@
     "@types/node": "^10.12.18",
     "@types/redis": "^2.8.10",
     "body-parser": "^1.18.3",
-    "cafy": "^12.0.0",
+    "cafy": "^12.1.0",
     "frost-component": "../component",
     "glob": "^7.1.3",
     "moment": "^2.23.0",

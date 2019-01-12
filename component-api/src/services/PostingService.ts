@@ -11,6 +11,7 @@ export default class PostingService {
 
 	async createChatPosting(userId: ObjectId, text: string, attachmentIds?: ObjectId[]): Promise<ChatPostingDocument> {
 		const source: IChatPostingDocumentSoruce = {
+			type: 'chat',
 			userId,
 			text
 		};
@@ -22,5 +23,14 @@ export default class PostingService {
 		const documentRaw: IChatPostingDocument = await this.db.create('api.postings', source);
 
 		return new ChatPostingDocument(documentRaw);
+	}
+
+	async findByChatId(chatPostingId: string | ObjectId): Promise<ChatPostingDocument | null> {
+		const rawDocument: any = await this.db.findById('api.postings', chatPostingId);
+		if (rawDocument && rawDocument.type != 'chat') {
+			return null;
+		}
+
+		return rawDocument ? new ChatPostingDocument(rawDocument) : null;
 	}
 }

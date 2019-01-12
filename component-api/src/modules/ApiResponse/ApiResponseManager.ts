@@ -36,7 +36,7 @@ export default class ApiResponseManager {
 	transport(res: Express.Response): void {
 		if (!this.responded) {
 			console.log('no response');
-			this.error(ApiErrorSources.ServerError);
+			this.error(ApiErrorSources.serverError);
 		}
 
 		if (this.resultData != null) {
