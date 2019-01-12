@@ -1,0 +1,51 @@
+import $ from 'cafy';
+import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
+import { UserResponseObject } from '../../modules/ApiResponse/ResponseObject';
+import { IUserDocument, UserDocument } from '../../modules/documents';
+
+export default define({
+	params: {
+		name: $.str.optional.range(1, 32),
+		description: $.str.optional.range(0, 256)
+	},
+	scopes: [AuthScopes.userWrite]
+}, async (manager) => {
+	const {
+		name,
+		description
+	} = manager.params;
+
+	// temporary
+	const account = await manager.userService.findByScreenName('test');
+	if (!account) {
+		manager.error(ApiErrorSources.serverError);
+		return;
+	}
+
+	const source: any = { };
+
+	if (name)
+		source.name = name;
+
+	if (description)
+		source.description = description;
+
+	if (Object.keys(source).length == 0) {
+		manager.error(ApiErrorSources.missingParam, { message: 'specify some optional params' });
+		return;
+	}
+
+	let userDocRaw: IUserDocument;
+	try {
+		userDocRaw = await manager.db.updateById('api.users', account._id, source);
+	}
+	catch (err) {
+		manager.error(ApiErrorSources.serverError, { message: 'failed to update user' });
+		return;
+	}
+
+	const userDoc = new UserDocument(userDocRaw);
+	const user = await userDoc.pack(manager.db);
+
+	manager.ok(new UserResponseObject(user));
+});

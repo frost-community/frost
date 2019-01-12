@@ -1,14 +1,17 @@
 import { MongoProvider } from 'frost-component';
 import { ObjectId } from 'mongodb';
-import { IUserRelationDocument, UserRelationDocument, IUserDocumentSoruce } from "../modules/documents";
+import { IUserRelationDocument, UserRelationDocument, IUserDocumentSoruce, UserDocument } from "../modules/documents";
 import { IUserRelation } from '../modules/ApiResponse/packingObjects';
+import { EndpointManager, ApiErrorSources } from '../modules/Endpoint';
 
 export default class UserRelationService {
-	constructor(db: MongoProvider) {
+	constructor(db: MongoProvider, manager: EndpointManager) {
 		this.db = db;
+		this.manager = manager;
 	}
 
 	private db: MongoProvider;
+	private manager: EndpointManager;
 
 	async follow(sourceUserId: ObjectId, targetUserId: ObjectId, message?: string) {
 		let documentRaw: IUserRelationDocument;
@@ -31,7 +34,7 @@ export default class UserRelationService {
 	}
 
 	async getRelation(sourceUserId: ObjectId, targetUserId: ObjectId): Promise<IUserRelation> {
-		let documentRaw: IUserRelationDocument = await this.db.find('api.userRelations', {
+		const documentRaw: IUserRelationDocument = await this.db.find('api.userRelations', {
 			sourceUserId: sourceUserId,
 			targetUserId: targetUserId
 		});
@@ -48,5 +51,57 @@ export default class UserRelationService {
 		const userRelation = await doc.pack(this.db);
 
 		return userRelation;
+	}
+
+	async getfollowings(userId: ObjectId): Promise<UserDocument[]> {
+		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
+			sourceUserId: userId,
+			status: 'following'
+		});
+
+		const followings = documentRaws.map(docRaw => new UserRelationDocument(docRaw));
+
+		const userPromises = followings.map(async following => {
+			const user = await this.manager.userService.findById(following.targetUserId);
+			if (!user) {
+				console.warn(`not existing user: ${following.targetUserId.toHexString()}`);
+			}
+			return user;
+		});
+
+		const usersWithNull = await Promise.all(userPromises);
+
+		const users: UserDocument[] = [];
+		for (const userOrNull of usersWithNull) {
+			if (userOrNull) users.push(userOrNull);
+		}
+
+		return users;
+	}
+
+	async getfollowers(userId: ObjectId): Promise<UserDocument[]> {
+		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
+			targetUserId: userId,
+			status: 'following'
+		});
+
+		const followers = documentRaws.map(docRaw => new UserRelationDocument(docRaw));
+
+		const userPromises = followers.map(async follower => {
+			const user = await this.manager.userService.findById(follower.sourceUserId);
+			if (!user) {
+				console.warn(`not existing user: ${follower.sourceUserId.toHexString()}`);
+			}
+			return user;
+		});
+
+		const usersWithNull = await Promise.all(userPromises);
+
+		const users: UserDocument[] = [];
+		for (const userOrNull of usersWithNull) {
+			if (userOrNull) users.push(userOrNull);
+		}
+
+		return users;
 	}
 }

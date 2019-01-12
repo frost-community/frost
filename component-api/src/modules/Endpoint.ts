@@ -8,6 +8,7 @@ import { ApiErrorSources } from './ApiResponse/ApiError';
 import UserService from '../services/UserService';
 import PostingService from '../services/PostingService';
 import UserRelationService from '../services/UserRelationService';
+import AppService from '../services/appService';
 
 export {
 	AuthScopes,
@@ -29,7 +30,8 @@ export class EndpointManager extends ApiResponseManager {
 		// services
 		this.userService = new UserService(db);
 		this.postingService = new PostingService(db);
-		this.userRelationService = new UserRelationService(db);
+		this.userRelationService = new UserRelationService(db, this);
+		this.appService = new AppService(db);
 	}
 
 	params: { [x: string]: any };
@@ -41,6 +43,8 @@ export class EndpointManager extends ApiResponseManager {
 	postingService: PostingService;
 
 	userRelationService: UserRelationService;
+
+	appService: AppService;
 }
 
 export type EndpointHandler = (ctx: EndpointManager) => (Promise<void> | void);

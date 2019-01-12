@@ -21,6 +21,9 @@ export class ApiErrorSources {
 
 	// specific of user api
 	static duplicatedScreenName: IApiErrorSource = {reason: 'duplicated_screen_name', message: 'The ScreenName is already exists', httpStatusCode: 400 };
+
+	// specific of app api
+	static duplicatedAppName: IApiErrorSource = {reason: 'duplicated_app_name', message: 'The app name is already exists', httpStatusCode: 400 };
 }
 
 export interface IApiError {
