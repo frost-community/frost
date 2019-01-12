@@ -89,7 +89,7 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 			id: this._id.toHexString(),
 			createdAt: moment(this._id.getTimestamp()).format('X'),
 			name: this.name,
-			creatorId: moment(this.creatorId.getTimestamp()).format('X'),
+			creatorId: this.creatorId.toHexString(),
 			description: this.description,
 			scopes: this.scopes
 		};
