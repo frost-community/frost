@@ -22,7 +22,7 @@ export default class UserService {
 		this.db = db;
 	}
 
-	db: MongoProvider;
+	private db: MongoProvider;
 
 	async create(screenName: string, password: string | null, name: string, description: string, options?: IUserCreateOptions): Promise<UserDocument> {
 		options = options || { };
@@ -52,5 +52,11 @@ export default class UserService {
 		const rawDocument: IUserDocument = await this.db.create('api.users', source);
 
 		return new UserDocument(rawDocument);
+	}
+
+	async findByScreenName(screenName: string): Promise<IUserDocument | null> {
+		// find (ignore case)
+		const user = this.db.find('api.users', { screenName: new RegExp(`^${screenName}$`, 'i') });
+		return user;
 	}
 }

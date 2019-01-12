@@ -38,7 +38,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 		manager.http.addRoute((app) => {
 			app.use('/api', (req, res) => {
 				const apiRes = new ApiResponseManager();
-				apiRes.error(ApiErrorSources.EndpointNotFound);
+				apiRes.error(ApiErrorSources.endpointNotFound);
 				apiRes.transport(res);
 			});
 
@@ -47,7 +47,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 				if (err instanceof SyntaxError && err.message.indexOf('JSON') != -1) {
 					const apiRes = new ApiResponseManager();
-					apiRes.error(ApiErrorSources.InvalidJson);
+					apiRes.error(ApiErrorSources.invalidJson);
 					apiRes.transport(res);
 					return;
 				}
@@ -61,7 +61,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 				console.error(err);
 
 				const apiRes = new ApiResponseManager();
-				apiRes.error(ApiErrorSources.ServerError);
+				apiRes.error(ApiErrorSources.serverError);
 				apiRes.transport(res);
 			});
 		});

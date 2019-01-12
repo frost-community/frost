@@ -7,7 +7,7 @@ export default class PostingService {
 		this.db = db;
 	}
 
-	db: MongoProvider;
+	private db: MongoProvider;
 
 	async createChatPosting(userId: ObjectId, text: string, attachmentIds?: ObjectId[]): Promise<ChatPostingDocument> {
 		const source: IChatPostingDocumentSoruce = {
