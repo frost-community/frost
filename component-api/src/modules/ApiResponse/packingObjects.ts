@@ -15,6 +15,13 @@ export interface IUser {
 	};
 }
 
+export interface IUserRelation {
+	sourceUserId: string;
+	targetUserId: string;
+	status: 'following' | 'notFollowing';
+	message?: string;
+}
+
 export interface IPosting {
 	id: string;
 	createdAt: string;
@@ -36,9 +43,17 @@ export interface IApp {
 	scopes: string[];
 }
 
-export interface IUserRelation {
-	sourceUserId: string;
-	targetUserId: string;
-	status: 'following' | 'notFollowing';
-	message?: string;
+export interface IAppSecret {
+	appId: string;
+	appSecret: string;
+}
+
+export interface IToken {
+	appId: string;
+	userId: string;
+	accessToken: string;
+}
+
+export interface ICredentialValidation {
+	isValid: boolean
 }

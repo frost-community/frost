@@ -1,13 +1,17 @@
 import { MongoProvider } from 'frost-component';
 import { ObjectId } from 'mongodb';
 import { AppDocument, IAppDocument, ChatPostingDocument, IAppDocumentSoruce, IChatPostingDocument, UserDocument } from "../modules/documents";
+import buildHash from '../modules/buildHash';
+import IApiConfig from '../modules/IApiConfig';
 
 export default class AppService {
-	constructor(db: MongoProvider) {
+	constructor(db: MongoProvider, config: IApiConfig) {
 		this.db = db;
+		this.config = config;
 	}
 
 	private db: MongoProvider;
+	private config: IApiConfig;
 
 	async create(name: string, user: UserDocument, description: string, scopes: string[]): Promise<AppDocument> {
 		const source: IAppDocumentSoruce = {

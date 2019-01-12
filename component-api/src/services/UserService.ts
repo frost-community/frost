@@ -1,17 +1,10 @@
-import crypto from 'crypto';
 import { ObjectId } from 'mongodb';
 import { MongoProvider } from 'frost-component';
 import { IUserDocumentSoruce, IUserDocument, UserDocument } from '../modules/documents';
+import buildHash from '../modules/buildHash';
 
 function randomRange(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function buildHash(text: string, algorithm?: string) {
-	const sha256 = crypto.createHash(algorithm || 'sha256');
-	sha256.update(text);
-
-	return sha256.digest('hex');
 }
 
 export interface IUserCreateOptions {

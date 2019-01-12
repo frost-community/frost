@@ -2,7 +2,7 @@
 	define typing of API response
 */
 
-import { IUser, IPosting, IApp, IUserRelation } from './packingObjects';
+import { IUser, IPosting, IApp, IUserRelation, IAppSecret, IToken, ICredentialValidation } from './packingObjects';
 
 const enum ResultType {
 	message = 'message',
@@ -12,7 +12,10 @@ const enum ResultType {
 	postings = 'postings',
 	app = 'app',
 	apps = 'apps',
-	userRelation = 'userRelation'
+	token = 'token',
+	appSecret = 'appSecret',
+	userRelation = 'userRelation',
+	credentialValidation = 'credentialValidation'
 }
 
 export interface IResponseObject<T> {
@@ -51,6 +54,14 @@ export class UsersResponseObject extends ResponseObject<IUser[]> {
 	}
 }
 
+// user relation
+
+export class UserRelationResponseObject extends ResponseObject<IUserRelation> {
+	constructor(result: IUserRelation) {
+		super(ResultType.userRelation, result);
+	}
+}
+
 // posting
 
 export class PostingResponseObject extends ResponseObject<IPosting> {
@@ -79,10 +90,24 @@ export class AppsResponseObject extends ResponseObject<IApp[]> {
 	}
 }
 
-// UserRelation
+export class AppSecretResponseObject extends ResponseObject<IAppSecret> {
+	constructor(result: IAppSecret) {
+		super(ResultType.appSecret, result);
+	}
+}
 
-export class UserRelationResponseObject extends ResponseObject<IUserRelation> {
-	constructor(result: IUserRelation) {
-		super(ResultType.userRelation, result);
+// token
+
+export class TokenResponseObject extends ResponseObject<IToken> {
+	constructor(result: IToken) {
+		super(ResultType.token, result);
+	}
+}
+
+// credential validation
+
+export class CredentialValidationResponseObject extends ResponseObject<ICredentialValidation> {
+	constructor(result: ICredentialValidation) {
+		super(ResultType.credentialValidation, result);
 	}
 }

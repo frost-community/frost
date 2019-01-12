@@ -1,13 +1,15 @@
+/// <reference path="./externalTypes/uid2.d.ts" />
+
 import { promisify } from 'util'
 import path from 'path';
 import glob from 'glob';
+import { Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
 import { ComponentEngineManager, IComponent } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/Endpoint';
 import ApiResponseManager from './modules/ApiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
-import bodyParser from 'body-parser';
-import { ErrorRequestHandler, Request, Response, NextFunction } from '../../component/node_modules/@types/express';
 
 export {
 	IApiConfig
@@ -32,7 +34,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
-			registerEndpoint(endpoint, endpointPath, manager);
+			registerEndpoint(endpoint, endpointPath, manager, config);
 		}
 
 		manager.http.addRoute((app) => {

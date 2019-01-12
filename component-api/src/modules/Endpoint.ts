@@ -9,6 +9,8 @@ import UserService from '../services/UserService';
 import PostingService from '../services/PostingService';
 import UserRelationService from '../services/UserRelationService';
 import AppService from '../services/appService';
+import IApiConfig from './IApiConfig';
+import TokenService from '../services/tokenService';
 
 export {
 	AuthScopes,
@@ -20,23 +22,27 @@ export interface IEndpointContextOptions {
 }
 
 export class EndpointManager extends ApiResponseManager {
-	constructor(db: MongoProvider, options?: IEndpointContextOptions) {
+	constructor(db: MongoProvider, config: IApiConfig, options?: IEndpointContextOptions) {
 		super();
 		options = options || { };
 
 		this.params = options.params || {};
 		this.db = db;
+		this.config = config;
 
 		// services
 		this.userService = new UserService(db);
 		this.postingService = new PostingService(db);
 		this.userRelationService = new UserRelationService(db, this);
-		this.appService = new AppService(db);
+		this.appService = new AppService(db, config);
+		this.tokenService = new TokenService(db);
 	}
 
 	params: { [x: string]: any };
 
 	db: MongoProvider;
+
+	config: IApiConfig;
 
 	userService: UserService;
 
@@ -45,6 +51,8 @@ export class EndpointManager extends ApiResponseManager {
 	userRelationService: UserRelationService;
 
 	appService: AppService;
+
+	tokenService: TokenService;
 }
 
 export type EndpointHandler = (ctx: EndpointManager) => (Promise<void> | void);
@@ -68,10 +76,10 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 	};
 }
 
-export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engineManager: ComponentEngineManager): void {
+export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engineManager: ComponentEngineManager, config: IApiConfig): void {
 	engineManager.http.addRoute((app: Express.Application) => {
 		app.post(`/api/${endpointPath}`, async (req, res) => {
-			const endpointManager = new EndpointManager(engineManager.db, { params: req.body });
+			const endpointManager = new EndpointManager(engineManager.db, config, { params: req.body });
 
 			try {
 				// TODO: check scopes

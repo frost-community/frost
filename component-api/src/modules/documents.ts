@@ -4,8 +4,11 @@
 
 import { ObjectId } from 'mongodb';
 import moment from 'moment';
+import uid from 'uid2';
 import { MongoProvider } from 'frost-component';
-import { IChatPosting, IUser, IUserRelation, IApp } from './ApiResponse/packingObjects';
+import { IChatPosting, IUser, IUserRelation, IApp, IToken } from './ApiResponse/packingObjects';
+import IApiConfig from './IApiConfig';
+import buildHash from './buildHash';
 
 export interface IDocument<PackingObject> {
 	pack(db: MongoProvider): Promise<PackingObject>;
@@ -64,6 +67,8 @@ export interface IAppDocumentSoruce {
 	creatorId: ObjectId;
 	description: string;
 	scopes: string[];
+	root?: boolean;
+	seed?: string;
 }
 
 export interface IAppDocument extends IAppDocumentSoruce {
@@ -77,12 +82,16 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 		this.creatorId = raw.creatorId;
 		this.description = raw.description;
 		this.scopes = raw.scopes;
+		this.root = raw.root;
+		this.seed = raw.seed;
 	}
 	_id: ObjectId;
 	name: string;
 	creatorId: ObjectId;
 	description: string;
 	scopes: string[];
+	root?: boolean;
+	seed?: string;
 
 	async pack(db: MongoProvider): Promise<IApp> {
 		return {
@@ -92,6 +101,71 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 			creatorId: this.creatorId.toHexString(),
 			description: this.description,
 			scopes: this.scopes
+		};
+	}
+
+	async generateAppSecret(db: MongoProvider) {
+		const seed = uid(8);
+		const updatedAppDoc = await db.updateById('api.apps', this._id.toHexString(), { seed });
+		const secret = this.getAppSecret(updatedAppDoc);
+
+		return secret;
+	}
+
+	getAppSecret(config: IApiConfig) {
+		if (this.seed == null) {
+			throw new Error('seed is empty');
+		}
+
+		const secret = buildHash(`${config.appSecretKey}/${this._id}/${this.seed}`);
+
+		return secret;
+	}
+
+	existsAppSecret() {
+		return this.seed != null;
+	}
+
+	hasScope(scopeId: string): boolean {
+		return this.scopes.indexOf(scopeId) != -1;
+	}
+}
+
+// token
+
+export interface ITokenDocumentSource {
+	appId: ObjectId;
+	userId: ObjectId;
+	scopes: string[];
+	accessToken: string;
+	host?: boolean;
+}
+
+export interface ITokenDocument extends ITokenDocumentSource {
+	_id: ObjectId;
+}
+
+export class TokenDocument implements ITokenDocument, IDocument<IToken> {
+	constructor(raw: ITokenDocument) {
+		this._id = raw._id;
+		this.appId = raw.appId;
+		this.userId = raw.userId;
+		this.scopes = raw.scopes;
+		this.accessToken = raw.accessToken;
+		this.host = raw.host;
+	}
+	_id: ObjectId;
+	appId: ObjectId;
+	userId: ObjectId;
+	scopes: string[];
+	accessToken: string;
+	host?: boolean;
+
+	async pack(db: MongoProvider): Promise<IToken> {
+		return {
+			appId: this.appId.toHexString(),
+			userId: this.userId.toHexString(),
+			accessToken: this.accessToken
 		};
 	}
 }
@@ -148,6 +222,14 @@ export class UserDocument implements IUserDocument, IDocument<IUser> {
 			followersCount: followersCount,
 			postingsCount: postingsCount
 		};
+	}
+
+	validatePassword(password: string): boolean {
+		if (!this.passwordHash) return false;
+
+		const [hash, salt] = this.passwordHash.split('.');
+
+		return hash == buildHash(`${password}.${salt}`);
 	}
 }
 
