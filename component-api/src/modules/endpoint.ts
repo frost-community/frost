@@ -1,4 +1,4 @@
-import Express, { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
 import { ComponentEngineManager, MongoProvider } from 'frost-component';
@@ -92,12 +92,33 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engi
 		passport.authenticate('accessToken', { session: false, failWithError: true })(req, res, next);
 	}
 
-	engineManager.http.addRoute((app: Express.Application) => {
+	engineManager.http.addRoute((app) => {
 		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
 			const endpointManager = new EndpointManager(engineManager.db, config, { params: req.body });
 
 			try {
-				// TODO: check scopes
+
+				// check scopes
+
+				if (endpoint.scopes.length != 0) {
+					if (!req.authInfo) {
+						console.log('[debug] authInfo is empty');
+						endpointManager.error(ApiErrorSources.nonAuthorized);
+						endpointManager.transport(res);
+						return;
+					}
+
+					const scopes: string[] = req.authInfo.scopes;
+
+					const missingScopes = endpoint.scopes.filter(neededScope => scopes.indexOf(neededScope.id) == -1);
+					const missingScopeIds = missingScopes.map(scope => scope.id);
+					if (missingScopeIds.length > 0) {
+						endpointManager.error(ApiErrorSources.nonAuthorized, { missingScopes: missingScopeIds });
+						endpointManager.transport(res);
+						return;
+					}
+
+				}
 
 				// check params
 
