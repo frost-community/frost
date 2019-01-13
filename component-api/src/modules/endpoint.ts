@@ -4,7 +4,7 @@ import passport from 'passport';
 import { ComponentEngineManager, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
-import { IDocument } from './documents';
+import { IDocument, AppDocument, TokenDocument } from './documents';
 import ApiResponseManager from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
 
@@ -100,7 +100,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engi
 
 				// check scopes
 
-				if (endpoint.scopes.length != 0) {
+				if (endpoint.scopes.length > 0) {
 					if (!req.authInfo) {
 						console.log('[debug] authInfo is empty');
 						endpointManager.error(ApiErrorSources.nonAuthorized);
@@ -108,16 +108,16 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engi
 						return;
 					}
 
-					const scopes: string[] = req.authInfo.scopes;
+					//const appDoc: AppDocument = req.authInfo.app;
+					const tokenDoc: TokenDocument = req.authInfo.token;
 
-					const missingScopes = endpoint.scopes.filter(neededScope => scopes.indexOf(neededScope.id) == -1);
+					const missingScopes = endpoint.scopes.filter(neededScope => tokenDoc.scopes.indexOf(neededScope.id) == -1);
 					const missingScopeIds = missingScopes.map(scope => scope.id);
 					if (missingScopeIds.length > 0) {
 						endpointManager.error(ApiErrorSources.nonAuthorized, { missingScopes: missingScopeIds });
 						endpointManager.transport(res);
 						return;
 					}
-
 				}
 
 				// check params

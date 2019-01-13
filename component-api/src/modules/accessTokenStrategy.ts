@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import { MongoProvider } from 'frost-component';
-import { IAppDocument, AppDocument, IUserDocument, UserDocument, ITokenDocument } from './documents';
+import { IAppDocument, AppDocument, IUserDocument, UserDocument, ITokenDocument, TokenDocument } from './documents';
 
 export default (db: MongoProvider) => {
 	passport.use('accessToken', new BearerStrategy(async (accessToken, done) => {
@@ -11,6 +11,7 @@ export default (db: MongoProvider) => {
 				done(null, false);
 				return;
 			}
+			const tokenDoc = new TokenDocument(tokenDocRaw);
 
 			const userDocRaw: IUserDocument = await db.find('api.users', { _id: tokenDocRaw.userId });
 			if (!userDocRaw) {
@@ -25,7 +26,7 @@ export default (db: MongoProvider) => {
 				return;
 			}
 			const appDoc = new AppDocument(appDocRaw);
-			done(null, userDoc, { app: appDoc, scopes: tokenDocRaw.scopes } as any);
+			done(null, userDoc, { app: appDoc, token: tokenDoc } as any);
 		}
 		catch (err) {
 			done(err);
