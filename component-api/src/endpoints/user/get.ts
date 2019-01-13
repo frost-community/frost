@@ -1,8 +1,8 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
+import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
 import { UserDocument } from '../../modules/documents';
 import { NullableObjectIdValidator } from '../../modules/cafyValidators';
-import { UserResponseObject } from '../../modules/ApiResponse/ResponseObject';
+import { UserResponseObject } from '../../modules/apiResponse/responseObjects';
 
 export default define({
 	params: {

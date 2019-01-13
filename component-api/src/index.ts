@@ -6,8 +6,8 @@ import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { ComponentEngineManager, IComponent } from 'frost-component';
-import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/Endpoint';
-import ApiResponseManager from './modules/ApiResponse/ApiResponseManager';
+import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
+import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
 

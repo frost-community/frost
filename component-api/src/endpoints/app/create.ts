@@ -1,6 +1,6 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
-import { AppResponseObject } from '../../modules/ApiResponse/ResponseObject';
+import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
+import { AppResponseObject } from '../../modules/apiResponse/responseObjects';
 import { AppDocument } from '../../modules/documents';
 
 function isAvailableScope(scopeId: string): boolean {

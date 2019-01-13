@@ -1,7 +1,7 @@
 import { IChatPostingDocument, ChatPostingDocument } from './documents';
-import { EndpointManager } from './Endpoint';
+import { EndpointManager } from './endpoint';
 import { ObjectId } from 'mongodb';
-import { IChatPosting } from './ApiResponse/packingObjects';
+import { IChatPosting } from './apiResponse/packingObjects';
 
 export default async function(manager: EndpointManager, userIds: ObjectId[]): Promise<IChatPosting[]> {
 	const chatPostingRaws: IChatPostingDocument[] = await manager.db.findArray('api.postings', {

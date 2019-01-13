@@ -1,7 +1,6 @@
 import { MongoProvider } from 'frost-component';
 import { ObjectId } from 'mongodb';
-import { AppDocument, IAppDocument, ChatPostingDocument, IAppDocumentSoruce, IChatPostingDocument, UserDocument } from "../modules/documents";
-import buildHash from '../modules/buildHash';
+import { AppDocument, IAppDocument, IAppDocumentSoruce, UserDocument } from "../modules/documents";
 import IApiConfig from '../modules/IApiConfig';
 
 export default class AppService {

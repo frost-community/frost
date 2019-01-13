@@ -1,17 +1,17 @@
 import Express from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import { ComponentEngineManager, MongoProvider } from 'frost-component';
-import { IAuthScope, AuthScopes } from './AuthScope';
-import ApiResponseManager from './ApiResponse/ApiResponseManager';
-import { ApiErrorSources } from './ApiResponse/ApiError';
+import { IAuthScope, AuthScopes } from './authScope';
+import IApiConfig from './IApiConfig';
+import { IDocument } from './documents';
+import ApiResponseManager from './apiResponse/ApiResponseManager';
+import { ApiErrorSources } from './apiResponse/apiError';
 
 import UserService from '../services/UserService';
 import PostingService from '../services/PostingService';
 import UserRelationService from '../services/UserRelationService';
-import AppService from '../services/appService';
-import IApiConfig from './IApiConfig';
-import TokenService from '../services/tokenService';
-import { IDocument } from './documents';
+import AppService from '../services/AppService';
+import TokenService from '../services/TokenService';
 
 export {
 	AuthScopes,

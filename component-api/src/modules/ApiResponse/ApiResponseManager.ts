@@ -1,6 +1,6 @@
 import Express from 'express';
-import { IResponseObject, MessageResponseObject } from './ResponseObject';
-import { ApiErrorUtil, ApiErrorSources, IApiErrorSource } from './ApiError';
+import { IResponseObject, MessageResponseObject } from './responseObjects';
+import { ApiErrorUtil, ApiErrorSources, IApiErrorSource } from './apiError';
 
 export default class ApiResponseManager {
 	resultData?: IResponseObject<any>;

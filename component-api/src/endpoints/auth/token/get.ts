@@ -1,6 +1,6 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from '../../../modules/Endpoint';
-import { TokenResponseObject } from '../../../modules/ApiResponse/ResponseObject';
+import { define, AuthScopes, ApiErrorSources } from '../../../modules/endpoint';
+import { TokenResponseObject } from '../../../modules/apiResponse/responseObjects';
 import { TokenDocument } from '../../../modules/documents';
 import { NullableObjectIdValidator } from '../../../modules/cafyValidators';
 

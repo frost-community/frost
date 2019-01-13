@@ -1,8 +1,8 @@
 import { MongoProvider } from 'frost-component';
 import { ObjectId } from 'mongodb';
-import { IUserRelationDocument, UserRelationDocument, IUserDocumentSoruce, UserDocument } from "../modules/documents";
-import { IUserRelation } from '../modules/ApiResponse/packingObjects';
-import { EndpointManager, ApiErrorSources } from '../modules/Endpoint';
+import { IUserRelationDocument, UserRelationDocument, UserDocument } from "../modules/documents";
+import { IUserRelation } from '../modules/apiResponse/packingObjects';
+import { EndpointManager } from '../modules/endpoint';
 
 export default class UserRelationService {
 	constructor(db: MongoProvider, manager: EndpointManager) {
