@@ -20,13 +20,9 @@ export default define({
 		return;
 	}
 
-	const followerUserDocs = await manager.userRelationService.getfollowers(user._id);
+	const followerDocs = await manager.userRelationService.getfollowers(user._id);
 
-	const followerUserPromises = followerUserDocs.map(followerUserDoc => {
-		return followerUserDoc.pack(manager.db);
-	});
+	const followers = await manager.packAll(followerDocs);
 
-	const followerUsers = await Promise.all(followerUserPromises);
-
-	manager.ok(new UsersResponseObject(followerUsers));
+	manager.ok(new UsersResponseObject(followers));
 });

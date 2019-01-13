@@ -31,6 +31,7 @@ export default define({
 		scopes = []
 	} = manager.params;
 
+	// if app name is duplicated
 	const tempApp = await manager.db.find('api.apps', { name: name });
 	if (tempApp) {
 		manager.error(ApiErrorSources.duplicatedAppName);
@@ -48,5 +49,6 @@ export default define({
 	}
 
 	const app = await appDoc.pack(manager.db);
+
 	manager.ok(new AppResponseObject(app));
 });

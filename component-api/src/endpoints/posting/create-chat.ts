@@ -26,5 +26,6 @@ export default define({
 	const chatPostingDoc = await manager.postingService.createChatPosting(user._id, text, attachmentIds);
 
 	const chatPosting = await chatPostingDoc.pack(manager.db);
+
 	manager.ok(new PostingResponseObject(chatPosting));
 });

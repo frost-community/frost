@@ -16,13 +16,12 @@ export default define({
 	} = manager.params;
 
 	const appDocRaw: IAppDocument = await manager.db.findById('api.apps', appId);
-
 	if (!appDocRaw) {
 		manager.error(ApiErrorSources.appNotFound);
 		return;
 	}
+	const appDoc = new AppDocument(appDocRaw);
 
-	let appDoc = new AppDocument(appDocRaw);
 	const app = await appDoc.pack(manager.db);
 
 	manager.ok(new AppResponseObject(app));

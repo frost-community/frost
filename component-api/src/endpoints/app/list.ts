@@ -1,7 +1,6 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/Endpoint';
 import { AppsResponseObject } from '../../modules/ApiResponse/ResponseObject';
-import { AppDocument } from '../../modules/documents';
 import { } from '../../modules/cafyValidators';
 
 export default define({
@@ -22,9 +21,8 @@ export default define({
 		// userId
 	} = manager.params;
 
-	const appDocs: AppDocument[] = await manager.appService.findArrayByCreatorId(user._id);
-	const appPromises = appDocs.map(appDoc => appDoc.pack(manager.db));
-	const apps = await Promise.all(appPromises);
+	const appDocs = await manager.appService.findArrayByCreatorId(user._id);
+	const apps = await manager.packAll(appDocs);
 
 	manager.ok(new AppsResponseObject(apps));
 });

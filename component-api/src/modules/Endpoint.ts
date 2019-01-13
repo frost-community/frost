@@ -11,6 +11,7 @@ import UserRelationService from '../services/UserRelationService';
 import AppService from '../services/appService';
 import IApiConfig from './IApiConfig';
 import TokenService from '../services/tokenService';
+import { IDocument } from './documents';
 
 export {
 	AuthScopes,
@@ -53,6 +54,10 @@ export class EndpointManager extends ApiResponseManager {
 	appService: AppService;
 
 	tokenService: TokenService;
+
+	packAll<PackingObject>(docs: IDocument<PackingObject>[]): Promise<PackingObject[]> {
+		return Promise.all(docs.map(doc => doc.pack(this.db)));
+	}
 }
 
 export type EndpointHandler = (ctx: EndpointManager) => (Promise<void> | void);

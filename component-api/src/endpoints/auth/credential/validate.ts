@@ -1,8 +1,6 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../../modules/Endpoint';
-import { TokenResponseObject, CredentialValidationResponseObject } from '../../../modules/ApiResponse/ResponseObject';
-import { IAppDocument, IUserDocument, AppDocument, TokenDocument } from '../../../modules/documents';
-import { ObjectIdValidator } from '../../../modules/cafyValidators';
+import { CredentialValidationResponseObject } from '../../../modules/ApiResponse/ResponseObject';
 
 export default define({
 	params: {
@@ -19,11 +17,15 @@ export default define({
 
 	const userDoc = await manager.userService.findByScreenName(screenName);
 	if (!userDoc) {
-		manager.ok(new CredentialValidationResponseObject({ isValid: false }));
+		manager.ok(new CredentialValidationResponseObject({
+			isValid: false
+		}));
 		return;
 	}
 
 	const isValid = userDoc.validatePassword(password);
 
-	manager.ok(new CredentialValidationResponseObject({ isValid: isValid }));
+	manager.ok(new CredentialValidationResponseObject({
+		isValid: isValid
+	}));
 });
