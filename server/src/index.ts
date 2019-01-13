@@ -4,14 +4,18 @@ import frostWeb, { IWebOptions, IWebAppConfig } from 'frost-component-webapp';
 import IServerConfig from './modules/IServerConfig';
 import verifyServerConfig from './modules/verifyServerConfig';
 
+const log = (...params: any[]) => {
+	console.log('[Server]', ...params);
+};
+
 function loadConfig(configName: string, envName: string, fileName: string): any {
 	try {
 		if (process.env[envName] != null) {
-			console.log(`loading ${configName} config from ${envName} env variable ...`);
+			log(`loading ${configName} config from ${envName} env variable ...`);
 			return JSON.parse(process.env[envName]!);
 		}
 		else {
-			console.log(`loading ${configName} config from ${fileName} ...`);
+			log(`loading ${configName} config from ${fileName} ...`);
 			return require(`../.configs/${fileName}`);
 		}
 	}
@@ -44,22 +48,22 @@ async function entryPoint() {
 	const engine = new ComponentEngine(serverConfig.httpPort, serverConfig.mongo, engineOptions);
 
 	if (serverConfig.enableApi) {
-		console.log('enable API component');
+		log('enable API component');
 		const apiConfig: IApiConfig = loadConfig('api', 'FROST_API', 'api-config.json');
 		engine.use(frostApi(apiConfig, { }));
 	}
 
 	if (serverConfig.enableWebApp) {
-		console.log('enable WebApp component');
+		log('enable WebApp component');
 		const webappConfig: IWebAppConfig = loadConfig('webapp', 'FROST_WEBAPP', 'webapp-config.json');
 		engine.use(frostWeb(webappConfig, { }));
 	}
 
-	console.log('starting server ...');
+	log('starting engine ...');
 	await engine.start();
 }
 
 entryPoint()
 .catch(err => {
-	console.log(err);
+	log(err);
 });

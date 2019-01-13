@@ -1,5 +1,6 @@
-import Express from 'express';
+import Express, { Request, Response, NextFunction } from 'express';
 import $, { Context as CafyContext } from 'cafy';
+import passport from 'passport';
 import { ComponentEngineManager, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
@@ -82,8 +83,17 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 }
 
 export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engineManager: ComponentEngineManager, config: IApiConfig): void {
+
+	// if some scopes is needed, requesting an AccessToken
+	function authorization(req: Request, res: Response, next: NextFunction) {
+		if (endpoint.scopes.length == 0) {
+			return next();
+		}
+		passport.authenticate('accessToken', { session: false, failWithError: true })(req, res, next);
+	}
+
 	engineManager.http.addRoute((app: Express.Application) => {
-		app.post(`/api/${endpointPath}`, async (req, res) => {
+		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
 			const endpointManager = new EndpointManager(engineManager.db, config, { params: req.body });
 
 			try {

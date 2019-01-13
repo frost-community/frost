@@ -1,4 +1,5 @@
 import Express from 'express';
+import passport from 'passport';
 import MongoProvider from './MongoProvider';
 
 export {
@@ -107,6 +108,10 @@ export class ComponentEngine {
 
 		log('database: connecting ...');
 		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
+
+		log('initialize passport ...');
+		app.use(passport.initialize());
+		//app.use(passport.session());
 
 		const manager = new ComponentEngineManager(this, db, { });
 

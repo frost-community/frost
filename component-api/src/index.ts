@@ -10,6 +10,7 @@ import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
+import accessTokenStrategy from './modules/accessTokenStrategy';
 
 export {
 	IApiConfig
@@ -22,13 +23,15 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
 	async function handler(manager: ComponentEngineManager) {
+		accessTokenStrategy(manager.db);
+
 		// get file paths of endpoint
 		const endpointPaths = await promisify(glob)('**/*.js', {
 			cwd: path.resolve(__dirname, 'endpoints')
 		});
 
 		manager.http.addInit((app) => {
-			app.use(bodyParser.json());
+			app.use('/api', bodyParser.json());
 		});
 
 		for (let endpointPath of endpointPaths) {
@@ -44,8 +47,20 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 				apiRes.transport(res);
 			});
 
+			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
+
+				if (err.name == 'AuthenticationError') {
+					const apiRes = new ApiResponseManager();
+					apiRes.error(ApiErrorSources.nonAuthorized);
+					apiRes.transport(res);
+					return;
+				}
+
+				next(err);
+			});
+
 			// json parsing error handler
-			app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
 
 				if (err instanceof SyntaxError && err.message.indexOf('JSON') != -1) {
 					const apiRes = new ApiResponseManager();
@@ -54,11 +69,11 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 					return;
 				}
 
-				next();
+				next(err);
 			});
 
 			// server error handler
-			app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
 				console.error('Server error:');
 				console.error(err);
 
