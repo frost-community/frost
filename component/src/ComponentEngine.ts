@@ -1,0 +1,112 @@
+import Express from 'express';
+import passport from 'passport';
+import argv from 'argv';
+import ComponentApi from './componentApi/ComponentApi';
+import ComponentApiInternal from './componentApi/ComponentApiInternal';
+import MongoProvider from './MongoProvider';
+import IComponent from './IComponent';
+import setupComponentMenu from './setupComponentMenu';
+import ConsoleMenu from './ConsoleMenu';
+
+export interface IMongoInfo {
+	url: string;
+	dbName: string;
+}
+
+export interface IComponentEngineOptions {
+}
+
+// componentを組み合わせて実行する
+export default class ComponentEngine {
+	constructor(httpPort: number, mongoInfo: IMongoInfo, options?: IComponentEngineOptions) {
+		options = options || {};
+
+		this.components = [];
+		this.setupMenus = [];
+
+		this.httpPort = httpPort;
+		this.mongoInfo = mongoInfo;
+	}
+
+	private httpPort: number;
+
+	private mongoInfo: IMongoInfo;
+
+	private components: IComponent[];
+
+	setupMenus: { component: IComponent, setupMenu: ConsoleMenu }[];
+
+	has(componentName: string): boolean {
+		return this.components.find(component => component.name == componentName) != null;
+	}
+
+	use(component: IComponent) {
+		if (this.components.some(c => c.name == component.name)) {
+			throw new Error('exists same component name');
+		}
+		this.components.push(component);
+	}
+
+	async start() {
+
+		const log = (...params: any[]) => {
+			console.log('[ComponentEngine]', ...params);
+		};
+
+		// options
+
+		argv.option({
+			name: 'setup',
+			short: 's',
+			type: 'boolean',
+			description: 'Display setup mode'
+		});
+
+		const { options } = argv.run();
+
+		// general
+
+		const app = Express();
+
+		log('database: connecting ...');
+		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
+
+		log('initialize passport ...');
+		app.use(passport.initialize());
+		//app.use(passport.session());
+
+		const apiInternal = new ComponentApiInternal(this, db);
+
+		log('loading components ...');
+
+		for (const component of this.components) {
+			await component.handler(new ComponentApi(apiInternal, component));
+		}
+
+		// setup
+		if (options.setup) {
+			await setupComponentMenu(this.setupMenus);
+			return;
+		}
+
+		// http
+
+		log('http: registering init handlers ...');
+
+		for (const initHandler of apiInternal.http.initHandlers) {
+			await initHandler(app);
+		}
+
+		log('http: registering route handlers ...');
+
+		for (const routeHandler of apiInternal.http.routeHandlers) {
+			await routeHandler(app);
+		}
+
+		app.listen(this.httpPort, () => {
+			log('http: started server.');
+		});
+
+		log('ready.');
+	}
+}

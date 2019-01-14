@@ -6,7 +6,8 @@
   "main": "built/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node ."
+    "start": "node .",
+    "setup": "node . --setup"
   },
   "author": "marihachi",
   "repository": {

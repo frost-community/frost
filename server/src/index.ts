@@ -43,9 +43,7 @@ async function entryPoint() {
 		throw new Error('httpPort is not configured');
 	}
 
-	const engineOptions: IComponentEngineOptions = {
-	};
-	const engine = new ComponentEngine(serverConfig.httpPort, serverConfig.mongo, engineOptions);
+	const engine = new ComponentEngine(serverConfig.httpPort, serverConfig.mongo, { });
 
 	if (serverConfig.enableApi) {
 		log('enable API component');

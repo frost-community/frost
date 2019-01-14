@@ -5,12 +5,13 @@ import path from 'path';
 import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-import { ComponentEngineManager, IComponent } from 'frost-component';
+import { ComponentApi, IComponent, ConsoleMenu } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
 import accessTokenStrategy from './modules/accessTokenStrategy';
+import { DataFormatState } from './modules/getDataFormatState';
 
 export {
 	IApiConfig
@@ -22,25 +23,56 @@ export interface IApiOptions {
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
-	async function handler(manager: ComponentEngineManager) {
-		accessTokenStrategy(manager.db);
+	async function handler(componentApi: ComponentApi) {
+
+		// * setup menu
+
+		let dataFormatState: DataFormatState = DataFormatState.ready;
+		const menu = new ConsoleMenu('API Setup Menu');
+		menu.add('exit setup', () => true, (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		menu.add('initialize (register root application and root user)', () => true, (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		componentApi.registerSetupMenu(menu);
+
+		// * strategy
+
+		accessTokenStrategy(componentApi.db);
+
+		// * enumerate endpoints
 
 		// get file paths of endpoint
 		const endpointPaths = await promisify(glob)('**/*.js', {
 			cwd: path.resolve(__dirname, 'endpoints')
 		});
 
-		manager.http.addInit((app) => {
+		// * initialize http server
+
+		componentApi.http.addInit((app) => {
 			app.use('/api', bodyParser.json());
 		});
+
+		// * routings
 
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
-			registerEndpoint(endpoint, endpointPath, manager, config);
+			registerEndpoint(endpoint, endpointPath, componentApi, config);
 		}
 
-		manager.http.addRoute((app) => {
+		componentApi.http.addRoute((app) => {
 			app.use('/api', (req, res) => {
 				const apiRes = new ApiResponseManager();
 				apiRes.error(ApiErrorSources.endpointNotFound);
