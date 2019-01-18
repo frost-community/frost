@@ -1,4 +1,4 @@
-import MongoProvider from "./MongoProvider";
+import { MongoProvider } from 'frost-component';
 
 export const enum DataFormatState {
 	ready,

@@ -23,29 +23,28 @@ export interface IApiOptions {
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
+	// * setup menu
+
+	let dataFormatState: DataFormatState = DataFormatState.ready;
+	const menu = new ConsoleMenu('API Setup Menu');
+	menu.add('exit setup', () => true, (ctx) => {
+		// TODO
+		ctx.closeMenu();
+	});
+	menu.add('initialize (register root application and root user)', () => true, (ctx) => {
+		// TODO
+		ctx.closeMenu();
+	});
+	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
+		// TODO
+		ctx.closeMenu();
+	});
+	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
+		// TODO
+		ctx.closeMenu();
+	});
+
 	async function handler(componentApi: ComponentApi) {
-
-		// * setup menu
-
-		let dataFormatState: DataFormatState = DataFormatState.ready;
-		const menu = new ConsoleMenu('API Setup Menu');
-		menu.add('exit setup', () => true, (ctx) => {
-			// TODO
-			ctx.closeMenu();
-		});
-		menu.add('initialize (register root application and root user)', () => true, (ctx) => {
-			// TODO
-			ctx.closeMenu();
-		});
-		menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
-			// TODO
-			ctx.closeMenu();
-		});
-		menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
-			// TODO
-			ctx.closeMenu();
-		});
-		componentApi.registerSetupMenu(menu);
 
 		// * strategy
 
@@ -118,6 +117,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 	return {
 		name: 'api',
-		handler: handler
+		handler: handler,
+		setupMenu: menu
 	};
 };

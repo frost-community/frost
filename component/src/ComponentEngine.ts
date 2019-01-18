@@ -64,6 +64,16 @@ export default class ComponentEngine {
 
 		const { options } = argv.run();
 
+		// setup
+		if (options.setup) {
+			const setupMenus: { setupMenu: ConsoleMenu, component: IComponent }[] = this.components
+				.map(c => { return { setupMenu: c.setupMenu, component: c }; })
+				.filter(c => c.setupMenu != null) as any[];
+
+			await setupComponentMenu(setupMenus);
+			return;
+		}
+
 		// general
 
 		const app = Express();
@@ -81,12 +91,6 @@ export default class ComponentEngine {
 
 		for (const component of this.components) {
 			await component.handler(new ComponentApi(apiInternal, component));
-		}
-
-		// setup
-		if (options.setup) {
-			await setupComponentMenu(this.setupMenus);
-			return;
 		}
 
 		// http

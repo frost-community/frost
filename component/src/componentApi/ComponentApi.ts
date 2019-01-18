@@ -35,10 +35,6 @@ export default class ComponentApi {
 	has(componentName: string) {
 		return this.apiInternal.has(this.targetComponent, componentName);
 	}
-
-	registerSetupMenu(menu: ConsoleMenu) {
-		this.apiInternal.registerSetupMenu(this.targetComponent, menu);
-	}
 }
 
 // http component api

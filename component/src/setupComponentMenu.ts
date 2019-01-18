@@ -9,7 +9,6 @@ export default async function(setupMenus: { component: IComponent, setupMenu: Co
 	for (const setupMenu of setupMenus) {
 		componentMenu.add(setupMenu.component.name, () => true, async (ctx) => {
 			await setupMenu.setupMenu.show();
-			ctx.closeMenu();
 		});
 	}
 

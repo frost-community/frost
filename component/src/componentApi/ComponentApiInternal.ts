@@ -29,10 +29,6 @@ export default class ComponentApiInternal {
 	has(accessFrom: IComponent, componentName: string) {
 		return this.engine.has(componentName);
 	}
-
-	registerSetupMenu(accessFrom: IComponent, menu: ConsoleMenu) {
-		this.engine.setupMenus.push({ component: accessFrom, setupMenu: menu });
-	}
 }
 
 // http component api (internal)

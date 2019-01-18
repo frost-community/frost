@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
-import { ComponentEngineManager, MongoProvider } from 'frost-component';
+import { ComponentApi, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
 import { IDocument, AppDocument, TokenDocument } from './documents';
@@ -82,7 +82,7 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 	};
 }
 
-export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engineManager: ComponentEngineManager, config: IApiConfig): void {
+export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, componentApi: ComponentApi, config: IApiConfig): void {
 
 	// if some scopes is needed, requesting an AccessToken
 	function authorization(req: Request, res: Response, next: NextFunction) {
@@ -92,9 +92,9 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, engi
 		passport.authenticate('accessToken', { session: false, failWithError: true })(req, res, next);
 	}
 
-	engineManager.http.addRoute((app) => {
+	componentApi.http.addRoute((app) => {
 		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
-			const endpointManager = new EndpointManager(engineManager.db, config, { params: req.body });
+			const endpointManager = new EndpointManager(componentApi.db, config, { params: req.body });
 
 			try {
 
