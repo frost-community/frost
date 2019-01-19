@@ -4,9 +4,10 @@ import passport from 'passport';
 import { ComponentApi, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
-import { IDocument, AppDocument, TokenDocument } from './documents';
-import ApiResponseManager from './apiResponse/ApiResponseManager';
+import { IDocument, TokenDocument } from './documents';
+import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
+import buildHttpResResolver from './apiResponse/buildHttpResResolver';
 
 import UserService from '../services/UserService';
 import PostingService from '../services/PostingService';
@@ -24,8 +25,8 @@ export interface IEndpointContextOptions {
 }
 
 export class EndpointManager extends ApiResponseManager {
-	constructor(db: MongoProvider, config: IApiConfig, options?: IEndpointContextOptions) {
-		super();
+	constructor(db: MongoProvider, config: IApiConfig, resResolver: (source: IApiResponseSource) => any, options?: IEndpointContextOptions) {
+		super(resResolver);
 		options = options || { };
 
 		this.params = options.params || {};
@@ -94,7 +95,11 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 
 	componentApi.http.addRoute((app) => {
 		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
-			const endpointManager = new EndpointManager(componentApi.db, config, { params: req.body });
+			const endpointManager = new EndpointManager(
+				componentApi.db,
+				config,
+				buildHttpResResolver(res),
+				{ params: req.body });
 
 			try {
 
@@ -104,7 +109,6 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					if (!req.authInfo) {
 						console.log('[debug] authInfo is empty');
 						endpointManager.error(ApiErrorSources.nonAuthorized);
-						endpointManager.transport(res);
 						return;
 					}
 
@@ -115,7 +119,6 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					const missingScopeIds = missingScopes.map(scope => scope.id);
 					if (missingScopeIds.length > 0) {
 						endpointManager.error(ApiErrorSources.nonAuthorized, { missingScopes: missingScopeIds });
-						endpointManager.transport(res);
 						return;
 					}
 				}
@@ -131,7 +134,6 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					// check missing param
 					if (!validator.isOptional && $.any.nullable.nok(endpointManager.params[paramName])) {
 						endpointManager.error(ApiErrorSources.missingParam, { paramName: paramName });
-						endpointManager.transport(res);
 						return;
 					}
 					// validation
@@ -141,19 +143,16 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					}
 					if (errorParam) {
 						endpointManager.error(ApiErrorSources.invalidParamFormat, { paramName: paramName });
-						endpointManager.transport(res);
 						return;
 					}
 				}
 
 				// process endpoint
 				await endpoint.handler(endpointManager);
-				endpointManager.transport(res);
 			}
 			catch (err) {
 				console.log(err);
 				endpointManager.error(ApiErrorSources.serverError);
-				endpointManager.transport(res);
 			}
 		});
 	});

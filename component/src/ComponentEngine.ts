@@ -66,6 +66,7 @@ export default class ComponentEngine {
 
 		// setup
 		if (options.setup) {
+			log('setup mode');
 			const setupMenus: { setupMenu: ConsoleMenu, component: IComponent }[] = this.components
 				.map(c => { return { setupMenu: c.setupMenu, component: c }; })
 				.filter(c => c.setupMenu != null) as any[];
@@ -74,7 +75,9 @@ export default class ComponentEngine {
 			return;
 		}
 
-		// general
+		// server
+
+		log('server mode');
 
 		const app = Express();
 

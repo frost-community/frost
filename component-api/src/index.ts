@@ -12,6 +12,7 @@ import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
 import accessTokenStrategy from './modules/accessTokenStrategy';
 import { DataFormatState } from './modules/getDataFormatState';
+import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
 
 export {
 	IApiConfig
@@ -50,13 +51,6 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 		accessTokenStrategy(componentApi.db);
 
-		// * enumerate endpoints
-
-		// get file paths of endpoint
-		const endpointPaths = await promisify(glob)('**/*.js', {
-			cwd: path.resolve(__dirname, 'endpoints')
-		});
-
 		// * initialize http server
 
 		componentApi.http.addInit((app) => {
@@ -65,6 +59,10 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 		// * routings
 
+		const endpointPaths = await promisify(glob)('**/*.js', {
+			cwd: path.resolve(__dirname, 'endpoints')
+		});
+
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
@@ -72,46 +70,35 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 		}
 
 		componentApi.http.addRoute((app) => {
-			app.use('/api', (req, res) => {
-				const apiRes = new ApiResponseManager();
-				apiRes.error(ApiErrorSources.endpointNotFound);
-				apiRes.transport(res);
+
+			// endpoint not found
+			app.use('/api', async (req, res) => {
+				const apiRes = new ApiResponseManager(buildHttpResResolver(res));
+				await apiRes.error(ApiErrorSources.endpointNotFound);
 			});
 
+			// error handling
 			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
+				const apiRes = new ApiResponseManager(buildHttpResResolver(res));
 
+				// authentication error
 				if (err.name == 'AuthenticationError') {
-					const apiRes = new ApiResponseManager();
 					apiRes.error(ApiErrorSources.nonAuthorized);
-					apiRes.transport(res);
 					return;
 				}
 
-				next(err);
-			});
-
-			// json parsing error handler
-			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
-
+				// json parsing error
 				if (err instanceof SyntaxError && err.message.indexOf('JSON') != -1) {
-					const apiRes = new ApiResponseManager();
 					apiRes.error(ApiErrorSources.invalidJson);
-					apiRes.transport(res);
 					return;
 				}
 
-				next(err);
-			});
-
-			// server error handler
-			app.use('/api', (err: any, req: Request, res: Response, next: NextFunction) => {
+				// server error
 				console.error('Server error:');
 				console.error(err);
-
-				const apiRes = new ApiResponseManager();
 				apiRes.error(ApiErrorSources.serverError);
-				apiRes.transport(res);
 			});
+
 		});
 	}
 

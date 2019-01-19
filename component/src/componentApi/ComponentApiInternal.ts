@@ -2,7 +2,6 @@ import MongoProvider from "../MongoProvider";
 import ComponentEngine from "../ComponentEngine";
 import IComponent from '../IComponent';
 import { HttpComponentHandler } from './ComponentApi';
-import ConsoleMenu from "../ConsoleMenu";
 
 // component api (internal)
 

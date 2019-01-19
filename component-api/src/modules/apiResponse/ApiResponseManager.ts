@@ -1,17 +1,27 @@
-import Express from 'express';
 import { IResponseObject, MessageResponseObject } from './responseObjects';
-import { ApiErrorUtil, ApiErrorSources, IApiErrorSource } from './apiError';
+import { IApiErrorSource } from './apiError';
 
-export default class ApiResponseManager {
+export interface IApiResponseSource {
 	resultData?: IResponseObject<any>;
 	errorSource?: IApiErrorSource;
-	errorDetail?: { [x: string]: any }
+	errorDetail?: { [x: string]: any };
+}
+
+export default class ApiResponseManager {
+	constructor(resResolver: (source: IApiResponseSource) => any) {
+		this.resResolver = resResolver;
+	}
+
+	private resResolver: (source: IApiResponseSource) => any;
+	private resultData?: IResponseObject<any>;
+	private errorSource?: IApiErrorSource;
+	private errorDetail?: { [x: string]: any }
 
 	get responded(): boolean {
 		return (this.resultData != null || this.errorSource != null);
 	}
 
-	ok(data: string | IResponseObject<any>): void {
+	async ok(data: string | IResponseObject<any>): Promise<void> {
 		if (this.responded) {
 			throw new Error('already responded');
 		}
@@ -22,29 +32,26 @@ export default class ApiResponseManager {
 		else {
 			this.resultData = data;
 		}
+
+		await this.resResolver({
+			resultData: this.resultData,
+			errorSource: this.errorSource,
+			errorDetail: this.errorDetail
+		});
 	}
 
-	error(errorSource: IApiErrorSource, errorDetail?: { [x: string]: any }): void {
+	async error(errorSource: IApiErrorSource, errorDetail?: { [x: string]: any }): Promise<void> {
 		if (this.responded) {
 			throw new Error('already responded');
 		}
 
 		this.errorSource = errorSource;
 		this.errorDetail = errorDetail;
-	}
 
-	transport(res: Express.Response): void {
-		if (!this.responded) {
-			console.log('no response');
-			this.error(ApiErrorSources.serverError);
-		}
-
-		if (this.resultData != null) {
-			res.status(200).json(this.resultData);
-		}
-		else if (this.errorSource != null) {
-			const statusCode = this.errorSource.httpStatusCode;
-			res.status(statusCode).json(ApiErrorUtil.build(this.errorSource, this.errorDetail));
-		}
+		await this.resResolver({
+			resultData: this.resultData,
+			errorSource: this.errorSource,
+			errorDetail: this.errorDetail
+		});
 	}
 }

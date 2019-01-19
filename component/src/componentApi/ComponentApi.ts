@@ -2,7 +2,6 @@ import Express from 'express';
 import MongoProvider from "../MongoProvider";
 import IComponent from '../IComponent';
 import ComponentApiInternal, { HttpComponentApiInternal } from './ComponentApiInternal';
-import ConsoleMenu from '../ConsoleMenu';
 
 /*
 	componentに向けたAPI
