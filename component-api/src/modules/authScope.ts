@@ -34,4 +34,10 @@ export class AuthScopes {
 	static storageRead: IAuthScope = { id: 'storage.read', grantable: true };
 	/** ストレージへの書き換え操作 */
 	static storageWrite: IAuthScope = { id: 'storage.write', grantable: true };
+
+	static toArray(): IAuthScope[] {
+		const scopes: IAuthScope[] = Object.keys(AuthScopes).map(scopeName => (AuthScopes as any)[scopeName]);
+
+		return scopes;
+	}
 }

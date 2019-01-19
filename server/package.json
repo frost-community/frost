@@ -6,8 +6,8 @@
   "main": "built/index.js",
   "scripts": {
     "build": "tsc",
-    "setup": "npm i && npm run build",
-    "start": "node ."
+    "start": "node .",
+    "setup": "node . --setup"
   },
   "author": "marihachi",
   "repository": {

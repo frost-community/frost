@@ -1,5 +1,12 @@
 import {
-	MongoClient, ObjectId, Db, FilterQuery, UpdateManyOptions, UpdateOneOptions, CommonOptions as MongoCommonOptions, WriteOpResult
+	MongoClient,
+	ObjectId,
+	Db,
+	FilterQuery,
+	UpdateManyOptions,
+	UpdateOneOptions,
+	CommonOptions as MongoCommonOptions,
+	WriteOpResult
 } from 'mongodb';
 
 interface IFindArrayOptions {
@@ -36,7 +43,7 @@ export default class MongoProvider {
 	/**
 	 * ドキュメントIDによりドキュメントを検索して1つの項目を取得します
 	*/
-	findById(collectionName: string, id: string | ObjectId, options: { [x: string]: any }): Promise<any> {
+	findById(collectionName: string, id: string | ObjectId, options?: { [x: string]: any }): Promise<any> {
 		return this.find(collectionName, { _id: MongoProvider.buildId(id) }, options);
 	}
 
@@ -73,7 +80,7 @@ export default class MongoProvider {
 	 * クエリに一致するドキュメントの個数を取得します
 	*/
 	async count(collectionName: string, query: { [x: string]: any }): Promise<number> {
-		return this.db.collection(collectionName).count(query);
+		return this.db.collection(collectionName).countDocuments(query);
 	}
 
 	/**
