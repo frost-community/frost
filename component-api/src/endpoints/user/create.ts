@@ -1,6 +1,7 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
 import { UserResponseObject } from '../../modules/apiResponse/responseObjects';
+import { UserDocument } from '../../modules/documents';
 
 export default define({
 	params: {
@@ -24,8 +25,12 @@ export default define({
 		return;
 	}
 
-	const userDoc = await manager.userService.create(screenName, password, name, description);
-	if (!userDoc) {
+	let userDoc: UserDocument;
+	try {
+		userDoc = await manager.userService.create(screenName, password, name, description);
+	}
+	catch (err) {
+		console.error(err);
 		manager.error(ApiErrorSources.serverError, { message: 'failed to create user' });
 		return;
 	}

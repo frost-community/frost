@@ -2,6 +2,7 @@ import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
 import { ObjectIdValidator } from '../../modules/cafyValidators';
 import { PostingResponseObject } from '../../modules/apiResponse/responseObjects';
+import { ChatPostingDocument } from '../../modules/documents';
 
 export default define({
 	params: {
@@ -18,7 +19,15 @@ export default define({
 		attachmentIds
 	} = manager.params;
 
-	const chatPostingDoc = await manager.postingService.createChatPosting(account._id, text, attachmentIds);
+	let chatPostingDoc: ChatPostingDocument;
+	try {
+		chatPostingDoc = await manager.postingService.createChatPosting(account._id, text, attachmentIds);
+	}
+	catch (err) {
+		console.error(err);
+		manager.error(ApiErrorSources.serverError, { message: 'failed to create an chat posting' });
+		return;
+	}
 
 	const chatPosting = await chatPostingDoc.pack(manager.db);
 
