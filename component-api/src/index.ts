@@ -1,4 +1,4 @@
-/// <reference path="./externalTypes/uid2.d.ts" />
+/// <reference path="../externalTypes/uid2.d.ts" />
 
 import { promisify } from 'util'
 import path from 'path';
