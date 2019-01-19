@@ -10,17 +10,13 @@ export default define({
 	},
 	scopes: [AuthScopes.userWrite]
 }, async (manager) => {
+
+	const account = manager.authInfo!.user;
+
 	const {
 		targetUserId,
 		message
 	} = manager.params;
-
-	// temporary
-	const account = await manager.userService.findByScreenName('test');
-	if (!account) {
-		manager.error(ApiErrorSources.serverError);
-		return;
-	}
 
 	// fetch target user
 	const targetUser = await manager.userService.findById(targetUserId);

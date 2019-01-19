@@ -4,7 +4,7 @@ import passport from 'passport';
 import { ComponentApi, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
-import { IDocument, TokenDocument } from './documents';
+import { IDocument, TokenDocument, UserDocument, AppDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
 import buildHttpResResolver from './apiResponse/buildHttpResResolver';
@@ -20,8 +20,15 @@ export {
 	ApiErrorSources,
 };
 
+export interface IAuthInfo {
+	user: UserDocument;
+	app: AppDocument;
+	token: TokenDocument;
+}
+
 export interface IEndpointContextOptions {
 	params?: { [x: number]: any };
+	authInfo?: IAuthInfo;
 }
 
 export class EndpointManager extends ApiResponseManager {
@@ -30,6 +37,7 @@ export class EndpointManager extends ApiResponseManager {
 		options = options || { };
 
 		this.params = options.params || {};
+		this.authInfo = options.authInfo;
 		this.db = db;
 		this.config = config;
 
@@ -42,6 +50,8 @@ export class EndpointManager extends ApiResponseManager {
 	}
 
 	params: { [x: string]: any };
+
+	authInfo?: IAuthInfo;
 
 	db: MongoProvider;
 
@@ -112,8 +122,14 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 						return;
 					}
 
-					//const appDoc: AppDocument = req.authInfo.app;
+					const appDoc: AppDocument = req.authInfo.app;
 					const tokenDoc: TokenDocument = req.authInfo.token;
+					const userDoc: UserDocument = req.user;
+					endpointManager.authInfo = {
+						app: appDoc,
+						token: tokenDoc,
+						user: userDoc
+					};
 
 					const missingScopes = endpoint.scopes.filter(neededScope => tokenDoc.scopes.indexOf(neededScope.id) == -1);
 					const missingScopeIds = missingScopes.map(scope => scope.id);

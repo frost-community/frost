@@ -18,12 +18,7 @@ export default define({
 	scopes: [AuthScopes.appCreate]
 }, async (manager) => {
 
-	// temporary
-	const user = await manager.userService.findByScreenName('test');
-	if (!user) {
-		manager.error(ApiErrorSources.serverError);
-		return;
-	}
+	const account = manager.authInfo!.user;
 
 	const {
 		name,
@@ -40,7 +35,7 @@ export default define({
 
 	let appDoc: AppDocument;
 	try {
-		appDoc = await manager.appService.create(name, user, description, scopes);
+		appDoc = await manager.appService.create(name, account, description, scopes);
 	}
 	catch (err) {
 		console.error(err);

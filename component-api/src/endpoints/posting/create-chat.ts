@@ -11,19 +11,14 @@ export default define({
 	scopes: [AuthScopes.postingWrite]
 }, async (manager) => {
 
-	// temporary
-	const user = await manager.userService.findByScreenName('test');
-	if (!user) {
-		manager.error(ApiErrorSources.serverError);
-		return;
-	}
+	const account = manager.authInfo!.user;
 
 	const {
 		text,
 		attachmentIds
 	} = manager.params;
 
-	const chatPostingDoc = await manager.postingService.createChatPosting(user._id, text, attachmentIds);
+	const chatPostingDoc = await manager.postingService.createChatPosting(account._id, text, attachmentIds);
 
 	const chatPosting = await chatPostingDoc.pack(manager.db);
 

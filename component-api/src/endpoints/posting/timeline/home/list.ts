@@ -10,20 +10,14 @@ export default define({
 	scopes: [AuthScopes.postingRead]
 }, async (manager) => {
 
-	const {
-	} = manager.params;
+	const account = manager.authInfo!.user;
 
-	// temporary
-	const user = await manager.userService.findByScreenName('test');
-	if (!user) {
-		manager.error(ApiErrorSources.serverError);
-		return;
-	}
+	const { } = manager.params;
 
 	// fetch followings
-	const followings = await manager.userRelationService.getfollowings(user._id);
+	const followings = await manager.userRelationService.getfollowings(account._id);
 	const followingIds = followings.map(f => f._id);
-	followingIds.push(user._id);
+	followingIds.push(account._id);
 
 	const chatPostings = await timeline(manager, followingIds);
 
