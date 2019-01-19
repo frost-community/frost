@@ -1,6 +1,6 @@
 {
   "name": "frost-component-api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The API component of the Frost",
   "main": "built/index.js",
   "scripts": {
