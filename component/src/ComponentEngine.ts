@@ -104,8 +104,19 @@ export default class ComponentEngine {
 
 		log('components: starting ...');
 
-		for (const component of this.components) {
-			await component.handler(new ComponentApi(apiInternal, component));
+		try {
+			for (const component of this.components) {
+				await component.handler(new ComponentApi(apiInternal, component));
+			}
+		}
+		catch (err) {
+			log('component error:');
+			console.error(err);
+
+			log('database: disconnecting ...');
+			await db.disconnect();
+
+			return;
 		}
 
 		// http
