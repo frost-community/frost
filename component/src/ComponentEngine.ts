@@ -53,6 +53,20 @@ export default class ComponentEngine {
 			console.log('[ComponentEngine]', ...params);
 		};
 
+		log('database: connecting ...');
+		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
+
+		log('components: initializing ...');
+		const initializedData: { component: IComponent, setupMenu?: ConsoleMenu }[] = [];
+		for (const component of this.components) {
+			if (component.init) {
+				initializedData.push({
+					component: component,
+					setupMenu: (await component.init({ db })).setupMenu
+				});
+			}
+		}
+
 		// options
 
 		argv.option({
@@ -64,39 +78,43 @@ export default class ComponentEngine {
 
 		const { options } = argv.run();
 
-		// setup
+		// (mode) setup
+
 		if (options.setup) {
+
 			log('setup mode');
-			const setupMenus: { setupMenu: ConsoleMenu, component: IComponent }[] = this.components
-				.map(c => { return { setupMenu: c.setupMenu, component: c }; })
-				.filter(c => c.setupMenu != null) as any[];
+
+			const setupMenus = initializedData
+				.map(c => { return { setupMenu: c.setupMenu, component: c.component }; })
+				.filter((c): c is { setupMenu: ConsoleMenu, component: IComponent } => c.setupMenu != null);
 
 			await setupComponentMenu(setupMenus);
+
+			log('database: disconnecting ...');
+			await db.disconnect();
+
 			return;
 		}
 
-		// server
+		// (mode) server
 
 		log('server mode');
 
-		const app = Express();
-
-		log('database: connecting ...');
-		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
-
-		log('initialize passport ...');
-		app.use(passport.initialize());
-		//app.use(passport.session());
-
 		const apiInternal = new ComponentApiInternal(this, db);
 
-		log('loading components ...');
+		log('components: starting ...');
 
 		for (const component of this.components) {
 			await component.handler(new ComponentApi(apiInternal, component));
 		}
 
 		// http
+
+		log('http: initialize ...');
+
+		const app = Express();
+		app.use(passport.initialize());
+		//app.use(passport.session());
 
 		log('http: registering init handlers ...');
 

@@ -5,7 +5,7 @@ import path from 'path';
 import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-import { ComponentApi, IComponent, ConsoleMenu } from 'frost-component';
+import { ComponentApi, IComponent, ConsoleMenu, MongoProvider } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
@@ -24,26 +24,32 @@ export interface IApiOptions {
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
-	// * setup menu
+	function init(manager: { db: MongoProvider }) {
 
-	let dataFormatState: DataFormatState = DataFormatState.ready;
-	const menu = new ConsoleMenu('API Setup Menu');
-	menu.add('exit setup', () => true, (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('initialize (register root application and root user)', () => true, (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
+		// * setup menu
+
+		let dataFormatState: DataFormatState = DataFormatState.ready;
+		const menu = new ConsoleMenu('API Setup Menu');
+		menu.add('exit setup', () => true, (ctx) => {
+			ctx.closeMenu();
+		});
+		menu.add('initialize (register root app and root user)', () => true, (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+		menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
+			// TODO
+			ctx.closeMenu();
+		});
+
+		return {
+			setupMenu: menu
+		};
+	}
 
 	async function handler(componentApi: ComponentApi) {
 
@@ -104,7 +110,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 	return {
 		name: 'api',
-		handler: handler,
-		setupMenu: menu
+		init: init,
+		handler: handler
 	};
 };
