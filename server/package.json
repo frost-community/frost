@@ -20,7 +20,7 @@
     "frost-component": "../component",
     "frost-component-api": "../component-api",
     "frost-component-webapp": "../component-webapp",
-    "cafy": "^12.0.0"
+    "cafy": "^12.1.0"
   },
   "devDependencies": {
     "typescript": "^3.2.2"
