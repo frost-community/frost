@@ -7,10 +7,10 @@ export interface IApiErrorSource {
 export class ApiErrorSources {
 	static serverError: IApiErrorSource = { reason: 'server_error', message: 'an internal error occurred on the server', httpStatusCode: 500 };
 	static endpointNotFound: IApiErrorSource = { reason: 'endpoint_not_found', message: 'please check the URL you entered', httpStatusCode: 404 };
-	static userNotFound: IApiErrorSource = { reason: 'user_not_found', message: 'user not found match to specified condition', httpStatusCode: 404 };
-	static postingNotFound: IApiErrorSource = { reason: 'posting_not_found', message: 'posting not found match to specified condition', httpStatusCode: 404 };
-	static appNotFound: IApiErrorSource = { reason: 'app_not_found', message: 'application not found match to specified condition', httpStatusCode: 404 };
-	static tokenNotFound: IApiErrorSource = { reason: 'token_not_found', message: 'token not found match to specified condition', httpStatusCode: 404 };
+	static userNotFound: IApiErrorSource = { reason: 'user_not_found', message: 'user not found match to specified condition', httpStatusCode: 400 };
+	static postingNotFound: IApiErrorSource = { reason: 'posting_not_found', message: 'posting not found match to specified condition', httpStatusCode: 400 };
+	static appNotFound: IApiErrorSource = { reason: 'app_not_found', message: 'application not found match to specified condition', httpStatusCode: 400 };
+	static tokenNotFound: IApiErrorSource = { reason: 'token_not_found', message: 'token not found match to specified condition', httpStatusCode: 400 };
 	static nonAuthorized: IApiErrorSource = { reason: 'non_authorized', message: 'authorization is required for this endpoint', httpStatusCode: 403 };
 	static missingScope: IApiErrorSource = { reason: 'missing_scope', message: 'your AccessToken does not have some scopes', httpStatusCode: 403 };
 	static missingParam: IApiErrorSource = { reason: 'missing_param', message: 'some required parameters are missing', httpStatusCode: 400 };

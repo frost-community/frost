@@ -55,5 +55,6 @@ export interface IToken {
 }
 
 export interface ICredentialValidation {
-	isValid: boolean
+	isValid: boolean;
+	userId?: string;
 }
