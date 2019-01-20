@@ -5,14 +5,19 @@ import path from 'path';
 import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-import { ComponentApi, IComponent, ConsoleMenu } from 'frost-component';
+import { ComponentApi, IComponent, MongoProvider } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
 import verifyApiConfig from './modules/verifyApiConfig';
 import accessTokenStrategy from './modules/accessTokenStrategy';
-import { DataFormatState } from './modules/getDataFormatState';
 import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
+import setupMenu from './modules/setup/setupMenu';
+import getDataFormatState, { DataFormatState } from './modules/getDataFormatState';
+
+const meta = {
+	currentDataVersion: 1
+};
 
 export {
 	IApiConfig
@@ -24,28 +29,38 @@ export interface IApiOptions {
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
-	// * setup menu
+	const log = (...params: any[]) => {
+		console.log('[API]', ...params);
+	};
 
-	let dataFormatState: DataFormatState = DataFormatState.ready;
-	const menu = new ConsoleMenu('API Setup Menu');
-	menu.add('exit setup', () => true, (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('initialize (register root application and root user)', () => true, (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
-	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), (ctx) => {
-		// TODO
-		ctx.closeMenu();
-	});
+	async function init(manager: { db: MongoProvider }) {
+
+		// * setup menu
+		const menu = await setupMenu(manager.db, config, meta.currentDataVersion);
+
+		return {
+			setupMenu: menu
+		};
+	}
 
 	async function handler(componentApi: ComponentApi) {
+
+		// * data format
+
+		log('checking dataFormat ...');
+		const dataFormatState: DataFormatState = await getDataFormatState(componentApi.db, meta.currentDataVersion);
+		if (dataFormatState != DataFormatState.ready) {
+			if (dataFormatState == DataFormatState.needInitialization) {
+				log('please initialize in setup mode.');
+			}
+			else if (dataFormatState == DataFormatState.needMigration) {
+				log('migration is required. please migrate database in setup mode.');
+			}
+			else {
+				log('this format is not supported. there is a possibility it was used by a newer api. please clear database and restart.');
+			}
+			throw new Error('failed to start api');
+		}
 
 		// * strategy
 
@@ -98,13 +113,12 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 				console.error(err);
 				apiRes.error(ApiErrorSources.serverError);
 			});
-
 		});
 	}
 
 	return {
 		name: 'api',
-		handler: handler,
-		setupMenu: menu
+		init: init,
+		handler: handler
 	};
 };

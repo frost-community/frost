@@ -13,4 +13,5 @@ export default async function(setupMenus: { component: IComponent, setupMenu: Co
 	}
 
 	await componentMenu.show();
+	console.log();
 }

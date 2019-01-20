@@ -13,13 +13,17 @@ export const enum DataFormatState {
  * APIのバージョンアップによって保存されるデータの構造が変更される場合があります。
  * 「データフォーマット」は、正常に初期化・データ移行するために必要な識別子です。
 */
-export default async function(db: MongoProvider, currentVersion: string): Promise<DataFormatState> {
+export default async function(db: MongoProvider, currentVersion: number): Promise<DataFormatState> {
 	const dataFormat = await db.find('meta', { type: 'dataFormat' });
 
 	let docCount = 0;
 	docCount += await db.count('api.users', {});
 	docCount += await db.count('api.apps', {});
 	docCount += await db.count('api.tokens', {});
+	docCount += await db.count('api.userRelations', {});
+	docCount += await db.count('api.postings', {});
+	docCount += await db.count('api.storageFiles', {});
+
 
 	// データフォーマットが保存されていないとき
 	if (!dataFormat) {
