@@ -21,7 +21,8 @@
     "argv": "0.0.2",
     "express": "^4.16.4",
     "mongodb": "^3.1.10",
-    "passport": "^0.4.0"
+    "passport": "^0.4.0",
+    "pug": "^2.0.3"
   },
   "devDependencies": {
     "typescript": "^3.2.2"
