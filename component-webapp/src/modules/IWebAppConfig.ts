@@ -6,4 +6,9 @@ export default interface IWebAppConfig {
 	clientToken: {
 		scopes: string[];
 	};
+	recaptcha: {
+		enable: boolean;
+		siteKey: string;
+		secretKey: string;
+	};
 }

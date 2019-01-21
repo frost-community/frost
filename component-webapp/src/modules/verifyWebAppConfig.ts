@@ -11,6 +11,11 @@ export default (config: IWebAppConfig): void => {
 		}),
 		clientToken: $.obj({
 			scopes: $.array($.str).unique()
+		}),
+		recaptcha: $.obj({
+			enable: $.boolean,
+			siteKey: $.str,
+			secretKey: $.str
 		})
 	});
 	if (verificationConfig.nok(config)) {

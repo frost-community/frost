@@ -79,11 +79,29 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 
 			app.post('/session/register', bodyParser.json(), async (req, res) => {
 
-				// TODO: reCAPTCHA
+				// reCAPTCHA
+				if (config.recaptcha.enable) {
+					let recaptchaResult = await axios.post('https://www.google.com/recaptcha/api/siteverify', {
+						secret: config.recaptcha.secretKey,
+						response: req.body.recaptchaToken
+					}, { validateStatus: () => true });
+					if (recaptchaResult.status != 200) {
+						log('failed to request recaptcha');
+						log('statusCode:', recaptchaResult.status);
+						log('data:', recaptchaResult.data);
+						res.status(500).json({ error: { reason: 'server_error' } });
+						return;
+					}
+					if (recaptchaResult.data.success !== true) {
+						res.status(400).json({ error: { reason: 'invalid_recaptcha' } });
+						return;
+					}
+				}
 
 				const creationResult = await axios.post(`${config.apiBaseUrl}/user/create`, {
 					screenName: req.body.screenName,
 					password: req.body.password,
+					name: req.body.name,
 					description: req.body.description
 				}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
 				if (creationResult.status != 200 && (creationResult.status != 400 || creationResult.data.error.reason != 'duplicated_screen_name')) {
