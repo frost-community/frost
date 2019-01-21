@@ -1,21 +1,18 @@
+import axios, { AxiosResponse } from 'axios';
 import { ComponentApi, IComponent } from 'frost-component';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
-import axios, { AxiosResponse } from 'axios';
+import validateCredential from './modules/validateCredential';
+import getToken, { ITokenInfo } from './modules/getToken';
+import { HttpError } from './modules/errors';
+import bodyParser from 'body-parser';
+import createToken from './modules/createToken';
+import getTokenByAccessToken from './modules/getTokenByAccessToken';
+import log from './modules/log';
 
 export {
 	IWebAppConfig
 };
-
-class HttpError extends Error {
-	constructor(status: number, data: any) {
-		super('http error');
-		this.status = status;
-		this.data = data;
-	}
-	status: number;
-	data: any;
-}
 
 export interface IWebOptions {
 }
@@ -23,94 +20,45 @@ export interface IWebOptions {
 export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 	verifyWebAppConfig(config);
 
-	const log = (...params: any[]) => {
-		console.log('[WebApp]', ...params);
-	};
-
 	function handler(componentApi: ComponentApi) {
 
 		componentApi.http.addRoute((app) => {
 
-			type ValidationResult = {
-				isValid: string;
-				userId: string;
-			};
+			let hostTokenInfo: ITokenInfo | undefined;
 
-			const validateCredential = async (screenName: string, password: string): Promise<ValidationResult> => {
-				// * validate credential
-				const validation = await axios.post(`${config.apiUrl}/auth/credential/validate`, {
-					screenName: screenName,
-					password: password
-				});
-				// expect: status 200
-				if (validation.status != 200) {
-					log('failed to request /auth/credential/validate');
-					log('statusCode:', validation.status);
-					log('data:', validation.data);
-					throw new HttpError(500, { error: { reason: 'server_error' } });
-				}
-				return {
-					isValid: validation.data.result.isValid,
-					userId: validation.data.result.userId
-				};
-			};
-
-			type TokenInfo = {
-				appId: string,
-				userId: string,
-				scopes: string[],
-				accessToken: string
-			};
-
-			const getToken = async (userId: string, scopes: string[]): Promise<TokenInfo> => {
-
-				let tokenResult: AxiosResponse<any>;
-				tokenResult = await axios.post(`${config.apiUrl}/auth/token/get`, {
-					appId: config.appId,
-					userId: userId,
-					scopes: scopes
-				});
-				// expect: status 200 or error token_not_found
-				if (tokenResult.status != 200 && (tokenResult.status != 400 || tokenResult.data.error.reason != 'token_not_found')) {
-					log('failed to request /auth/token/get');
-					log('statusCode:', tokenResult.status);
-					log('data:', tokenResult.data);
-					throw new HttpError(500, { error: { reason: 'server_error' } });
-				}
-
-				// if token is not found, create a token
-				if (tokenResult.status == 400) {
-					tokenResult = await axios.post(`${config.apiUrl}/auth/token/create`, {
-						appId: config.appId,
-						userId: userId,
-						scopes: scopes
-					});
-					if (tokenResult.status != 200) {
-						log('failed to request /auth/token/create');
-						log('statusCode:', tokenResult.status);
-						log('data:', tokenResult.data);
-						throw new HttpError(500, { error: { reason: 'server_error' } });
-					}
-				}
-
-				return {
-					appId: tokenResult.data.result.appId,
-					userId: tokenResult.data.result.userId,
-					scopes: scopes,
-					accessToken: tokenResult.data.result.accessToken
-				};
-			};
-
-			app.post('/session', async (req, res) => {
+			app.post('/session', bodyParser.json(), async (req, res) => {
+				let tokenInfo: ITokenInfo | null;
+				let userGetResult: AxiosResponse<any>;
 				try {
-					const validation = await validateCredential(req.params.screenName, req.params.password);
+					const validation = await validateCredential(req.body.screenName, req.body.password, config);
 					if (!validation.isValid) {
 						res.status(400).json({ error: { reason: 'invalid_credential' } });
 						return;
 					}
 
-					const tokenInfo = await getToken(validation.userId, config.token.scopes);
-					res.status(200).json(tokenInfo);
+					// for the first time only, fetch host token info
+					if (!hostTokenInfo) {
+						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, config);
+					}
+
+					// get token
+					tokenInfo = await getToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, config);
+
+					// if token is not found, create a token
+					if (!tokenInfo) {
+						tokenInfo = await createToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, config);
+					}
+
+					userGetResult = await axios.post(`${config.apiBaseUrl}/user/get`, {
+						userId: tokenInfo.userId
+					}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
+					if (userGetResult.status != 200) {
+						log('failed to request /user/get');
+						log('statusCode:', userGetResult.status);
+						log('data:', userGetResult.data);
+						res.status(500).json({ error: { reason: 'server_error' } });
+						return;
+					}
 				}
 				catch (err) {
 					if (err instanceof HttpError) {
@@ -121,18 +69,27 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 						throw err;
 					}
 				}
+
+				res.status(200).json({
+					user: userGetResult.data.result,
+					scopes: tokenInfo.scopes,
+					accessToken: tokenInfo.accessToken
+				});
 			});
 
-			app.post('/session/register', async (req, res) => {
+			app.post('/session/register', bodyParser.json(), async (req, res) => {
 
 				// TODO: reCAPTCHA
 
-				const creationResult = await axios.post(`${config.apiUrl}/user/create`, {
-					screenName: req.params.screenName,
-					password: req.params.password,
-					description: req.params.description
-				});
+				const creationResult = await axios.post(`${config.apiBaseUrl}/user/create`, {
+					screenName: req.body.screenName,
+					password: req.body.password,
+					description: req.body.description
+				}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
 				if (creationResult.status != 200 && (creationResult.status != 400 || creationResult.data.error.reason != 'duplicated_screen_name')) {
+					log('failed to request /user/create');
+					log('statusCode:', creationResult.status);
+					log('data:', creationResult.data);
 					res.status(500).json({ error: { reason: 'server_error' } });
 					return;
 				}
@@ -141,9 +98,20 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 					return;
 				}
 
-				let tokenInfo: TokenInfo;
+				let tokenInfo: ITokenInfo | null;
 				try {
-					tokenInfo = await getToken(creationResult.data.result.id, config.token.scopes);
+					// for the first time only, fetch host token info
+					if (!hostTokenInfo) {
+						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, config);
+					}
+
+					// get token
+					tokenInfo = await getToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, config);
+
+					// if token is not found, create a token
+					if (!tokenInfo) {
+						tokenInfo = await createToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, config);
+					}
 				}
 				catch (err) {
 					if (err instanceof HttpError) {
@@ -155,7 +123,11 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 					}
 				}
 
-				res.status(200).json(tokenInfo);
+				res.status(200).json({
+					user: creationResult.data.result,
+					scopes: tokenInfo.scopes,
+					accessToken: tokenInfo.accessToken
+				});
 			});
 
 			app.get('/', (req, res) => {

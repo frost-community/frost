@@ -1,7 +1,9 @@
 export default interface IWebAppConfig {
-	apiUrl: string;
-	appId: string;
-	token: {
+	apiBaseUrl: string;
+	hostToken: {
+		accessToken: string;
+	};
+	clientToken: {
 		scopes: string[];
 	};
 }
