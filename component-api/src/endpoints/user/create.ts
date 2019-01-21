@@ -12,12 +12,12 @@ export default define({
 	},
 	scopes: [AuthScopes.userCreate]
 }, async (manager) => {
-	const {
-		screenName,
-		password,
-		name = 'froster',
-		description = ''
-	} = manager.params;
+
+	// params
+	const screenName: string = manager.params.screenName;
+	const password: string = manager.params.password;
+	const name: string = manager.params.name || 'froster';
+	const description: string = manager.params.description || '';
 
 	// check availability of ScreenName
 	if (await manager.userService.findByScreenName(screenName)) {

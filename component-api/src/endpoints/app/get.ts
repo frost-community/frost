@@ -2,18 +2,17 @@ import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
 import { AppResponseObject } from '../../modules/apiResponse/responseObjects';
 import { AppDocument, IAppDocument } from '../../modules/documents';
-import { ObjectIdValidator } from '../../modules/cafyValidators';
+import { ObjectIdContext } from '../../modules/cafyValidators';
 
 export default define({
 	params: {
-		appId: ObjectIdValidator
+		appId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.appRead]
 }, async (manager) => {
 
-	const {
-		appId
-	} = manager.params;
+	// params
+	const appId: string = manager.params.appId;
 
 	const appDocRaw: IAppDocument = await manager.db.findById('api.apps', appId);
 	if (!appDocRaw) {

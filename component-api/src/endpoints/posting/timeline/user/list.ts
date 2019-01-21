@@ -1,20 +1,19 @@
 import $ from 'cafy';
 import { MongoProvider } from 'frost-component';
 import { define, AuthScopes, ApiErrorSources } from '../../../../modules/endpoint';
-import { ObjectIdValidator } from '../../../../modules/cafyValidators';
+import { ObjectIdContext } from '../../../../modules/cafyValidators';
 import timeline from '../../../../modules/timeline';
 import { PostingsResponseObject } from '../../../../modules/apiResponse/responseObjects';
 
 export default define({
 	params: {
-		userId: ObjectIdValidator
+		userId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.postingRead]
 }, async (manager) => {
 
-	const {
-		userId
-	} = manager.params;
+	// params
+	const userId: string = manager.params.userId;
 
 	const chatPostings = await timeline(manager, [MongoProvider.buildId(userId)]);
 

@@ -1,17 +1,17 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../../modules/endpoint';
-import { ObjectIdValidator } from '../../../modules/cafyValidators';
+import { ObjectIdContext } from '../../../modules/cafyValidators';
 import { UsersResponseObject } from '../../../modules/apiResponse/responseObjects';
 
 export default define({
 	params: {
-		userId: ObjectIdValidator
+		userId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.userRead]
 }, async (manager) => {
-	const {
-		userId
-	} = manager.params;
+
+	// params
+	const userId: string = manager.params.userId;
 
 	// fetch user
 	const user = await manager.userService.findById(userId);

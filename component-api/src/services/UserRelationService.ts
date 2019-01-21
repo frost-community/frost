@@ -13,27 +13,27 @@ export default class UserRelationService {
 	private db: MongoProvider;
 	private manager: EndpointManager;
 
-	async follow(sourceUserId: ObjectId, targetUserId: ObjectId, message?: string) {
+	async follow(sourceUserId: string | ObjectId, targetUserId: string | ObjectId, message?: string) {
 		let documentRaw: IUserRelationDocument;
 		documentRaw = await this.db.upsert(
 			'api.userRelations',
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId },
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId, message, status: 'following' });
+			{ sourceUserId: MongoProvider.buildId(sourceUserId), targetUserId: MongoProvider.buildId(targetUserId) },
+			{ sourceUserId: MongoProvider.buildId(sourceUserId), targetUserId: MongoProvider.buildId(targetUserId), message, status: 'following' });
 
 		return new UserRelationDocument(documentRaw);
 	}
 
-	async unfollow(sourceUserId: ObjectId, targetUserId: ObjectId) {
+	async unfollow(sourceUserId: string | ObjectId, targetUserId: string | ObjectId) {
 		let documentRaw: IUserRelationDocument;
 		documentRaw = await this.db.upsert(
 			'api.userRelations',
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId },
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId, message: null, status: 'notFollowing' });
+			{ sourceUserId: MongoProvider.buildId(sourceUserId), targetUserId: MongoProvider.buildId(targetUserId) },
+			{ sourceUserId: MongoProvider.buildId(sourceUserId), targetUserId: MongoProvider.buildId(targetUserId), message: null, status: 'notFollowing' });
 
 		return new UserRelationDocument(documentRaw);
 	}
 
-	async getRelation(sourceUserId: ObjectId, targetUserId: ObjectId): Promise<IUserRelation> {
+	async getRelation(sourceUserId: string | ObjectId, targetUserId: string | ObjectId): Promise<IUserRelation> {
 		const documentRaw: IUserRelationDocument = await this.db.find('api.userRelations', {
 			sourceUserId: sourceUserId,
 			targetUserId: targetUserId
@@ -41,8 +41,8 @@ export default class UserRelationService {
 
 		if (!documentRaw) {
 			return {
-				sourceUserId: sourceUserId.toHexString(),
-				targetUserId: targetUserId.toHexString(),
+				sourceUserId: MongoProvider.buildId(sourceUserId).toHexString(),
+				targetUserId: MongoProvider.buildId(targetUserId).toHexString(),
 				status: 'notFollowing'
 			};
 		}
@@ -53,9 +53,9 @@ export default class UserRelationService {
 		return userRelation;
 	}
 
-	async getfollowings(userId: ObjectId): Promise<UserDocument[]> {
+	async getfollowings(userId: string | ObjectId): Promise<UserDocument[]> {
 		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
-			sourceUserId: userId,
+			sourceUserId: MongoProvider.buildId(userId),
 			status: 'following'
 		});
 
@@ -79,9 +79,9 @@ export default class UserRelationService {
 		return users;
 	}
 
-	async getfollowers(userId: ObjectId): Promise<UserDocument[]> {
+	async getfollowers(userId: string | ObjectId): Promise<UserDocument[]> {
 		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
-			targetUserId: userId,
+			targetUserId: MongoProvider.buildId(userId),
 			status: 'following'
 		});
 

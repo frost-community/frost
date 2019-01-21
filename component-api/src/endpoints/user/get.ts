@@ -1,20 +1,20 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
 import { UserDocument } from '../../modules/documents';
-import { NullableObjectIdValidator } from '../../modules/cafyValidators';
+import { ObjectIdContext } from '../../modules/cafyValidators';
 import { UserResponseObject } from '../../modules/apiResponse/responseObjects';
 
 export default define({
 	params: {
-		userId: NullableObjectIdValidator,
+		userId: $.type(ObjectIdContext).optional,
 		screenName: $.str.optional.range(4, 15).match(/^[a-zA-Z0-9_-]+$/)
 	},
 	scopes: [AuthScopes.userRead]
 }, async (manager) => {
-	const {
-		userId,
-		screenName
-	} = manager.params;
+
+	// params
+	const userId: string | undefined = manager.params.userId;
+	const screenName: string | undefined = manager.params.screenName;
 
 	if (!userId && !screenName) {
 		manager.error(ApiErrorSources.invalidSearchCondition);
@@ -27,7 +27,7 @@ export default define({
 		userDoc = await manager.userService.findByScreenName(screenName);
 	}
 	else {
-		userDoc = await manager.userService.findById(userId);
+		userDoc = await manager.userService.findById(userId!);
 	}
 
 	if (!userDoc) {

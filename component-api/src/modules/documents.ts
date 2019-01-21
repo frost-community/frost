@@ -165,6 +165,7 @@ export class TokenDocument implements ITokenDocument, IDocument<IToken> {
 		return {
 			appId: this.appId.toHexString(),
 			userId: this.userId.toHexString(),
+			scopes: this.scopes,
 			accessToken: this.accessToken
 		};
 	}

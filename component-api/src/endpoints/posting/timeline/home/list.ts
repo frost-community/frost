@@ -5,14 +5,15 @@ import { PostingsResponseObject } from '../../../../modules/apiResponse/response
 
 export default define({
 	params: {
-		//userId: ObjectIdValidator
+		//userId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.postingRead]
 }, async (manager) => {
 
 	const account = manager.authInfo!.user;
 
-	const { } = manager.params;
+	// params
+	//const userId: string = manager.params.userId;
 
 	// fetch followings
 	const followings = await manager.userRelationService.getfollowings(account._id);

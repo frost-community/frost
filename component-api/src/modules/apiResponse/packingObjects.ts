@@ -51,6 +51,7 @@ export interface IAppSecret {
 export interface IToken {
 	appId: string;
 	userId: string;
+	scopes: string[];
 	accessToken: string;
 }
 

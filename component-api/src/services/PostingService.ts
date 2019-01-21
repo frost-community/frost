@@ -9,15 +9,15 @@ export default class PostingService {
 
 	private db: MongoProvider;
 
-	async createChatPosting(userId: ObjectId, text: string, attachmentIds?: ObjectId[]): Promise<ChatPostingDocument> {
+	async createChatPosting(userId: string | ObjectId, text: string, attachmentIds?: (ObjectId | string)[]): Promise<ChatPostingDocument> {
 		const source: IChatPostingDocumentSoruce = {
 			type: 'chat',
-			userId,
+			userId: MongoProvider.buildId(userId),
 			text
 		};
 
 		if (attachmentIds) {
-			source.attachmentIds = attachmentIds;
+			source.attachmentIds = attachmentIds.map(i => MongoProvider.buildId(i));
 		}
 
 		const documentRaw: IChatPostingDocument = await this.db.create('api.postings', source);

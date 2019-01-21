@@ -14,6 +14,7 @@ import accessTokenStrategy from './modules/accessTokenStrategy';
 import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
 import setupMenu from './modules/setup/setupMenu';
 import getDataFormatState, { DataFormatState } from './modules/getDataFormatState';
+import log from './modules/log';
 
 const meta = {
 	currentDataVersion: 1
@@ -29,19 +30,22 @@ export interface IApiOptions {
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 	verifyApiConfig(config);
 
-	const log = (...params: any[]) => {
-		console.log('[API]', ...params);
-	};
-
 	async function init(manager: { db: MongoProvider }) {
 
 		// * setup menu
+
 		const menu = await setupMenu(manager.db, config, meta.currentDataVersion);
 
 		return {
 			setupMenu: menu
 		};
 	}
+
+	// * middlewares
+
+	const initMiddlewares = [
+		bodyParser.json()
+	];
 
 	async function handler(componentApi: ComponentApi) {
 
@@ -66,12 +70,6 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 
 		accessTokenStrategy(componentApi.db);
 
-		// * initialize http server
-
-		componentApi.http.addInit((app) => {
-			app.use('/api', bodyParser.json());
-		});
-
 		// * routings
 
 		const endpointPaths = await promisify(glob)('**/*.js', {
@@ -81,7 +79,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
-			registerEndpoint(endpoint, endpointPath, componentApi, config);
+			registerEndpoint(endpoint, endpointPath, initMiddlewares, componentApi, config);
 		}
 
 		componentApi.http.addRoute((app) => {

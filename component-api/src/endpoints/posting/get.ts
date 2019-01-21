@@ -1,18 +1,17 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../modules/endpoint';
-import { ObjectIdValidator } from '../../modules/cafyValidators';
+import { ObjectIdContext } from '../../modules/cafyValidators';
 import { PostingResponseObject } from '../../modules/apiResponse/responseObjects';
 
 export default define({
 	params: {
-		postingId: ObjectIdValidator
+		postingId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.postingRead]
 }, async (manager) => {
 
-	const {
-		postingId
-	} = manager.params;
+	// params
+	const postingId: string = manager.params.postingId;
 
 	const chatPostingDoc = await manager.postingService.findByChatId(postingId);
 	if (!chatPostingDoc) {

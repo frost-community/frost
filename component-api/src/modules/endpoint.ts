@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
 import { ComponentApi, MongoProvider } from 'frost-component';
@@ -93,7 +93,7 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 	};
 }
 
-export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, componentApi: ComponentApi, config: IApiConfig): void {
+export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, middlewares: RequestHandler[], componentApi: ComponentApi, config: IApiConfig): void {
 
 	// if some scopes is needed, requesting an AccessToken
 	function authorization(req: Request, res: Response, next: NextFunction) {
@@ -104,7 +104,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 	}
 
 	componentApi.http.addRoute((app) => {
-		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
+		app.post(`/api/${endpointPath}`, ...middlewares, authorization, async (req, res) => {
 			const endpointManager = new EndpointManager(
 				componentApi.db,
 				config,
@@ -134,7 +134,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					const missingScopes = endpoint.scopes.filter(neededScope => tokenDoc.scopes.indexOf(neededScope.id) == -1);
 					const missingScopeIds = missingScopes.map(scope => scope.id);
 					if (missingScopeIds.length > 0) {
-						endpointManager.error(ApiErrorSources.nonAuthorized, { missingScopes: missingScopeIds });
+						endpointManager.error(ApiErrorSources.missingScope, { missingScopes: missingScopeIds });
 						return;
 					}
 				}
