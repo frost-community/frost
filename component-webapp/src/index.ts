@@ -1,3 +1,4 @@
+import path from 'path';
 import axios, { AxiosResponse } from 'axios';
 import { ComponentApi, IComponent } from 'frost-component';
 import IWebAppConfig from './modules/IWebAppConfig';
@@ -21,6 +22,8 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 	verifyWebAppConfig(config);
 
 	function handler(componentApi: ComponentApi) {
+
+		componentApi.http.addViewPath(path.resolve(__dirname, './views'));
 
 		componentApi.http.addRoute((app) => {
 
@@ -149,7 +152,9 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 			});
 
 			app.get('/', (req, res) => {
-				res.send('frost');
+				//res.send('frost');
+				const params = { };
+				res.render('main', { params });
 			});
 		});
 	}
