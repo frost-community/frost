@@ -28,7 +28,6 @@ export default define({
 	}
 
 	const userRelationDoc = await manager.userRelationService.unfollow(account._id, targetUser._id);
-
 	const userRelation = await userRelationDoc.pack(manager.db);
 
 	manager.ok(new UserRelationResponseObject(userRelation));

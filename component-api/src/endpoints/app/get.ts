@@ -21,6 +21,7 @@ export default define({
 	}
 	const appDoc = new AppDocument(appDocRaw);
 
+	await appDoc.populate(manager.db);
 	const app = await appDoc.pack(manager.db);
 
 	manager.ok(new AppResponseObject(app));

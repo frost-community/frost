@@ -17,20 +17,20 @@ export class ApiErrorSources {
 	static invalidParamFormat: IApiErrorSource = { reason: 'invalid_param_format', message: 'some parameters are invalid format', httpStatusCode: 400 };
 	static invalidJson: IApiErrorSource = { reason: 'invalid_json', message: 'request body is invalid json', httpStatusCode: 400 };
 	static invalidSearchCondition: IApiErrorSource = { reason: 'invalid_search_condition', message: 'the specified condition is invalid', httpStatusCode: 400 };
-	static cannotSpecifyMyself: IApiErrorSource = { reason: 'cannot_specify_myself', message: 'cannot specifiy myself user id', httpStatusCode: 400 };
-	static cannotSpecifySameUser: IApiErrorSource = { reason: 'cannot_specify_same_user', message: 'cannot specifiy same user id for source and target', httpStatusCode: 400 };
+	static cannotSpecifyMyself: IApiErrorSource = { reason: 'cannot_specify_myself', message: 'cannot specify myself user id', httpStatusCode: 400 };
+	static cannotSpecifySameUser: IApiErrorSource = { reason: 'cannot_specify_same_user', message: 'cannot specify same user id for source and target', httpStatusCode: 400 };
 	static invalidSomeScopes: IApiErrorSource = { reason: 'invalid_some_scopes', message: 'some scopes are invalid or do not have', httpStatusCode: 400 };
 
 	// specific of user api
-	static duplicatedScreenName: IApiErrorSource = {reason: 'duplicated_screen_name', message: 'The ScreenName is already exists', httpStatusCode: 400 };
+	static duplicatedScreenName: IApiErrorSource = { reason: 'duplicated_screen_name', message: 'The ScreenName is already exists', httpStatusCode: 400 };
 
 	// specific of app api
-	static duplicatedAppName: IApiErrorSource = {reason: 'duplicated_app_name', message: 'The app name is already exists', httpStatusCode: 400 };
-	static cannnotCreateRootAppSecret: IApiErrorSource = {reason: 'cannnot_create_root_app_secret', message: 'cannot create AppSecret of root app', httpStatusCode: 400 };
-	static appSecretNotCreated: IApiErrorSource = {reason: 'app_secret_not_created', message: 'the AppSecret has not been created yet', httpStatusCode: 400 }; // 404?
+	static duplicatedAppName: IApiErrorSource = { reason: 'duplicated_app_name', message: 'The app name is already exists', httpStatusCode: 400 };
+	static cannnotCreateRootAppSecret: IApiErrorSource = { reason: 'cannnot_create_root_app_secret', message: 'cannot create AppSecret of root app', httpStatusCode: 400 };
+	static appSecretNotCreated: IApiErrorSource = { reason: 'app_secret_not_created', message: 'the AppSecret has not been created yet', httpStatusCode: 400 };
 
 	// specific of token
-	static tokenAlreadyExists: IApiErrorSource = {reason: 'token_already_exist', message: 'the token already exists', httpStatusCode: 400 };
+	static tokenAlreadyExists: IApiErrorSource = { reason: 'token_already_exist', message: 'the token already exists', httpStatusCode: 400 };
 }
 
 export interface IApiError {

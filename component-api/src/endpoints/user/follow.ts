@@ -30,7 +30,6 @@ export default define({
 	}
 
 	const userRelationDoc = await manager.userRelationService.follow(account._id, targetUser._id, message);
-
 	const userRelation = await userRelationDoc.pack(manager.db);
 
 	manager.ok(new UserRelationResponseObject(userRelation));

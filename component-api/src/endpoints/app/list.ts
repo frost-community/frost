@@ -16,6 +16,8 @@ export default define({
 	//const userId: string = manager.params.userId;
 
 	const appDocs = await manager.appService.findArrayByCreatorId(account._id);
+
+	await manager.populateAll(appDocs);
 	const apps = await manager.packAll(appDocs);
 
 	manager.ok(new AppsResponseObject(apps));

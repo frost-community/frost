@@ -4,7 +4,7 @@ import passport from 'passport';
 import { ComponentApi, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
-import { IDocument, TokenDocument, UserDocument, AppDocument } from './documents';
+import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
 import buildHttpResResolver from './apiResponse/buildHttpResResolver';
@@ -45,7 +45,7 @@ export class EndpointManager extends ApiResponseManager {
 		this.userService = new UserService(db);
 		this.postingService = new PostingService(db);
 		this.userRelationService = new UserRelationService(db, this);
-		this.appService = new AppService(db, config);
+		this.appService = new AppService(db);
 		this.tokenService = new TokenService(db);
 	}
 
@@ -69,6 +69,10 @@ export class EndpointManager extends ApiResponseManager {
 
 	packAll<PackingObject>(docs: IDocument<PackingObject>[]): Promise<PackingObject[]> {
 		return Promise.all(docs.map(doc => doc.pack(this.db)));
+	}
+
+	async populateAll<PackingObject>(docs: IPopulatableDocument<PackingObject>[]): Promise<void> {
+		await Promise.all(docs.map(doc => doc.populate(this.db)));
 	}
 }
 

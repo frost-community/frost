@@ -23,9 +23,15 @@ export default define({
 	}
 
 	const isValid = userDoc.validatePassword(password);
+	if (!isValid) {
+		manager.ok(new CredentialValidationResponseObject({
+			isValid: false
+		}));
+		return;
+	}
 
 	manager.ok(new CredentialValidationResponseObject({
-		isValid: isValid,
+		isValid: true,
 		userId: userDoc._id.toHexString()
 	}));
 });

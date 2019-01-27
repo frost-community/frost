@@ -42,6 +42,7 @@ export default define({
 		return;
 	}
 
+	await appDoc.populate(manager.db);
 	const app = await appDoc.pack(manager.db);
 
 	manager.ok(new AppResponseObject(app));

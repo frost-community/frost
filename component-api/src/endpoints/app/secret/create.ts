@@ -19,17 +19,21 @@ export default define({
 		manager.error(ApiErrorSources.appNotFound);
 		return;
 	}
-	const appDoc = new AppDocument(appDocRaw);
+	const appDoc: AppDocument = new AppDocument(appDocRaw);
 
 	if (appDocRaw.root) {
 		manager.error(ApiErrorSources.cannnotCreateRootAppSecret);
 		return;
 	}
 
+	// population
+	await appDoc.populate(manager.db);
+
 	const appSecret = await appDoc.generateAppSecret(manager.db);
 
 	manager.ok(new AppSecretResponseObject({
 		appId: appDocRaw._id.toHexString(),
+		app: await appDoc.pack(manager.db),
 		appSecret: appSecret
 	}));
 });

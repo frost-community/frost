@@ -25,7 +25,7 @@ export default async function(db: MongoProvider, config: IApiConfig, currentData
 
 	// services
 	const userService = new UserService(db);
-	const appService = new AppService(db, config);
+	const appService = new AppService(db);
 	const tokenService = new TokenService(db);
 
 	let dataFormatState: DataFormatState;

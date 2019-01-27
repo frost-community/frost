@@ -10,5 +10,6 @@ export default async function(manager: EndpointManager, userIds: ObjectId[]): Pr
 	});
 	const chatPostingDocs = chatPostingRaws.map(docRaw => new ChatPostingDocument(docRaw));
 
+	await manager.populateAll(chatPostingDocs);
 	return manager.packAll(chatPostingDocs);
 }

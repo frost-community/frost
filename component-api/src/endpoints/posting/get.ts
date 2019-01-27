@@ -19,6 +19,7 @@ export default define({
 		return;
 	}
 
+	await chatPostingDoc.populate(manager.db);
 	const chatPosting = await chatPostingDoc.pack(manager.db);
 
 	manager.ok(new PostingResponseObject(chatPosting));

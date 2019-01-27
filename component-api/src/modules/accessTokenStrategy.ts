@@ -26,6 +26,7 @@ export default (db: MongoProvider) => {
 				return;
 			}
 			const appDoc = new AppDocument(appDocRaw);
+			await appDoc.populate(db);
 			done(null, userDoc, { app: appDoc, token: tokenDoc } as any);
 		}
 		catch (err) {

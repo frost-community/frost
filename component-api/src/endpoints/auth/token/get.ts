@@ -60,6 +60,7 @@ export default define({
 		return;
 	}
 
+	await tokenDoc.populate(manager.db);
 	const token = await tokenDoc.pack(manager.db);
 
 	manager.ok(new TokenResponseObject(token));

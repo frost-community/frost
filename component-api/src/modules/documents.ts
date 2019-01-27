@@ -14,6 +14,10 @@ export interface IDocument<PackingObject> {
 	pack(db: MongoProvider): Promise<PackingObject>;
 }
 
+export interface IPopulatableDocument<PackingObject> extends IDocument<PackingObject> {
+	populate(db: MongoProvider): Promise<void>;
+}
+
 // posting
 
 export interface IChatPostingDocumentSoruce {
@@ -27,7 +31,7 @@ export interface IChatPostingDocument extends IChatPostingDocumentSoruce {
 	_id: ObjectId;
 }
 
-export class ChatPostingDocument implements IDocument<IChatPosting> {
+export class ChatPostingDocument implements IChatPostingDocument, IPopulatableDocument<IChatPosting> {
 	constructor(raw: IChatPostingDocument) {
 		this._id = raw._id;
 		this.userId = raw.userId;
@@ -35,15 +39,13 @@ export class ChatPostingDocument implements IDocument<IChatPosting> {
 		this.attachmentIds = raw.attachmentIds;
 	}
 	_id: ObjectId;
-	type: string = 'chat';
+	type: 'chat' = 'chat';
 	userId: ObjectId;
+	user?: IUser;
 	text: string;
 	attachmentIds?: ObjectId[];
 
 	async pack(db: MongoProvider): Promise<IChatPosting> {
-		const userSource = await db.findById('api.users', this.userId);
-		const userEntity = await new UserDocument(userSource).pack(db);
-
 		let attachmentIds: string[] | undefined;
 		if (this.attachmentIds && this.attachmentIds.length > 0) {
 			attachmentIds = this.attachmentIds.map(attachmentId => attachmentId.toHexString());
@@ -53,10 +55,17 @@ export class ChatPostingDocument implements IDocument<IChatPosting> {
 			id: this._id.toHexString(),
 			createdAt: moment(this._id.getTimestamp()).format('X'),
 			type: this.type,
-			user: userEntity,
+			userId: this.userId.toHexString(),
+			user: this.user,
 			text: this.text,
 			attachmentIds: attachmentIds
 		};
+	}
+
+	// By calling before the pack method, you can populate internal objects
+	async populate(db: MongoProvider) {
+		const user = await db.findById('api.users', this.userId);
+		this.user = await new UserDocument(user).pack(db);
 	}
 }
 
@@ -75,7 +84,7 @@ export interface IAppDocument extends IAppDocumentSoruce {
 	_id: ObjectId;
 }
 
-export class AppDocument implements IAppDocument, IDocument<IApp> {
+export class AppDocument implements IAppDocument, IPopulatableDocument<IApp> {
 	constructor(raw: IAppDocument) {
 		this._id = raw._id;
 		this.name = raw.name;
@@ -88,6 +97,7 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 	_id: ObjectId;
 	name: string;
 	creatorId: ObjectId;
+	creator?: IUser;
 	description: string;
 	scopes: string[];
 	root?: boolean;
@@ -99,9 +109,16 @@ export class AppDocument implements IAppDocument, IDocument<IApp> {
 			createdAt: moment(this._id.getTimestamp()).format('X'),
 			name: this.name,
 			creatorId: this.creatorId.toHexString(),
+			creator: this.creator,
 			description: this.description,
 			scopes: this.scopes
 		};
+	}
+
+	// By calling before the pack method, you can populate internal objects
+	async populate(db: MongoProvider) {
+		const creator = await db.findById('api.users', this.creatorId);
+		this.creator = await new UserDocument(creator).pack(db);
 	}
 
 	async generateAppSecret(db: MongoProvider) {
@@ -145,7 +162,7 @@ export interface ITokenDocument extends ITokenDocumentSource {
 	_id: ObjectId;
 }
 
-export class TokenDocument implements ITokenDocument, IDocument<IToken> {
+export class TokenDocument implements ITokenDocument, IPopulatableDocument<IToken> {
 	constructor(raw: ITokenDocument) {
 		this._id = raw._id;
 		this.appId = raw.appId;
@@ -156,7 +173,9 @@ export class TokenDocument implements ITokenDocument, IDocument<IToken> {
 	}
 	_id: ObjectId;
 	appId: ObjectId;
+	app?: IApp;
 	userId: ObjectId;
+	user?: IUser;
 	scopes: string[];
 	accessToken: string;
 	host?: boolean;
@@ -164,10 +183,21 @@ export class TokenDocument implements ITokenDocument, IDocument<IToken> {
 	async pack(db: MongoProvider): Promise<IToken> {
 		return {
 			appId: this.appId.toHexString(),
+			app: this.app,
 			userId: this.userId.toHexString(),
+			user: this.user,
 			scopes: this.scopes,
 			accessToken: this.accessToken
 		};
+	}
+
+	// By calling before the pack method, you can populate internal objects
+	async populate(db: MongoProvider) {
+		const app = await db.findById('api.apps', this.appId);
+		this.app = await new AppDocument(app).pack(db);
+
+		const user = await db.findById('api.users', this.userId);
+		this.user = await new UserDocument(user).pack(db);
 	}
 }
 
