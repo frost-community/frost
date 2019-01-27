@@ -1,5 +1,6 @@
 import path from 'path';
 import axios, { AxiosResponse } from 'axios';
+import express from 'express';
 import { ComponentApi, IComponent } from 'frost-component';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
@@ -23,9 +24,10 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 
 	function handler(componentApi: ComponentApi) {
 
-		componentApi.http.addViewPath(path.resolve(__dirname, './views'));
+		//componentApi.http.addViewPath(path.resolve(__dirname, './views'));
 
 		componentApi.http.addRoute((app) => {
+			app.use(express.static(path.resolve(__dirname, './client'), { etag: false }));
 
 			let hostTokenInfo: ITokenInfo | undefined;
 
@@ -151,10 +153,13 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 				});
 			});
 
-			app.get('/', (req, res) => {
-				//res.send('frost');
-				const params = { };
-				res.render('main', { params });
+			app.post('/meta', (req, res) => {
+				res.json({
+					recaptcha: {
+						enabled: config.recaptcha.enable,
+						key: config.recaptcha.siteKey,
+					}
+				});
 			});
 		});
 	}
