@@ -153,12 +153,17 @@ export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
 				});
 			});
 
-			app.post('/meta', (req, res) => {
+			app.post('/config', (req, res) => {
+				// recaptcha
+				const recaptcha: { [x: string]: any } = {
+					enabled: config.recaptcha.enable
+				};
+				if (config.recaptcha.enable) {
+					recaptcha.key = config.recaptcha.siteKey;
+				}
+
 				res.json({
-					recaptcha: {
-						enabled: config.recaptcha.enable,
-						key: config.recaptcha.siteKey,
-					}
+					recaptcha: recaptcha
 				});
 			});
 		});

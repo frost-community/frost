@@ -128,7 +128,6 @@ export default class ComponentEngine {
 		app.set('view engine', 'pug');
 
 		app.use(passport.initialize());
-		//app.use(passport.session());
 
 		log('http: registering init handlers ...');
 
