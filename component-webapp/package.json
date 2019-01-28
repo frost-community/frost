@@ -1,13 +1,13 @@
 {
   "name": "frost-component-webapp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The web application component of the Frost",
   "main": "built/index.js",
   "scripts": {
-    "build": "tsc && npm run build-views && npm run copy-images",
+    "build": "tsc && npm run build-pages && npm run copy-images",
     "copy-views": "cpx \"./src/views/*\" \"built/views\"",
     "copy-images": "cpx \"./src/client/images/*\" \"built/client/images\"",
-    "build-views": "pug ./src/client -o ./built/client --pretty"
+    "build-pages": "pug ./src/client -o ./built/client --pretty"
   },
   "author": "marihachi",
   "repository": {
