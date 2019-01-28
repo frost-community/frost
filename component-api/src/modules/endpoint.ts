@@ -1,10 +1,10 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
 import { ComponentApi, MongoProvider } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
 import IApiConfig from './IApiConfig';
-import { IDocument, TokenDocument, UserDocument, AppDocument } from './documents';
+import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
 import buildHttpResResolver from './apiResponse/buildHttpResResolver';
@@ -45,7 +45,7 @@ export class EndpointManager extends ApiResponseManager {
 		this.userService = new UserService(db);
 		this.postingService = new PostingService(db);
 		this.userRelationService = new UserRelationService(db, this);
-		this.appService = new AppService(db, config);
+		this.appService = new AppService(db);
 		this.tokenService = new TokenService(db);
 	}
 
@@ -70,6 +70,10 @@ export class EndpointManager extends ApiResponseManager {
 	packAll<PackingObject>(docs: IDocument<PackingObject>[]): Promise<PackingObject[]> {
 		return Promise.all(docs.map(doc => doc.pack(this.db)));
 	}
+
+	async populateAll<PackingObject>(docs: IPopulatableDocument<PackingObject>[]): Promise<void> {
+		await Promise.all(docs.map(doc => doc.populate(this.db)));
+	}
 }
 
 export type EndpointHandler = (ctx: EndpointManager) => (Promise<void> | void);
@@ -93,7 +97,7 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 	};
 }
 
-export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, componentApi: ComponentApi, config: IApiConfig): void {
+export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, middlewares: RequestHandler[], componentApi: ComponentApi, config: IApiConfig): void {
 
 	// if some scopes is needed, requesting an AccessToken
 	function authorization(req: Request, res: Response, next: NextFunction) {
@@ -104,7 +108,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 	}
 
 	componentApi.http.addRoute((app) => {
-		app.post(`/api/${endpointPath}`, authorization, async (req, res) => {
+		app.post(`/api/${endpointPath}`, ...middlewares, authorization, async (req, res) => {
 			const endpointManager = new EndpointManager(
 				componentApi.db,
 				config,
@@ -134,7 +138,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, comp
 					const missingScopes = endpoint.scopes.filter(neededScope => tokenDoc.scopes.indexOf(neededScope.id) == -1);
 					const missingScopeIds = missingScopes.map(scope => scope.id);
 					if (missingScopeIds.length > 0) {
-						endpointManager.error(ApiErrorSources.nonAuthorized, { missingScopes: missingScopeIds });
+						endpointManager.error(ApiErrorSources.missingScope, { missingScopes: missingScopeIds });
 						return;
 					}
 				}

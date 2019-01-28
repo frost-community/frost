@@ -1,6 +1,6 @@
 import { MongoProvider } from 'frost-component';
-import { ObjectId } from 'mongodb';
-import { IUserRelationDocument, UserRelationDocument, UserDocument } from "../modules/documents";
+import { ObjectId, ObjectID } from 'mongodb';
+import { IUserRelationDocument, UserRelationDocument, UserDocument, IUserRelationDocumentSoruce, IUserDocument } from "../modules/documents";
 import { IUserRelation } from '../modules/apiResponse/packingObjects';
 import { EndpointManager } from '../modules/endpoint';
 
@@ -13,53 +13,65 @@ export default class UserRelationService {
 	private db: MongoProvider;
 	private manager: EndpointManager;
 
-	async follow(sourceUserId: ObjectId, targetUserId: ObjectId, message?: string) {
-		let documentRaw: IUserRelationDocument;
-		documentRaw = await this.db.upsert(
-			'api.userRelations',
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId },
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId, message, status: 'following' });
+	async follow(sourceUserId: string | ObjectId, targetUserId: string | ObjectId, message?: string) {
+		const query = {
+			sourceUserId: MongoProvider.buildId(sourceUserId),
+			targetUserId: MongoProvider.buildId(targetUserId)
+		};
+		const docSource: IUserRelationDocumentSoruce = {
+			sourceUserId: query.sourceUserId,
+			targetUserId: query.targetUserId,
+			message: message,
+			status: 'following'
+		};
+		const documentRaw: IUserRelationDocument = await this.db.upsert('api.userRelations', query, docSource);
 
 		return new UserRelationDocument(documentRaw);
 	}
 
-	async unfollow(sourceUserId: ObjectId, targetUserId: ObjectId) {
-		let documentRaw: IUserRelationDocument;
-		documentRaw = await this.db.upsert(
-			'api.userRelations',
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId },
-			{ sourceUserId: sourceUserId, targetUserId: targetUserId, message: null, status: 'notFollowing' });
+	async unfollow(sourceUserId: string | ObjectId, targetUserId: string | ObjectId) {
+		const query = {
+			sourceUserId: MongoProvider.buildId(sourceUserId),
+			targetUserId: MongoProvider.buildId(targetUserId)
+		};
+		const docSource: IUserRelationDocumentSoruce = {
+			sourceUserId: query.sourceUserId,
+			targetUserId: query.targetUserId,
+			message: undefined,
+			status: 'notFollowing'
+		};
+		const docRaw: IUserRelationDocument = await this.db.upsert('api.userRelations', query, docSource);
 
-		return new UserRelationDocument(documentRaw);
+		return new UserRelationDocument(docRaw);
 	}
 
-	async getRelation(sourceUserId: ObjectId, targetUserId: ObjectId): Promise<IUserRelation> {
-		const documentRaw: IUserRelationDocument = await this.db.find('api.userRelations', {
+	async getRelation(sourceUserId: string | ObjectId, targetUserId: string | ObjectId): Promise<IUserRelation> {
+		const docRaw: IUserRelationDocument = await this.db.find('api.userRelations', {
 			sourceUserId: sourceUserId,
 			targetUserId: targetUserId
 		});
 
-		if (!documentRaw) {
+		if (!docRaw) {
 			return {
-				sourceUserId: sourceUserId.toHexString(),
-				targetUserId: targetUserId.toHexString(),
+				sourceUserId: MongoProvider.buildId(sourceUserId).toHexString(),
+				targetUserId: MongoProvider.buildId(targetUserId).toHexString(),
 				status: 'notFollowing'
 			};
 		}
 
-		const doc = new UserRelationDocument(documentRaw);
-		const userRelation = await doc.pack(this.db);
+		const userRelationDoc = new UserRelationDocument(docRaw);
+		const userRelation = await userRelationDoc.pack(this.db);
 
 		return userRelation;
 	}
 
-	async getfollowings(userId: ObjectId): Promise<UserDocument[]> {
-		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
-			sourceUserId: userId,
+	async getfollowings(userId: string | ObjectId): Promise<UserDocument[]> {
+		const docRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
+			sourceUserId: MongoProvider.buildId(userId),
 			status: 'following'
 		});
 
-		const followings = documentRaws.map(docRaw => new UserRelationDocument(docRaw));
+		const followings = docRaws.map(docRaw => new UserRelationDocument(docRaw));
 
 		const userPromises = followings.map(async following => {
 			const user = await this.manager.userService.findById(following.targetUserId);
@@ -79,13 +91,13 @@ export default class UserRelationService {
 		return users;
 	}
 
-	async getfollowers(userId: ObjectId): Promise<UserDocument[]> {
-		const documentRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
-			targetUserId: userId,
+	async getfollowers(userId: string | ObjectId): Promise<UserDocument[]> {
+		const docRaws: IUserRelationDocument[] = await this.db.findArray('api.userRelations', {
+			targetUserId: MongoProvider.buildId(userId),
 			status: 'following'
 		});
 
-		const followers = documentRaws.map(docRaw => new UserRelationDocument(docRaw));
+		const followers = docRaws.map(docRaw => new UserRelationDocument(docRaw));
 
 		const userPromises = followers.map(async follower => {
 			const user = await this.manager.userService.findById(follower.sourceUserId);

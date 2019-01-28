@@ -8,8 +8,6 @@ export default define({
 	},
 	scopes: [AuthScopes.userRead]
 }, async (manager) => {
-	const {
-	} = manager.params;
 
 	const userDocRaws: (IUserDocument | null)[] = await manager.db.findArray('api.users', { });
 

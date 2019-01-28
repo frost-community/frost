@@ -60,6 +60,10 @@ export class HttpComponentApi {
 	addRoute(handler: HttpComponentHandler) {
 		this.httpApiInternal.addRoute(this.targetComponent, handler);
 	}
+
+	addViewPath(viewPath: string) {
+		this.httpApiInternal.addViewPath(this.targetComponent, viewPath);
+	}
 }
 
 export type HttpComponentHandler = (app: Express.Application) => void;

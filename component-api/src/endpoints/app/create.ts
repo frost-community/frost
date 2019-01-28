@@ -20,11 +20,10 @@ export default define({
 
 	const account = manager.authInfo!.user;
 
-	const {
-		name,
-		description = '',
-		scopes = []
-	} = manager.params;
+	// params
+	const name: string = manager.params.name;
+	const description: string = manager.params.description || '';
+	const scopes: string[] = manager.params.scopes || [];
 
 	// if app name is duplicated
 	const tempApp = await manager.db.find('api.apps', { name: name });
@@ -43,6 +42,7 @@ export default define({
 		return;
 	}
 
+	await appDoc.populate(manager.db);
 	const app = await appDoc.pack(manager.db);
 
 	manager.ok(new AppResponseObject(app));

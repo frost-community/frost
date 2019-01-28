@@ -2,7 +2,7 @@
 	define typing of API response
 */
 
-import { IUser, IPosting, IApp, IUserRelation, IAppSecret, IToken, ICredentialValidation } from './packingObjects';
+import { IUser, IPosting, IApp, IUserRelation, IAppSecret, IToken, IValidationResultValid, IValidationResultInvalid } from './packingObjects';
 
 const enum ResultType {
 	message = 'message',
@@ -106,8 +106,8 @@ export class TokenResponseObject extends ResponseObject<IToken> {
 
 // credential validation
 
-export class CredentialValidationResponseObject extends ResponseObject<ICredentialValidation> {
-	constructor(result: ICredentialValidation) {
+export class CredentialValidationResponseObject extends ResponseObject<IValidationResultValid | IValidationResultInvalid> {
+	constructor(result: IValidationResultValid | IValidationResultInvalid) {
 		super(ResultType.credentialValidation, result);
 	}
 }

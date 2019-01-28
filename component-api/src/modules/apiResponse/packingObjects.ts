@@ -17,7 +17,9 @@ export interface IUser {
 
 export interface IUserRelation {
 	sourceUserId: string;
+	sourceUser?: IUser;
 	targetUserId: string;
+	targetUser?: IUser;
 	status: 'following' | 'notFollowing';
 	message?: string;
 }
@@ -26,7 +28,8 @@ export interface IPosting {
 	id: string;
 	createdAt: string;
 	type: string;
-	user: IUser;
+	userId: string;
+	user?: IUser;
 }
 
 export interface IChatPosting extends IPosting {
@@ -39,21 +42,32 @@ export interface IApp {
 	createdAt: string;
 	name: string;
 	creatorId: string;
+	creator?: IUser;
 	description: string;
 	scopes: string[];
 }
 
 export interface IAppSecret {
 	appId: string;
+	app?: IApp;
 	appSecret: string;
 }
 
 export interface IToken {
 	appId: string;
+	app?: IApp;
 	userId: string;
+	user?: IUser;
+	scopes: string[];
 	accessToken: string;
 }
 
-export interface ICredentialValidation {
-	isValid: boolean
+export interface IValidationResultValid {
+	isValid: true;
+	userId: string;
+	user?: IUser;
+}
+
+export interface IValidationResultInvalid {
+	isValid: false;
 }

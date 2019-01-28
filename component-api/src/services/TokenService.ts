@@ -27,14 +27,18 @@ export default class TokenService {
 		return new TokenDocument(tokenDocRaw);
 	}
 
-	async find(appId: ObjectId, userId: ObjectId, scopes: string[]): Promise<TokenDocument | null> {
+	async find(appId: string | ObjectId, userId: string | ObjectId, scopes: string[]): Promise<TokenDocument | null> {
 		const scopesQuery: any = { $size: scopes.length };
 		// NOTE: 空の配列を$allに指定すると検索にヒットしなくなるので、空のときは$allを指定しない
 		if (scopes.length != 0) {
 			scopesQuery.$all = scopes;
 		}
 
-		const tokenDocRaw = await this.db.find('api.tokens', { appId, userId, scopes: scopesQuery });
+		const tokenDocRaw = await this.db.find('api.tokens', {
+			appId: MongoProvider.buildId(appId),
+			userId: MongoProvider.buildId(userId),
+			scopes: scopesQuery
+		});
 
 		return tokenDocRaw ? new TokenDocument(tokenDocRaw) : null;
 	}

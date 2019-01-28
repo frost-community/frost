@@ -7,6 +7,7 @@ import TokenService from '../../services/TokenService';
 import IApiConfig from '../IApiConfig';
 import { AuthScopes } from '../authScope';
 import migrate from './migrate';
+import log from '../log';
 
 function read(message: string): Promise<string> {
 	return new Promise<string>((resolve) => {
@@ -20,15 +21,11 @@ function read(message: string): Promise<string> {
 
 const q = async (str: string) => (await read(str)).toLowerCase().indexOf('y') === 0;
 
-const log = (...params: any[]) => {
-	console.log('[API]', ...params);
-};
-
 export default async function(db: MongoProvider, config: IApiConfig, currentDataVersion: number) {
 
 	// services
 	const userService = new UserService(db);
-	const appService = new AppService(db, config);
+	const appService = new AppService(db);
 	const tokenService = new TokenService(db);
 
 	let dataFormatState: DataFormatState;
@@ -82,14 +79,8 @@ export default async function(db: MongoProvider, config: IApiConfig, currentData
 			let hostToken = await db.find('api.tokens', { host: true });
 
 			if (!hostToken) {
-				const scopes = [
-					AuthScopes.userRead.id,
-					AuthScopes.appRead.id,
-					AuthScopes.appHost.id,
-					AuthScopes.authHost.id,
-					AuthScopes.userCreate.id,
-					AuthScopes.userDelete.id
-				];
+				const scopes = config.hostToken.scopes;
+
 				hostToken = await tokenService.create(rootApp, rootUser, scopes, true);
 				log('host token created:', hostToken);
 			}

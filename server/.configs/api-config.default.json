@@ -1,2 +1,6 @@
 {
+  "appSecretKey": "set-your-app-secret-key",
+  "hostToken": {
+    "scopes": ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"]
+  }
 }

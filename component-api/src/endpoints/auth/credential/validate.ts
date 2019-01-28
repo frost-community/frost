@@ -10,10 +10,9 @@ export default define({
 	scopes: [AuthScopes.authHost]
 }, async (manager) => {
 
-	const {
-		screenName,
-		password
-	} = manager.params;
+	// params
+	const screenName: string = manager.params.screenName;
+	const password: string = manager.params.password;
 
 	const userDoc = await manager.userService.findByScreenName(screenName);
 	if (!userDoc) {
@@ -24,8 +23,15 @@ export default define({
 	}
 
 	const isValid = userDoc.validatePassword(password);
+	if (!isValid) {
+		manager.ok(new CredentialValidationResponseObject({
+			isValid: false
+		}));
+		return;
+	}
 
 	manager.ok(new CredentialValidationResponseObject({
-		isValid: isValid
+		isValid: true,
+		userId: userDoc._id.toHexString()
 	}));
 });

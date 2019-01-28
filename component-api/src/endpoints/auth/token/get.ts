@@ -2,27 +2,26 @@ import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../../modules/endpoint';
 import { TokenResponseObject } from '../../../modules/apiResponse/responseObjects';
 import { TokenDocument } from '../../../modules/documents';
-import { NullableObjectIdValidator } from '../../../modules/cafyValidators';
+import { ObjectIdContext } from '../../../modules/cafyValidators';
 
 export default define({
 	params: {
-		appId: NullableObjectIdValidator,
-		userId: NullableObjectIdValidator,
+		appId: $.type(ObjectIdContext).optional,
+		userId: $.type(ObjectIdContext).optional,
 		scopes: $.array($.str).optional.unique(),
 		accessToken: $.str.optional // TODO
 	},
 	scopes: [AuthScopes.authHost]
 }, async (manager) => {
 
-	const {
-		appId,
-		userId,
-		scopes,
-		accessToken
-	} = manager.params;
+	// params
+	const appId: string | undefined = manager.params.appId;
+	const userId: string | undefined = manager.params.userId;
+	const scopes: string[] | undefined = manager.params.scopes;
+	const accessToken: string | undefined = manager.params.accessToken;
 
 	let tokenDoc: TokenDocument | null;
-	if (accessToken != null) {
+	if (accessToken) {
 		tokenDoc = await manager.tokenService.findByAccessToken(accessToken);
 	}
 	else {
@@ -61,6 +60,7 @@ export default define({
 		return;
 	}
 
+	await tokenDoc.populate(manager.db);
 	const token = await tokenDoc.pack(manager.db);
 
 	manager.ok(new TokenResponseObject(token));

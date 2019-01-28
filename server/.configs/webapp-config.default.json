@@ -1,2 +1,14 @@
 {
+  "apiBaseUrl": "http://localhost:3000/api",
+  "hostToken": {
+    "accessToken": "set-your-access-token"
+  },
+  "clientToken": {
+    "scopes": ["user.read", "user.write", "user.account.read", "user.account.write", "post.read", "post.write", "storage.read", "storage.write"]
+  },
+  "recaptcha": {
+    "enable": false,
+    "siteKey": "set-your-recaptcha-site-key",
+    "secretKey": "set-your-recaptcha-secret-key"
+  }
 }

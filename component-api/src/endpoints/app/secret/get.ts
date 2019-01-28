@@ -2,18 +2,17 @@ import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../../modules/endpoint';
 import { AppSecretResponseObject } from '../../../modules/apiResponse/responseObjects';
 import { IAppDocument, AppDocument } from '../../../modules/documents';
-import { ObjectIdValidator } from '../../../modules/cafyValidators';
+import { ObjectIdContext } from '../../../modules/cafyValidators';
 
 export default define({
 	params: {
-		appId: ObjectIdValidator
+		appId: $.type(ObjectIdContext)
 	},
 	scopes: [AuthScopes.appHost]
 }, async (manager) => {
 
-	const {
-		appId
-	} = manager.params;
+	// params
+	const appId: string = manager.params.appId;
 
 	const appDocRaw: IAppDocument = await manager.db.findById('api.apps', appId);
 	if (!appDocRaw) {
@@ -27,10 +26,14 @@ export default define({
 		return;
 	}
 
+	// population
+	await appDoc.populate(manager.db);
+
 	const appSecret = await appDoc.getAppSecret(manager.config);
 
 	manager.ok(new AppSecretResponseObject({
 		appId: appDocRaw._id.toHexString(),
+		app: await appDoc.pack(manager.db),
 		appSecret: appSecret
 	}));
 });

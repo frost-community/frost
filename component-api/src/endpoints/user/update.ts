@@ -13,10 +13,9 @@ export default define({
 
 	const account = manager.authInfo!.user;
 
-	const {
-		name,
-		description
-	} = manager.params;
+	// params
+	const name: string | undefined = manager.params.name;
+	const description: string | undefined = manager.params.description;
 
 	const source: any = { };
 

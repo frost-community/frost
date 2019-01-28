@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+echo -n 'JSC = ' > Makefile
+if type yarn > /dev/null
+ then
+  echo 'yarn' >> Makefile
+ else
+  echo 'npm' >> Makefile
+fi
+
+echo >> Makefile
+
+targets=(component component-api component-webapp server)
+
+for target in ${targets[@]}
+ do
+  cat <<EOF >> Makefile
+$target = $target
+${target}_blt = \$($target)/built
+${target}_mod = \$($target)/node_modules
+
+EOF
+done
+
+echo -n 'all:' >> Makefile
+
+for target in ${targets[@]}
+ do
+  echo -n " \$(${target}_blt)" >> Makefile
+done
+
+echo >> Makefile
+echo >> Makefile
+
+for target in ${targets[@]}
+ do
+  cat <<EOF >> Makefile
+\$(${target}_blt): \$(${target}_mod)
+	@cd \$($target); \
+	NODE_ENV=production \$(JSC) run build
+
+\$(${target}_mod):
+	@cd \$($target); \
+	\$(JSC) install
+
+EOF
+done
+
+echo 'clean:' >> Makefile
+
+for target in ${targets[@]}
+ do
+  cat <<EOF >> Makefile
+	@\$(RM) -r \$(${target}_blt)
+	@\$(RM) -r \$(${target}_mod)
+EOF
+done

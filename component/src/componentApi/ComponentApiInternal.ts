@@ -43,6 +43,7 @@ export class HttpComponentApiInternal {
 
 		this.initHandlers = [];
 		this.routeHandlers = [];
+		this.viewPathes = [];
 	}
 
 	private engine: ComponentEngine;
@@ -51,11 +52,17 @@ export class HttpComponentApiInternal {
 
 	routeHandlers: HttpComponentHandler[];
 
+	viewPathes: string[];
+
 	addInit(accessFrom: IComponent, handler: HttpComponentHandler) {
 		this.initHandlers.push(handler);
 	}
 
 	addRoute(accessFrom: IComponent, handler: HttpComponentHandler) {
 		this.routeHandlers.push(handler);
+	}
+
+	addViewPath(accessFrom: IComponent, viewPath: string) {
+		this.viewPathes.push(viewPath);
 	}
 }

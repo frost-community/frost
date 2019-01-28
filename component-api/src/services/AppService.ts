@@ -8,13 +8,11 @@ export interface IAppCreateOptions {
 }
 
 export default class AppService {
-	constructor(db: MongoProvider, config: IApiConfig) {
+	constructor(db: MongoProvider) {
 		this.db = db;
-		this.config = config;
 	}
 
 	private db: MongoProvider;
-	private config: IApiConfig;
 
 	async create(name: string, user: UserDocument, description: string, scopes: string[], options?: IAppCreateOptions): Promise<AppDocument> {
 		options = options || { };

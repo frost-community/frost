@@ -124,8 +124,10 @@ export default class ComponentEngine {
 		log('http: initialize ...');
 
 		const app = Express();
+		app.set('views', apiInternal.http.viewPathes);
+		app.set('view engine', 'pug');
+
 		app.use(passport.initialize());
-		//app.use(passport.session());
 
 		log('http: registering init handlers ...');
 
