@@ -17,9 +17,9 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^10.12.15",
-    "frost-component": "0.0.x",
-    "frost-component-api": "0.0.x",
-    "frost-component-webapp": "0.0.x",
+    "frost-component": "0.0.5",
+    "frost-component-api": "0.0.5",
+    "frost-component-webapp": "0.0.3",
     "cafy": "^12.1.0"
   },
   "devDependencies": {
