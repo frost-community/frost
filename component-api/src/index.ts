@@ -28,9 +28,8 @@ export interface IApiOptions {
 }
 
 export default (config: IApiConfig, options?: IApiOptions): IComponent => {
-	verifyApiConfig(config);
-
 	async function init(manager: { db: MongoProvider }) {
+		verifyApiConfig(config);
 
 		// * setup menu
 

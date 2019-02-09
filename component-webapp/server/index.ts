@@ -20,14 +20,13 @@ export interface IWebOptions {
 }
 
 export default (config: IWebAppConfig, options?: IWebOptions): IComponent => {
-	verifyWebAppConfig(config);
-
 	function handler(componentApi: ComponentApi) {
+		verifyWebAppConfig(config);
 
 		//componentApi.http.addViewPath(path.resolve(__dirname, './views'));
 
 		componentApi.http.addRoute((app) => {
-			app.use(express.static(path.resolve(__dirname, './client'), { etag: false }));
+			app.use(express.static(path.resolve(__dirname, './frontend'), { etag: false }));
 
 			let hostTokenInfo: ITokenInfo | undefined;
 

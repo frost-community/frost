@@ -1,13 +1,16 @@
 {
   "name": "frost-component-webapp",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "The web application component of the Frost",
   "main": "built/index.js",
   "scripts": {
-    "build": "tsc && npm run build-pages && npm run copy-images",
-    "copy-views": "cpx \"./src/views/*\" \"built/views\"",
-    "copy-images": "cpx \"./src/client/images/*\" \"built/client/images\"",
-    "build-pages": "pug ./src/client -o ./built/client --pretty"
+    "build": "npm run build.server && npm run build.front",
+    "build.server": "tsc",
+    "build.front": "npm run build.front.webpack && npm run build.front.pages && npm run build.front.images",
+    "build.front.webpack": "webpack --config \"frontend/webpack.config.js\"",
+    "build.front.pages": "pug ./frontend/src/pages -o ./built/frontend --pretty",
+    "build.front.images": "cpx \"./frontend/src/images/*\" \"built/frontend/images\"",
+    "start-instant": "node ./built/instant"
   },
   "author": "marihachi",
   "repository": {
@@ -21,14 +24,26 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cafy": "^12.0.0",
-    "cpx": "^1.5.0",
     "express": "^4.16.4",
-    "frost-component": "../component"
+    "frost-component": "../component",
+    "vue": "2.5.x",
+    "vue-class-component": "6.3.x",
+    "vue-property-decorator": "7.3.x"
   },
   "devDependencies": {
-    "typescript": "^3.2.2",
+    "cpx": "^1.5.0",
+    "css-loader": "2.1.x",
+    "node-sass": "4.11.x",
     "pug": "^2.0.3",
-    "pug-cli": "^1.0.0-alpha6"
+    "pug-cli": "^1.0.0-alpha6",
+    "sass-loader": "7.1.x",
+    "ts-loader": "5.3.x",
+    "typescript": "^3.2.2",
+    "vue-loader": "15.6.x",
+    "vue-style-loader": "4.1.x",
+    "vue-template-compiler": "2.5.x",
+    "webpack": "4.29.x",
+    "webpack-cli": "3.2.x"
   },
   "files": [
     "built"
