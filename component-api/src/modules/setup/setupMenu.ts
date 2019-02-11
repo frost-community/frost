@@ -1,36 +1,45 @@
-import { MongoProvider, ConsoleMenu } from 'frost-component';
+import $ from 'cafy';
+import uid from 'uid2';
+import { MongoProvider, ConsoleMenu, inputLine, ConfigManager } from 'frost-component';
 import getDataFormatState, { DataFormatState } from '../getDataFormatState';
-import readLine from 'readline';
 import UserService from '../../services/UserService';
 import AppService from '../../services/AppService';
 import TokenService from '../../services/TokenService';
-import IApiConfig from '../IApiConfig';
 import { AuthScopes } from '../authScope';
 import migrate from './migrate';
 import log from '../log';
+import IApiConfig from '../IApiConfig';
+import verifyApiConfig from '../verifyApiConfig';
 
-function read(message: string): Promise<string> {
-	return new Promise<string>((resolve) => {
-		const rl = readLine.createInterface(process.stdin, process.stdout);
-		rl.question(message, (ans) => {
-			resolve(ans);
-			rl.close();
-		});
-	});
-}
+const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 
-const q = async (str: string) => (await read(str)).toLowerCase().indexOf('y') === 0;
-
-export default async function(db: MongoProvider, config: IApiConfig, currentDataVersion: number) {
+export default async function(db: MongoProvider, currentDataVersion: number) {
 
 	// services
 	const userService = new UserService(db);
 	const appService = new AppService(db);
 	const tokenService = new TokenService(db);
 
+	const configManager = new ConfigManager(db);
+
+	let config: IApiConfig | undefined;
 	let dataFormatState: DataFormatState;
 	const refreshMenu = async () => {
 		dataFormatState = await getDataFormatState(db, currentDataVersion);
+
+		config = {
+			appSecretKey: await configManager.getItem('api', 'appSecretKey'),
+			hostToken: {
+				scopes: await configManager.getItem('api', 'hostToken.scopes')
+			}
+		};
+		try {
+			verifyApiConfig(config);
+		}
+		catch {
+			// if config is invalid, set undefined
+			config = undefined;
+		}
 	};
 	await refreshMenu();
 
@@ -40,17 +49,18 @@ export default async function(db: MongoProvider, config: IApiConfig, currentData
 	});
 	menu.add('initialize (register root app and root user)', () => true, async (ctx) => {
 		if (dataFormatState != DataFormatState.needInitialization) {
-			const allowClear = await q('(!) are you sure you want to REMOVE ALL COLLECTIONS and ALL DOCUMENTS in target database? (y/n) > ');
+			const allowClear = await question('(!) are you sure you want to REMOVE ALL COLLECTIONS and ALL DOCUMENTS in target database? (y/n) > ');
 			if (!allowClear) {
 				return;
 			}
 
-			const clean = async (collection: string) => {
+			async function clean(collection: string) {
 				await db.remove(collection, {});
 				log(`cleaned ${collection} collection.`);
-			};
+			}
 
 			await clean('meta');
+			await clean('api.config');
 			await clean('api.apps');
 			await clean('api.tokens');
 			await clean('api.users');
@@ -59,7 +69,7 @@ export default async function(db: MongoProvider, config: IApiConfig, currentData
 			await clean('api.storageFiles');
 		}
 
-		let appName = await read('app name(default: Frost Web) > ');
+		let appName = await inputLine('app name(default: Frost Web) > ');
 		if (appName == '') appName = 'Frost Web';
 
 		const userDoc = await userService.create('frost', null, 'Frost公式', 'オープンソースSNS Frostです。', { root: true });
@@ -68,18 +78,30 @@ export default async function(db: MongoProvider, config: IApiConfig, currentData
 		await appService.create(appName, userDoc, userDoc.description, AuthScopes.toArray().map(s => s.id), { root: true });
 		log('root app created.');
 
+		const appSecretKey = uid(128);
+		await configManager.setItem('api', 'appSecretKey', appSecretKey);
+		log('appSecretKey configured:', appSecretKey);
+
+		const hostTokenScopes = ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"];
+		await configManager.setItem('api', 'hostToken.scopes', hostTokenScopes);
+		log('hostToken.scopes configured.');
+
 		await db.create('meta', { type: 'dataFormat', value: currentDataVersion });
 
 		await refreshMenu();
 	});
-	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready), async (ctx) => {
+	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready && config != null), async (ctx) => {
 		const rootUser = await db.find('api.users', { root: true });
 		let rootApp = await db.find('api.apps', { root: true });
 		if (rootApp) {
 			let hostToken = await db.find('api.tokens', { host: true });
 
 			if (!hostToken) {
-				const scopes = config.hostToken.scopes;
+				if (!config) {
+					console.log('api config is not found.');
+					return;
+				}
+				const scopes = config!.hostToken.scopes;
 
 				hostToken = await tokenService.create(rootApp, rootUser, scopes, true);
 				log('host token created:', hostToken);

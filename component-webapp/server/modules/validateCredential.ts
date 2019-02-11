@@ -1,8 +1,8 @@
 import $ from 'cafy';
 import axios from 'axios';
 import { HttpError } from './errors';
-import IWebAppConfig from './IWebAppConfig';
 import log from './log';
+import { ConfigManager } from 'frost-component';
 
 export interface IValidResult {
 	isValid: true;
@@ -13,15 +13,18 @@ export interface IInvalidResult {
 	isValid: false;
 }
 
-export default async function(screenName: string, password: string, config: IWebAppConfig): Promise<IValidResult | IInvalidResult> {
+export default async function(screenName: string, password: string, configManager: ConfigManager): Promise<IValidResult | IInvalidResult> {
+	const apiBaseUrl = await configManager.getItem('webapp', 'apiBaseUrl');
+	const hostAccessToken = await configManager.getItem('webapp', 'hostToken.accessToken');
+
 	if ($.str.nok(screenName) || $.str.nok(password)) {
 		throw new HttpError(400, { error: { reason: 'invalid_param' } });
 	}
 	// * validate credential
-	const validation = await axios.post(`${config.apiBaseUrl}/auth/credential/validate`, {
+	const validation = await axios.post(`${apiBaseUrl}/auth/credential/validate`, {
 		screenName: screenName,
 		password: password
-	}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
+	}, { headers: { authorization: `bearer ${hostAccessToken}` }, validateStatus: () => true });
 	// expect: status 200 or error invalid_param_format
 	if (validation.status != 200 && (validation.status != 400 || validation.data.error.reason != 'invalid_param_format')) {
 		log('failed to request /auth/credential/validate');

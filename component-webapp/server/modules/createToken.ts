@@ -1,7 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
-import IWebAppConfig from './IWebAppConfig';
+import axios from 'axios';
 import { HttpError } from './errors';
 import log from './log';
+import { ConfigManager } from 'frost-component';
 
 export interface ITokenInfo {
 	appId: string,
@@ -10,12 +10,15 @@ export interface ITokenInfo {
 	accessToken: string
 };
 
-export default async function(userId: string, appId: string, scopes: string[], config: IWebAppConfig): Promise<ITokenInfo> {
-	const tokenResult = await axios.post(`${config.apiBaseUrl}/auth/token/create`, {
+export default async function(userId: string, appId: string, scopes: string[], configManager: ConfigManager): Promise<ITokenInfo> {
+	const apiBaseUrl = await configManager.getItem('webapp', 'apiBaseUrl');
+	const hostAccessToken = await configManager.getItem('webapp', 'hostToken.accessToken');
+
+	const tokenResult = await axios.post(`${apiBaseUrl}/auth/token/create`, {
 		appId: appId,
 		userId: userId,
 		scopes: scopes
-	}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
+	}, { headers: { authorization: `bearer ${hostAccessToken}` }, validateStatus: () => true });
 	if (tokenResult.status != 200) {
 		log('failed to request /auth/token/create');
 		log('statusCode:', tokenResult.status);

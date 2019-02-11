@@ -1,16 +1,6 @@
-import readLine from 'readline';
+import inputLine from './inputLine';
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
-
-function read(message: string): Promise<string> {
-	return new Promise<string>((resolve) => {
-		const rl = readLine.createInterface(process.stdin, process.stdout);
-		rl.question(message, (ans) => {
-			resolve(ans);
-			rl.close();
-		});
-	});
-}
 
 type ConsoleMenuItem = { description: string, enable: () => Promise<boolean> | boolean, func: (ctx: { closeMenu: () => void }) => Promise<void> | void };
 
@@ -49,7 +39,7 @@ export default class ConsoleMenu {
 					console.log(`${i}: ${enabledItems[i].description}`);
 				}
 			}
-			const index = parseInt(await read('> '));
+			const index = parseInt(await inputLine('> '));
 			if (Number.isInteger(index) && index < enabledItems.length) {
 				await enabledItems[index].func({ closeMenu: () => { this.isCloseMenu = true; }});
 			}

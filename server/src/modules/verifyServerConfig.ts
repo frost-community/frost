@@ -6,10 +6,6 @@ export default (config: IServerConfig): void => {
 	// verify server config
 	const verificationServerConfig = $.obj({
 		httpPort: $.num.optional.nullable,
-		mongo: $.obj({
-			url: $.str,
-			dbName: $.str
-		}),
 		enableApi: $.bool,
 		enableWebApp: $.bool
 	});

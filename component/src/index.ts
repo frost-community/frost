@@ -1,3 +1,5 @@
+/// <reference path="../externalTypes/uid2.d.ts" />
+
 export {
 	default as ComponentEngine,
 	IComponentEngineOptions,
@@ -23,3 +25,15 @@ export {
 export {
 	default as ConsoleMenu
 } from './ConsoleMenu';
+
+export {
+	default as inputLine
+} from './inputLine';
+
+export {
+	default as CoreConfigManager
+} from './CoreConfigManager';
+
+export {
+	default as ConfigManager
+} from './ConfigManager';

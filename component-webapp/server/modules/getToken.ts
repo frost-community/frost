@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import IWebAppConfig from './IWebAppConfig';
 import { HttpError } from './errors';
 import log from './log';
+import { ConfigManager } from 'frost-component';
 
 export interface ITokenInfo {
 	appId: string,
@@ -10,14 +10,16 @@ export interface ITokenInfo {
 	accessToken: string
 };
 
-export default async function(userId: string, appId: string, scopes: string[], config: IWebAppConfig): Promise<ITokenInfo | null> {
+export default async function(userId: string, appId: string, scopes: string[], configManager: ConfigManager): Promise<ITokenInfo | null> {
+	const apiBaseUrl = await configManager.getItem('webapp', 'apiBaseUrl');
+	const hostAccessToken = await configManager.getItem('webapp', 'hostToken.accessToken');
 
 	let tokenResult: AxiosResponse<any>;
-	tokenResult = await axios.post(`${config.apiBaseUrl}/auth/token/get`, {
+	tokenResult = await axios.post(`${apiBaseUrl}/auth/token/get`, {
 		appId: appId,
 		userId: userId,
 		scopes: scopes
-	}, { headers: { authorization: `bearer ${config.hostToken.accessToken}` }, validateStatus: () => true });
+	}, { headers: { authorization: `bearer ${hostAccessToken}` }, validateStatus: () => true });
 	// expect: status 200 or error token_not_found
 	if (tokenResult.status != 200 && (tokenResult.status != 400 || tokenResult.data.error.reason != 'token_not_found')) {
 		log('failed to request /auth/token/get');

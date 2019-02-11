@@ -5,9 +5,8 @@
 import { ObjectId } from 'mongodb';
 import moment from 'moment';
 import uid from 'uid2';
-import { MongoProvider } from 'frost-component';
+import { MongoProvider, ConfigManager } from 'frost-component';
 import { IChatPosting, IUser, IUserRelation, IApp, IToken } from './apiResponse/packingObjects';
-import IApiConfig from './IApiConfig';
 import buildHash from './buildHash';
 
 export interface IDocument<PackingObject> {
@@ -121,20 +120,23 @@ export class AppDocument implements IAppDocument, IPopulatableDocument<IApp> {
 		this.creator = await new UserDocument(creator).pack(db);
 	}
 
-	async generateAppSecret(db: MongoProvider) {
+	async generateAppSecret(db: MongoProvider, configManager: ConfigManager) {
 		const seed = uid(8);
 		const updatedAppDoc = await db.updateById('api.apps', this._id.toHexString(), { seed });
-		const secret = this.getAppSecret(updatedAppDoc);
+		this.seed = seed;
+		const secret = this.getAppSecret(configManager);
 
 		return secret;
 	}
 
-	getAppSecret(config: IApiConfig) {
+	async getAppSecret(configManager: ConfigManager) {
 		if (this.seed == null) {
 			throw new Error('seed is empty');
 		}
 
-		const secret = buildHash(`${config.appSecretKey}/${this._id}/${this.seed}`);
+		const appSecretKey = await configManager.getItem('api', 'appSecretKey');
+
+		const secret = buildHash(`${appSecretKey}/${this._id}/${this.seed}`);
 
 		return secret;
 	}

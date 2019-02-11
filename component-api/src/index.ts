@@ -1,11 +1,9 @@
-/// <reference path="../externalTypes/uid2.d.ts" />
-
 import { promisify } from 'util'
 import path from 'path';
 import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
-import { ComponentApi, IComponent, MongoProvider } from 'frost-component';
+import { ComponentApi, IComponent, MongoProvider, ConfigManager } from 'frost-component';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
@@ -17,7 +15,7 @@ import getDataFormatState, { DataFormatState } from './modules/getDataFormatStat
 import log from './modules/log';
 
 const meta = {
-	currentDataVersion: 1
+	currentDataVersion: 2
 };
 
 export {
@@ -27,13 +25,12 @@ export {
 export interface IApiOptions {
 }
 
-export default (config: IApiConfig, options?: IApiOptions): IComponent => {
+export default (options?: IApiOptions): IComponent => {
 	async function init(manager: { db: MongoProvider }) {
-		verifyApiConfig(config);
 
 		// * setup menu
 
-		const menu = await setupMenu(manager.db, config, meta.currentDataVersion);
+		const menu = await setupMenu(manager.db, meta.currentDataVersion);
 
 		return {
 			setupMenu: menu
@@ -60,10 +57,22 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 				log('migration is required. please migrate database in setup mode.');
 			}
 			else {
-				log('this format is not supported. there is a possibility it was used by a newer api. please clear database and restart.');
+				log('this format is not supported. there is a possibility it was used by a newer api component. please clear database and restart.');
 			}
 			throw new Error('failed to start api');
 		}
+
+		// * verify config
+
+		const configManager = new ConfigManager(componentApi.db);
+
+		const config: IApiConfig = {
+			appSecretKey: await configManager.getItem('api', 'appSecretKey'),
+			hostToken: {
+				scopes: await configManager.getItem('api', 'hostToken.scopes')
+			}
+		};
+		verifyApiConfig(config);
 
 		// * strategy
 
@@ -78,7 +87,7 @@ export default (config: IApiConfig, options?: IApiOptions): IComponent => {
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
-			registerEndpoint(endpoint, endpointPath, initMiddlewares, componentApi, config);
+			registerEndpoint(endpoint, endpointPath, initMiddlewares, componentApi, configManager);
 		}
 
 		componentApi.http.addRoute((app) => {

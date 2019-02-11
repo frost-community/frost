@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
-import { ComponentApi, MongoProvider } from 'frost-component';
+import { ComponentApi, MongoProvider, ConfigManager } from 'frost-component';
 import { IAuthScope, AuthScopes } from './authScope';
-import IApiConfig from './IApiConfig';
 import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
@@ -32,14 +31,14 @@ export interface IEndpointContextOptions {
 }
 
 export class EndpointManager extends ApiResponseManager {
-	constructor(db: MongoProvider, config: IApiConfig, resResolver: (source: IApiResponseSource) => any, options?: IEndpointContextOptions) {
+	constructor(db: MongoProvider, configManager: ConfigManager, resResolver: (source: IApiResponseSource) => any, options?: IEndpointContextOptions) {
 		super(resResolver);
 		options = options || { };
 
 		this.params = options.params || {};
 		this.authInfo = options.authInfo;
 		this.db = db;
-		this.config = config;
+		this.configManager = configManager;
 
 		// services
 		this.userService = new UserService(db);
@@ -55,7 +54,7 @@ export class EndpointManager extends ApiResponseManager {
 
 	db: MongoProvider;
 
-	config: IApiConfig;
+	configManager: ConfigManager;
 
 	userService: UserService;
 
@@ -97,7 +96,7 @@ export function define(endpointProperty: IEndpointProperty, handler: EndpointHan
 	};
 }
 
-export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, middlewares: RequestHandler[], componentApi: ComponentApi, config: IApiConfig): void {
+export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, middlewares: RequestHandler[], componentApi: ComponentApi, configManager: ConfigManager): void {
 
 	// if some scopes is needed, requesting an AccessToken
 	function authorization(req: Request, res: Response, next: NextFunction) {
@@ -111,7 +110,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, midd
 		app.post(`/api/${endpointPath}`, ...middlewares, authorization, async (req, res) => {
 			const endpointManager = new EndpointManager(
 				componentApi.db,
-				config,
+				configManager,
 				buildHttpResResolver(res),
 				{ params: req.body });
 

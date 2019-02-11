@@ -1,8 +1,5 @@
-import { IMongoInfo } from 'frost-component';
-
 export default interface IServerConfig {
-	httpPort: number,
-	mongo: IMongoInfo,
+	httpPort?: number,
 	enableApi: boolean,
 	enableWebApp: boolean
 }
