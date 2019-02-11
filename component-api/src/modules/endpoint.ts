@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
-import { ComponentApi, MongoProvider, ConfigManager } from 'frost-component';
+import { ComponentApi } from 'frost-component';
+import { MongoProvider, ConfigManager } from 'frost-core';
 import { IAuthScope, AuthScopes } from './authScope';
 import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';

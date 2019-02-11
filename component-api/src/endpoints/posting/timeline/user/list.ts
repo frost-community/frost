@@ -1,5 +1,5 @@
 import $ from 'cafy';
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 import { define, AuthScopes, ApiErrorSources } from '../../../../modules/endpoint';
 import { ObjectIdContext } from '../../../../modules/cafyValidators';
 import timeline from '../../../../modules/timeline';

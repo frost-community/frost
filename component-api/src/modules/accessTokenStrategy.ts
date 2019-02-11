@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 import { IAppDocument, AppDocument, IUserDocument, UserDocument, ITokenDocument, TokenDocument } from './documents';
 
 export default (db: MongoProvider) => {

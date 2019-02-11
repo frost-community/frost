@@ -1,5 +1,5 @@
 import $, { StringContext } from 'cafy';
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 
 class ObjectIdContext extends StringContext {
 	constructor() {

@@ -1,4 +1,4 @@
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
 import uid from 'uid2';
 import { IAppDocument, IUserDocument, ITokenDocumentSource, ITokenDocument, TokenDocument } from "../modules/documents";

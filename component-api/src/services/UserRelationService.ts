@@ -1,4 +1,4 @@
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 import { ObjectId, ObjectID } from 'mongodb';
 import { IUserRelationDocument, UserRelationDocument, UserDocument, IUserRelationDocumentSoruce, IUserDocument } from "../modules/documents";
 import { IUserRelation } from '../modules/apiResponse/packingObjects';

@@ -1,6 +1,6 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import { MongoProvider, ConsoleMenu, inputLine, ConfigManager } from 'frost-component';
+import { MongoProvider, ConsoleMenu, inputLine, ConfigManager } from 'frost-core';
 import getDataFormatState, { DataFormatState } from '../getDataFormatState';
 import UserService from '../../services/UserService';
 import AppService from '../../services/AppService';

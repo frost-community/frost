@@ -1,7 +1,8 @@
 import path from 'path';
 import axios, { AxiosResponse } from 'axios';
 import express from 'express';
-import { ComponentApi, IComponent, MongoProvider, ConfigManager } from 'frost-component';
+import { ComponentApi, IComponent } from 'frost-component';
+import { MongoProvider, ConfigManager } from 'frost-core';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
 import validateCredential from './modules/validateCredential';

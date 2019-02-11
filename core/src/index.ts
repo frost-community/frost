@@ -19,3 +19,7 @@ export {
 export {
 	default as ConfigManager
 } from './ConfigManager';
+
+export {
+	default as ICoreConfig
+} from './ICoreConfig';

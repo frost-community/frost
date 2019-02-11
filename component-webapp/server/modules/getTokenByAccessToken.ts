@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { HttpError } from './errors';
 import log from './log';
-import { ConfigManager } from 'frost-component';
+import { ConfigManager } from 'frost-core';
 
 export interface ITokenInfo {
 	appId: string,

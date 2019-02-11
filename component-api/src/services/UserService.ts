@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { MongoProvider } from 'frost-component';
+import { MongoProvider } from 'frost-core';
 import { IUserDocumentSoruce, IUserDocument, UserDocument } from '../modules/documents';
 import buildHash from '../modules/buildHash';
 

@@ -1,11 +1,11 @@
 import $ from 'cafy';
 import argv from 'argv';
-import { ComponentEngine, IComponentEngineOptions, CoreConfigManager, MongoProvider, ConfigManager, ConsoleMenu, inputLine } from 'frost-component';
+import { ComponentEngine, IComponentEngineOptions } from 'frost-component';
 import frostApi, { IApiOptions } from 'frost-component-api';
 import frostWeb, { IWebOptions } from 'frost-component-webapp';
+import { CoreConfigManager, MongoProvider, ICoreConfig, ConfigManager, ConsoleMenu, inputLine } from 'frost-core';
 import IServerConfig from './modules/IServerConfig';
 import verifyServerConfig from './modules/verifyServerConfig';
-import ICoreConfig from '../node_modules/frost-component/built/ICoreConfig';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 

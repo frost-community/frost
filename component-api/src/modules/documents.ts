@@ -5,7 +5,7 @@
 import { ObjectId } from 'mongodb';
 import moment from 'moment';
 import uid from 'uid2';
-import { MongoProvider, ConfigManager } from 'frost-component';
+import { MongoProvider, ConfigManager } from 'frost-core';
 import { IChatPosting, IUser, IUserRelation, IApp, IToken } from './apiResponse/packingObjects';
 import buildHash from './buildHash';
 
