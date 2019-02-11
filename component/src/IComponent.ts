@@ -1,6 +1,5 @@
+import { MongoProvider, ConsoleMenu } from 'frost-core';
 import ComponentApi from './componentApi/ComponentApi';
-import ConsoleMenu from './ConsoleMenu';
-import MongoProvider from './MongoProvider';
 
 export default interface IComponent {
 	name: string;

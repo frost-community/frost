@@ -1,5 +1,5 @@
 import Express from 'express';
-import MongoProvider from "../MongoProvider";
+import { MongoProvider } from 'frost-core';
 import IComponent from '../IComponent';
 import ComponentApiInternal, { HttpComponentApiInternal } from './ComponentApiInternal';
 

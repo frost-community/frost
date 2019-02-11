@@ -1,12 +1,11 @@
 import Express from 'express';
 import passport from 'passport';
 import argv from 'argv';
+import { MongoProvider, ConsoleMenu } from 'frost-core';
 import ComponentApi from './componentApi/ComponentApi';
 import ComponentApiInternal from './componentApi/ComponentApiInternal';
-import MongoProvider from './MongoProvider';
 import IComponent from './IComponent';
 import setupComponentMenu from './setupComponentMenu';
-import ConsoleMenu from './ConsoleMenu';
 
 export interface IMongoInfo {
 	url: string;

@@ -1,4 +1,4 @@
-import MongoProvider from "../MongoProvider";
+import { MongoProvider } from 'frost-core';
 import ComponentEngine from "../ComponentEngine";
 import IComponent from '../IComponent';
 import { HttpComponentHandler } from './ComponentApi';

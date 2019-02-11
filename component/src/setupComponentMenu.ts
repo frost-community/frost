@@ -1,4 +1,4 @@
-import ConsoleMenu from './ConsoleMenu';
+import { ConsoleMenu } from 'frost-core';
 import IComponent from './IComponent';
 
 export default async function(setupMenus: { component: IComponent, setupMenu: ConsoleMenu }[]) {

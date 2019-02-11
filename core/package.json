@@ -1,7 +1,7 @@
 {
-  "name": "frost-component",
-  "version": "0.0.6",
-  "description": "The component system of the Frost",
+  "name": "frost-core",
+  "version": "0.0.1",
+  "description": "The core of the Frost",
   "main": "built/index.js",
   "scripts": {
     "build": "tsc"
@@ -14,14 +14,12 @@
   "license": "MIT",
   "dependencies": {
     "@types/argv": "0.0.4",
-    "@types/express": "^4.16.0",
+    "@types/mongodb": "^3.1.18",
     "@types/node": "^10.12.15",
-    "@types/passport": "^1.0.0",
     "argv": "0.0.2",
-    "express": "^4.16.4",
-    "frost-core": "../core",
-    "passport": "^0.4.0",
-    "pug": "^2.0.3"
+    "cafy": "^13.0.0",
+    "mongodb": "^3.1.10",
+    "uid2": "0.0.3"
   },
   "devDependencies": {
     "typescript": "^3.2.2"
