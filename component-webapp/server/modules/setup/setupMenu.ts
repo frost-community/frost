@@ -86,13 +86,13 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		await activeConfigManager.setItem('webapp', 'recaptcha.secretKey', recaptchaSecretKey);
 		log('recaptcha configured.');
 
-		await db.create('meta', { type: 'dataFormat', value: currentDataVersion });
+		await db.create('webapp.meta', { type: 'dataFormat', value: currentDataVersion });
 
 		await refreshMenu();
 	});
 	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), async (ctx) => {
 
-		const dataFormat = await db.find('meta', { type: 'dataFormat' });
+		const dataFormat = await db.find('webapp.meta', { type: 'dataFormat' });
 		if (!dataFormat) {
 			if (await migrate('empty->1')) {
 				log('migration to v1 has completed.');

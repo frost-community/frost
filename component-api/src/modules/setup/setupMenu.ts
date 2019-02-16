@@ -59,7 +59,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 				log(`cleaned ${collection} collection.`);
 			}
 
-			await clean('meta');
+			await clean('api.meta');
 			await clean('api.config');
 			await clean('api.apps');
 			await clean('api.tokens');
@@ -86,7 +86,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		await activeConfigManager.setItem('api', 'hostToken.scopes', hostTokenScopes);
 		log('hostToken.scopes configured.');
 
-		await db.create('meta', { type: 'dataFormat', value: currentDataVersion });
+		await db.create('api.meta', { type: 'dataFormat', value: currentDataVersion });
 
 		await refreshMenu();
 	});
@@ -115,7 +115,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 	});
 	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), async (ctx) => {
 
-		const dataFormat = await db.find('meta', { type: 'dataFormat' });
+		const dataFormat = await db.find('api.meta', { type: 'dataFormat' });
 		if (!dataFormat) {
 			if (await migrate('empty->1')) {
 				log('migration to v1 has completed.');

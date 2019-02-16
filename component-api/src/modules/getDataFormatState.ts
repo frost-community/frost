@@ -14,7 +14,7 @@ export const enum DataFormatState {
  * 「データフォーマット」は、正常に初期化・データ移行するために必要な識別子です。
 */
 export default async function(db: MongoProvider, currentVersion: number): Promise<DataFormatState> {
-	const dataFormat = await db.find('meta', { type: 'dataFormat' });
+	const dataFormat = await db.find('api.meta', { type: 'dataFormat' });
 
 	let docCount = 0;
 	docCount += await db.count('api.users', {});

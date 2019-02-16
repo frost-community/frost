@@ -147,6 +147,10 @@ export default class MongoProvider {
 		await this.db.collection(collectionName).drop();
 	}
 
+	async rename(collectionName: string, newcollectionName: string) {
+		await this.db.collection(collectionName).rename(newcollectionName);
+	}
+
 	disconnect(): Promise<void> {
 		return this.client.close();
 	}
