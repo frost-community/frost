@@ -1,11 +1,9 @@
 import Express from 'express';
 import passport from 'passport';
-import argv from 'argv';
 import { MongoProvider, ConsoleMenu } from 'frost-core';
 import ComponentApi from './componentApi/ComponentApi';
 import ComponentApiInternal from './componentApi/ComponentApiInternal';
 import IComponent from './IComponent';
-import setupComponentMenu from './setupComponentMenu';
 
 export interface IMongoInfo {
 	url: string;
@@ -15,25 +13,31 @@ export interface IMongoInfo {
 export interface IComponentEngineOptions {
 }
 
+const log = (...params: any[]) => {
+	console.log('[ComponentEngine]', ...params);
+};
+
 // componentを組み合わせて実行する
 export default class ComponentEngine {
-	constructor(httpPort: number, mongoInfo: IMongoInfo, options?: IComponentEngineOptions) {
+	constructor(httpPort: number, db: MongoProvider, options?: IComponentEngineOptions) {
 		options = options || {};
 
 		this.components = [];
 		this.setupMenus = [];
 
 		this.httpPort = httpPort;
-		this.mongoInfo = mongoInfo;
+		this.db = db;
 	}
+
+	private isInitialized = false;
 
 	private httpPort: number;
 
-	private mongoInfo: IMongoInfo;
+	private db: MongoProvider;
 
 	private components: IComponent[];
 
-	setupMenus: { component: IComponent, setupMenu: ConsoleMenu }[];
+	private setupMenus: { component: IComponent, setupMenu: ConsoleMenu }[];
 
 	has(componentName: string): boolean {
 		return this.components.find(component => component.name == componentName) != null;
@@ -46,59 +50,48 @@ export default class ComponentEngine {
 		this.components.push(component);
 	}
 
-	async start() {
-
-		const log = (...params: any[]) => {
-			console.log('[ComponentEngine]', ...params);
-		};
-
-		log('database: connecting ...');
-		const db = await MongoProvider.connect(this.mongoInfo.url, this.mongoInfo.dbName);
-
+	async initializeComponents() {
 		log('components: initializing ...');
 		const initializedData: { component: IComponent, setupMenu?: ConsoleMenu }[] = [];
 		for (const component of this.components) {
 			if (component.init) {
 				initializedData.push({
 					component: component,
-					setupMenu: (await component.init({ db })).setupMenu
+					setupMenu: (await component.init({ db: this.db })).setupMenu
 				});
 			}
 		}
 
-		// options
+		this.setupMenus = initializedData
+			.filter((c): c is { setupMenu: ConsoleMenu, component: IComponent } => c.setupMenu != null);
 
-		argv.option({
-			name: 'setup',
-			short: 's',
-			type: 'boolean',
-			description: 'Display setup mode'
-		});
+		this.isInitialized = true;
+	}
 
-		const { options } = argv.run();
-
-		// (mode) setup
-
-		if (options.setup) {
-
-			log('setup mode');
-
-			const setupMenus = initializedData
-				.filter((c): c is { setupMenu: ConsoleMenu, component: IComponent } => c.setupMenu != null);
-
-			await setupComponentMenu(setupMenus);
-
-			log('database: disconnecting ...');
-			await db.disconnect();
-
-			return;
+	async showComponentMenu() {
+		if (!this.isInitialized) {
+			throw new Error('showComponentMenu need to called after initialization.');
 		}
 
-		// (mode) server
+		const componentMenu = new ConsoleMenu('Select a component to setup');
 
-		log('server mode');
+		componentMenu.add(' * close menu * ', () => true, (ctx) => ctx.closeMenu());
+		for (const setupMenu of this.setupMenus) {
+			componentMenu.add(setupMenu.component.name, () => true, async (ctx) => {
+				await setupMenu.setupMenu.show();
+			});
+		}
 
-		const apiInternal = new ComponentApiInternal(this, db);
+		await componentMenu.show();
+		console.log();
+	}
+
+	async startComponents() {
+		if (!this.isInitialized) {
+			throw new Error('startComponents need to called after initialization.');
+		}
+
+		const apiInternal = new ComponentApiInternal(this, this.db);
 
 		log('components: starting ...');
 
@@ -108,18 +101,13 @@ export default class ComponentEngine {
 			}
 		}
 		catch (err) {
-			log('component error:');
 			console.error(err);
-
-			log('database: disconnecting ...');
-			await db.disconnect();
-
-			return;
+			throw new Error('component starting error');
 		}
 
 		// http
 
-		log('http: initialize ...');
+		log('http: initializing ...');
 
 		const app = Express();
 		app.set('views', apiInternal.http.viewPathes);

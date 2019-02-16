@@ -18,12 +18,13 @@ async function entryPoint() {
 	argv.option({
 		name: 'serverSetting',
 		type: 'boolean',
-		description: 'Display initialization mode'
+		description: 'Display server setting menu'
 	});
+
 	argv.option({
-		name: 'setup',
+		name: 'componentSetting',
 		type: 'boolean',
-		description: 'Display setup mode'
+		description: 'Display component setting menu'
 	});
 	const { options } = argv.run();
 
@@ -32,6 +33,7 @@ async function entryPoint() {
 	// mode: server setting menu
 
 	if (options.serverSetting) {
+		log('starting server menu ...');
 		await showServerSettingMenu(initResult ? initResult.activeConfigManager : undefined);
 		return;
 	}
@@ -44,7 +46,7 @@ async function entryPoint() {
 
 	const serverConfig = await loadServerConfig(initResult.activeConfigManager);
 
-	const engine = new ComponentEngine(serverConfig.httpPort!, initResult.bootConfig.mongo, { });
+	const engine = new ComponentEngine(serverConfig.httpPort!, initResult.db, { });
 
 	if (serverConfig.enableApi) {
 		log('enable API component');
@@ -56,8 +58,16 @@ async function entryPoint() {
 		engine.use(frostWeb({ }));
 	}
 
+	await engine.initializeComponents();
+
+	if (options.componentSetting) {
+		log('starting component menu ...');
+		await engine.showComponentMenu();
+		return;
+	}
+
 	log('starting engine ...');
-	await engine.start();
+	await engine.startComponents();
 }
 
 entryPoint()
