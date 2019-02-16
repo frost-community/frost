@@ -70,7 +70,7 @@ export default class ComponentEngine {
 
 	async showComponentMenu() {
 		if (!this.isInitialized) {
-			throw new Error('showComponentMenu need to called after initialization.');
+			throw new Error('showComponentMenu need to called after components initialization.');
 		}
 
 		const componentMenu = new ConsoleMenu('Select a component to setup');
@@ -88,7 +88,7 @@ export default class ComponentEngine {
 
 	async startComponents() {
 		if (!this.isInitialized) {
-			throw new Error('startComponents need to called after initialization.');
+			throw new Error('startComponents need to called after components initialization.');
 		}
 
 		const apiInternal = new ComponentApiInternal(this, this.db);

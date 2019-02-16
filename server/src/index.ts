@@ -13,14 +13,12 @@ async function entryPoint() {
 	console.log('  * Frost  ');
 	console.log('===========');
 
-	// * option args
-
+	// option args
 	argv.option({
 		name: 'serverSetting',
 		type: 'boolean',
 		description: 'Display server setting menu'
 	});
-
 	argv.option({
 		name: 'componentSetting',
 		type: 'boolean',
@@ -30,15 +28,11 @@ async function entryPoint() {
 
 	const initResult = await initializeServer();
 
-	// mode: server setting menu
-
+	// server setting menu
 	if (options.serverSetting) {
-		log('starting server menu ...');
 		await showServerSettingMenu(initResult ? initResult.activeConfigManager : undefined);
 		return;
 	}
-
-	// mode: main
 
 	if (!initResult) {
 		throw new Error('boot config is not found. please generate boot config on the server setting menu.');
@@ -50,23 +44,22 @@ async function entryPoint() {
 
 	if (serverConfig.enableApi) {
 		log('enable API component');
-		engine.use(frostApi({ }));
+		engine.use(frostApi());
 	}
 
 	if (serverConfig.enableWebApp) {
 		log('enable WebApp component');
-		engine.use(frostWeb({ }));
+		engine.use(frostWeb());
 	}
 
 	await engine.initializeComponents();
 
+	// component setting menu
 	if (options.componentSetting) {
-		log('starting component menu ...');
 		await engine.showComponentMenu();
 		return;
 	}
 
-	log('starting engine ...');
 	await engine.startComponents();
 }
 
