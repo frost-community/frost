@@ -1,6 +1,6 @@
 import MongoProvider from './MongoProvider';
 
-export default class ConfigManager {
+export default class ActiveConfigManager {
 	constructor(db: MongoProvider) {
 		this.db = db;
 	}

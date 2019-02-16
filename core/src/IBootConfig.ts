@@ -1,4 +1,4 @@
-export default interface ICoreConfig {
+export default interface IBootConfig {
 	cryptoKey: string;
 	mongo: {
 		url: string;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { HttpError } from './errors';
 import log from './log';
-import { ConfigManager } from 'frost-core';
+import { ActiveConfigManager } from 'frost-core';
 
 export interface ITokenInfo {
 	appId: string,
@@ -10,9 +10,9 @@ export interface ITokenInfo {
 	accessToken: string
 };
 
-export default async function(userId: string, appId: string, scopes: string[], configManager: ConfigManager): Promise<ITokenInfo> {
-	const apiBaseUrl = await configManager.getItem('webapp', 'apiBaseUrl');
-	const hostAccessToken = await configManager.getItem('webapp', 'hostToken.accessToken');
+export default async function(userId: string, appId: string, scopes: string[], activeConfigManager: ActiveConfigManager): Promise<ITokenInfo> {
+	const apiBaseUrl = await activeConfigManager.getItem('webapp', 'apiBaseUrl');
+	const hostAccessToken = await activeConfigManager.getItem('webapp', 'hostToken.accessToken');
 
 	const tokenResult = await axios.post(`${apiBaseUrl}/auth/token/create`, {
 		appId: appId,

@@ -1,3 +1,8 @@
+cd core
+rm -r node_modules
+call npm i
+cd ..
+
 cd component
 rm -r node_modules
 call npm i

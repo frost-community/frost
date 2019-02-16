@@ -2,7 +2,7 @@ import path from 'path';
 import axios, { AxiosResponse } from 'axios';
 import express from 'express';
 import { ComponentApi, IComponent } from 'frost-component';
-import { MongoProvider, ConfigManager } from 'frost-core';
+import { MongoProvider, ActiveConfigManager } from 'frost-core';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
 import validateCredential from './modules/validateCredential';
@@ -59,20 +59,20 @@ export default (options?: IWebOptions): IComponent => {
 
 		// * verify config
 
-		const configManager = new ConfigManager(componentApi.db);
+		const activeConfigManager = new ActiveConfigManager(componentApi.db);
 
 		const config: IWebAppConfig = {
-			apiBaseUrl: await configManager.getItem('webapp', 'apiBaseUrl'),
+			apiBaseUrl: await activeConfigManager.getItem('webapp', 'apiBaseUrl'),
 			hostToken: {
-				accessToken: await configManager.getItem('webapp', 'hostToken.accessToken')
+				accessToken: await activeConfigManager.getItem('webapp', 'hostToken.accessToken')
 			},
 			clientToken: {
-				scopes: await configManager.getItem('webapp', 'clientToken.scopes')
+				scopes: await activeConfigManager.getItem('webapp', 'clientToken.scopes')
 			},
 			recaptcha: {
-				enable: await configManager.getItem('webapp', 'recaptcha.enable'),
-				siteKey: await configManager.getItem('webapp', 'recaptcha.siteKey'),
-				secretKey: await configManager.getItem('webapp', 'recaptcha.secretKey')
+				enable: await activeConfigManager.getItem('webapp', 'recaptcha.enable'),
+				siteKey: await activeConfigManager.getItem('webapp', 'recaptcha.siteKey'),
+				secretKey: await activeConfigManager.getItem('webapp', 'recaptcha.secretKey')
 			}
 		};
 		verifyWebAppConfig(config);
@@ -88,7 +88,7 @@ export default (options?: IWebOptions): IComponent => {
 				let tokenInfo: ITokenInfo | null;
 				let userGetResult: AxiosResponse<any>;
 				try {
-					const validation = await validateCredential(req.body.screenName, req.body.password, configManager);
+					const validation = await validateCredential(req.body.screenName, req.body.password, activeConfigManager);
 					if (!validation.isValid) {
 						res.status(400).json({ error: { reason: 'invalid_credential' } });
 						return;
@@ -96,15 +96,15 @@ export default (options?: IWebOptions): IComponent => {
 
 					// for the first time only, fetch host token info
 					if (!hostTokenInfo) {
-						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, configManager);
+						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, activeConfigManager);
 					}
 
 					// get token
-					tokenInfo = await getToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, configManager);
+					tokenInfo = await getToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, activeConfigManager);
 
 					// if token is not found, create a token
 					if (!tokenInfo) {
-						tokenInfo = await createToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, configManager);
+						tokenInfo = await createToken(validation.userId, hostTokenInfo.appId, config.clientToken.scopes, activeConfigManager);
 					}
 
 					userGetResult = await axios.post(`${config.apiBaseUrl}/user/get`, {
@@ -178,15 +178,15 @@ export default (options?: IWebOptions): IComponent => {
 				try {
 					// for the first time only, fetch host token info
 					if (!hostTokenInfo) {
-						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, configManager);
+						hostTokenInfo = await getTokenByAccessToken(config.hostToken.accessToken, activeConfigManager);
 					}
 
 					// get token
-					tokenInfo = await getToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, configManager);
+					tokenInfo = await getToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, activeConfigManager);
 
 					// if token is not found, create a token
 					if (!tokenInfo) {
-						tokenInfo = await createToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, configManager);
+						tokenInfo = await createToken(creationResult.data.result.id, hostTokenInfo.appId, config.clientToken.scopes, activeConfigManager);
 					}
 				}
 				catch (err) {

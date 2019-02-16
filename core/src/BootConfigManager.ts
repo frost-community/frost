@@ -1,15 +1,15 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import ICoreConfig from './ICoreConfig';
+import IBootConfig from './IBootConfig';
 import fs from 'fs';
 import { promisify } from 'util';
 import inputLine from './inputLine';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 
-export default class CoreConfigManager {
-	static create(mongoUrl: string, dbName: string): ICoreConfig {
-		const config: ICoreConfig = {
+export default class BootConfigManager {
+	static create(mongoUrl: string, dbName: string): IBootConfig {
+		const config: IBootConfig = {
 			cryptoKey: uid(128),
 			mongo: {
 				url: mongoUrl,
@@ -17,18 +17,18 @@ export default class CoreConfigManager {
 			}
 		};
 		try {
-			CoreConfigManager.verify(config);
+			BootConfigManager.verify(config);
 		}
 		catch (err) {
-			if (err instanceof Error && err.message == 'invalid core config') {
-				throw new Error('failed to verify core config. please check if mongoUrl and dbName are valid.');
+			if (err instanceof Error && err.message == 'invalid boot config') {
+				throw new Error('failed to verify boot config. please check if mongoUrl and dbName are valid.');
 			}
 			throw err;
 		}
 		return config;
 	}
 
-	static verify(config: ICoreConfig): void {
+	static verify(config: IBootConfig): void {
 		const verificationConfig = $.obj({
 			cryptoKey: $.str,
 			mongo: $.obj({
@@ -37,17 +37,17 @@ export default class CoreConfigManager {
 			})
 		});
 		if (verificationConfig.nok(config)) {
-			throw new Error('invalid core config');
+			throw new Error('invalid boot config');
 		}
 	}
 
-	static async write(config: ICoreConfig, filePath: string): Promise<void> {
+	static async write(config: IBootConfig, filePath: string): Promise<void> {
 		await promisify(fs.writeFile)(filePath, JSON.stringify(config, null, 2));
 	}
 
-	static read(filePath: string): ICoreConfig {
-		const config: ICoreConfig = require(filePath);
-		CoreConfigManager.verify(config);
+	static read(filePath: string): IBootConfig {
+		const config: IBootConfig = require(filePath);
+		BootConfigManager.verify(config);
 		return config;
 	}
 
@@ -62,16 +62,16 @@ export default class CoreConfigManager {
 				break;
 			}
 		}
-		const config = CoreConfigManager.create(mongoUrl, dbName);
+		const config = BootConfigManager.create(mongoUrl, dbName);
 
-		console.log('generated core config:\n');
+		console.log('generated boot config:\n');
 		console.log(JSON.stringify(config, null, 2));
 		console.log('');
 
-		const isGenerate = await question('are you sure you want to write to file core-config.json? (y/n) > ');
+		const isGenerate = await question('are you sure you want to write to file boot-config.json? (y/n) > ');
 		if (isGenerate) {
-			await CoreConfigManager.write(config, './.configs/core-config.json');
-			console.log('core-config.json was generated.');
+			await BootConfigManager.write(config, './.configs/boot-config.json');
+			console.log('boot-config.json was generated.');
 		}
 	}
 }

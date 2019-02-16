@@ -2,7 +2,7 @@ import $ from 'cafy';
 import axios from 'axios';
 import { HttpError } from './errors';
 import log from './log';
-import { ConfigManager } from 'frost-core';
+import { ActiveConfigManager } from 'frost-core';
 
 export interface IValidResult {
 	isValid: true;
@@ -13,9 +13,9 @@ export interface IInvalidResult {
 	isValid: false;
 }
 
-export default async function(screenName: string, password: string, configManager: ConfigManager): Promise<IValidResult | IInvalidResult> {
-	const apiBaseUrl = await configManager.getItem('webapp', 'apiBaseUrl');
-	const hostAccessToken = await configManager.getItem('webapp', 'hostToken.accessToken');
+export default async function(screenName: string, password: string, activeConfigManager: ActiveConfigManager): Promise<IValidResult | IInvalidResult> {
+	const apiBaseUrl = await activeConfigManager.getItem('webapp', 'apiBaseUrl');
+	const hostAccessToken = await activeConfigManager.getItem('webapp', 'hostToken.accessToken');
 
 	if ($.str.nok(screenName) || $.str.nok(password)) {
 		throw new HttpError(400, { error: { reason: 'invalid_param' } });

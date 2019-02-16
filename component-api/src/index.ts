@@ -4,7 +4,7 @@ import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { ComponentApi, IComponent } from 'frost-component';
-import { MongoProvider, ConfigManager } from 'frost-core';
+import { MongoProvider, ActiveConfigManager } from 'frost-core';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
@@ -65,12 +65,12 @@ export default (options?: IApiOptions): IComponent => {
 
 		// * verify config
 
-		const configManager = new ConfigManager(componentApi.db);
+		const activeConfigManager = new ActiveConfigManager(componentApi.db);
 
 		const config: IApiConfig = {
-			appSecretKey: await configManager.getItem('api', 'appSecretKey'),
+			appSecretKey: await activeConfigManager.getItem('api', 'appSecretKey'),
 			hostToken: {
-				scopes: await configManager.getItem('api', 'hostToken.scopes')
+				scopes: await activeConfigManager.getItem('api', 'hostToken.scopes')
 			}
 		};
 		verifyApiConfig(config);
@@ -88,7 +88,7 @@ export default (options?: IApiOptions): IComponent => {
 		for (let endpointPath of endpointPaths) {
 			endpointPath = endpointPath.replace('.js', '');
 			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
-			registerEndpoint(endpoint, endpointPath, initMiddlewares, componentApi, configManager);
+			registerEndpoint(endpoint, endpointPath, initMiddlewares, componentApi, activeConfigManager);
 		}
 
 		componentApi.http.addRoute((app) => {

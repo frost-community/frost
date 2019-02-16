@@ -29,7 +29,7 @@ export default define({
 	// population
 	await appDoc.populate(manager.db);
 
-	const appSecret = await appDoc.getAppSecret(manager.configManager);
+	const appSecret = await appDoc.getAppSecret(manager.activeConfigManager);
 
 	manager.ok(new AppSecretResponseObject({
 		appId: appDocRaw._id.toHexString(),

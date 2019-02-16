@@ -13,13 +13,17 @@ export {
 } from './inputLine';
 
 export {
-	default as CoreConfigManager
-} from './CoreConfigManager';
+	default as question
+} from './question';
 
 export {
-	default as ConfigManager
-} from './ConfigManager';
+	default as BootConfigManager
+} from './BootConfigManager';
 
 export {
-	default as ICoreConfig
-} from './ICoreConfig';
+	default as ActiveConfigManager
+} from './ActiveConfigManager';
+
+export {
+	default as IBootConfig
+} from './IBootConfig';

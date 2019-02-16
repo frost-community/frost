@@ -1,3 +1,8 @@
+cd core
+rm -r built
+call npm run build
+cd ..
+
 cd component
 rm -r built
 call npm run build

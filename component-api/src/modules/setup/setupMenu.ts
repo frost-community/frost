@@ -1,6 +1,6 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import { MongoProvider, ConsoleMenu, inputLine, ConfigManager } from 'frost-core';
+import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager } from 'frost-core';
 import getDataFormatState, { DataFormatState } from '../getDataFormatState';
 import UserService from '../../services/UserService';
 import AppService from '../../services/AppService';
@@ -20,7 +20,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 	const appService = new AppService(db);
 	const tokenService = new TokenService(db);
 
-	const configManager = new ConfigManager(db);
+	const activeConfigManager = new ActiveConfigManager(db);
 
 	let config: IApiConfig | undefined;
 	let dataFormatState: DataFormatState;
@@ -28,9 +28,9 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		dataFormatState = await getDataFormatState(db, currentDataVersion);
 
 		config = {
-			appSecretKey: await configManager.getItem('api', 'appSecretKey'),
+			appSecretKey: await activeConfigManager.getItem('api', 'appSecretKey'),
 			hostToken: {
-				scopes: await configManager.getItem('api', 'hostToken.scopes')
+				scopes: await activeConfigManager.getItem('api', 'hostToken.scopes')
 			}
 		};
 		try {
@@ -79,11 +79,11 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		log('root app created.');
 
 		const appSecretKey = uid(128);
-		await configManager.setItem('api', 'appSecretKey', appSecretKey);
+		await activeConfigManager.setItem('api', 'appSecretKey', appSecretKey);
 		log('appSecretKey configured:', appSecretKey);
 
 		const hostTokenScopes = ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"];
-		await configManager.setItem('api', 'hostToken.scopes', hostTokenScopes);
+		await activeConfigManager.setItem('api', 'hostToken.scopes', hostTokenScopes);
 		log('hostToken.scopes configured.');
 
 		await db.create('meta', { type: 'dataFormat', value: currentDataVersion });

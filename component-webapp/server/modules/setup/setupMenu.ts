@@ -1,6 +1,6 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import { MongoProvider, ConsoleMenu, inputLine, ConfigManager } from 'frost-core';
+import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager } from 'frost-core';
 import getDataFormatState, { DataFormatState } from '../getDataFormatState';
 import migrate from './migrate';
 import log from '../log';
@@ -10,7 +10,7 @@ import verifyWebAppConfig from '../verifyWebAppConfig';
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 
 export default async function(db: MongoProvider, currentDataVersion: number) {
-	const configManager = new ConfigManager(db);
+	const activeConfigManager = new ActiveConfigManager(db);
 
 	let config: IWebAppConfig | undefined;
 	let dataFormatState: DataFormatState;
@@ -18,17 +18,17 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		dataFormatState = await getDataFormatState(db, currentDataVersion);
 
 		config = {
-			apiBaseUrl: await configManager.getItem('webapp', 'apiBaseUrl'),
+			apiBaseUrl: await activeConfigManager.getItem('webapp', 'apiBaseUrl'),
 			hostToken: {
-				accessToken: await configManager.getItem('webapp', 'hostToken.accessToken')
+				accessToken: await activeConfigManager.getItem('webapp', 'hostToken.accessToken')
 			},
 			clientToken: {
-				scopes: await configManager.getItem('webapp', 'clientToken.scopes')
+				scopes: await activeConfigManager.getItem('webapp', 'clientToken.scopes')
 			},
 			recaptcha: {
-				enable: await configManager.getItem('webapp', 'recaptcha.enable'),
-				siteKey: await configManager.getItem('webapp', 'recaptcha.siteKey'),
-				secretKey: await configManager.getItem('webapp', 'recaptcha.secretKey')
+				enable: await activeConfigManager.getItem('webapp', 'recaptcha.enable'),
+				siteKey: await activeConfigManager.getItem('webapp', 'recaptcha.siteKey'),
+				secretKey: await activeConfigManager.getItem('webapp', 'recaptcha.secretKey')
 			}
 		};
 		try {
@@ -72,18 +72,18 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 			recaptchaSecretKey = await inputLine('please input reCAPTCHA secretKey > ');
 		}
 
-		await configManager.setItem('webapp', 'apiBaseUrl', apiBaseUrl);
+		await activeConfigManager.setItem('webapp', 'apiBaseUrl', apiBaseUrl);
 		log('apiBaseUrl configured.');
 
-		await configManager.setItem('webapp', 'hostToken.accessToken', hostAccessToken);
+		await activeConfigManager.setItem('webapp', 'hostToken.accessToken', hostAccessToken);
 		log('hostToken.accessToken configured.');
 
-		await configManager.setItem('webapp', 'clientToken.scopes', clientScopes);
+		await activeConfigManager.setItem('webapp', 'clientToken.scopes', clientScopes);
 		log('clientToken.scopes configured.');
 
-		await configManager.setItem('webapp', 'recaptcha.enable', enableRecaptcha);
-		await configManager.setItem('webapp', 'recaptcha.siteKey', recaptchaSiteKey);
-		await configManager.setItem('webapp', 'recaptcha.secretKey', recaptchaSecretKey);
+		await activeConfigManager.setItem('webapp', 'recaptcha.enable', enableRecaptcha);
+		await activeConfigManager.setItem('webapp', 'recaptcha.siteKey', recaptchaSiteKey);
+		await activeConfigManager.setItem('webapp', 'recaptcha.secretKey', recaptchaSecretKey);
 		log('recaptcha configured.');
 
 		await db.create('meta', { type: 'dataFormat', value: currentDataVersion });
