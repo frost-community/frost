@@ -84,7 +84,6 @@ export default class ComponentEngine {
 			log('setup mode');
 
 			const setupMenus = initializedData
-				.map(c => { return { setupMenu: c.setupMenu, component: c.component }; })
 				.filter((c): c is { setupMenu: ConsoleMenu, component: IComponent } => c.setupMenu != null);
 
 			await setupComponentMenu(setupMenus);
