@@ -1,4 +1,6 @@
-import { BootConfigManager, ActiveConfigManager, ConsoleMenu, inputLine, question } from 'frost-core';
+import {
+	BootConfigManager, ActiveConfigManager, ConsoleMenu, inputLine, question
+} from 'frost-core';
 
 /**
  * show menu of server setting.

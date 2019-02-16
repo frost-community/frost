@@ -1,7 +1,9 @@
 import $ from 'cafy';
 import { define, AuthScopes, ApiErrorSources } from '../../../modules/endpoint';
 import { TokenResponseObject } from '../../../modules/apiResponse/responseObjects';
-import { IAppDocument, IUserDocument, AppDocument, TokenDocument } from '../../../modules/documents';
+import {
+	IAppDocument, IUserDocument, AppDocument, TokenDocument
+} from '../../../modules/documents';
 import { ObjectIdContext } from '../../../modules/cafyValidators';
 
 export default define({

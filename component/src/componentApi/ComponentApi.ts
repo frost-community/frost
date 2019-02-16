@@ -3,16 +3,13 @@ import { MongoProvider } from 'frost-core';
 import IComponent from '../IComponent';
 import ComponentApiInternal, { HttpComponentApiInternal } from './ComponentApiInternal';
 
-/*
-	componentに向けたAPI
-*/
-
-// component api
-
 export interface IComponentApiOptions {
 	http?: IHttpComponentApiOptions;
 }
 
+/**
+ * provide methods to access the frost component apis
+*/
 export default class ComponentApi {
 	constructor(apiInternal: ComponentApiInternal, targetComponent: IComponent, options?: IComponentApiOptions) {
 		options = options || {};

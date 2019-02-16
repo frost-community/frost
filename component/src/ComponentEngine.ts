@@ -5,11 +5,6 @@ import ComponentApi from './componentApi/ComponentApi';
 import ComponentApiInternal from './componentApi/ComponentApiInternal';
 import IComponent from './IComponent';
 
-export interface IMongoInfo {
-	url: string;
-	dbName: string;
-}
-
 export interface IComponentEngineOptions {
 }
 
@@ -17,7 +12,9 @@ const log = (...params: any[]) => {
 	console.log('[ComponentEngine]', ...params);
 };
 
-// componentを組み合わせて実行する
+/**
+ * provide to execute some components on the server
+*/
 export default class ComponentEngine {
 	constructor(httpPort: number, db: MongoProvider, options?: IComponentEngineOptions) {
 		options = options || {};

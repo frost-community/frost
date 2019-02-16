@@ -1,12 +1,6 @@
 import {
-	MongoClient,
-	ObjectId,
-	Db,
-	FilterQuery,
-	UpdateManyOptions,
-	UpdateOneOptions,
-	CommonOptions as MongoCommonOptions,
-	WriteOpResult
+	MongoClient, ObjectId, Db, FilterQuery, UpdateManyOptions, UpdateOneOptions,
+	CommonOptions as MongoCommonOptions, WriteOpResult
 } from 'mongodb';
 
 interface IFindArrayOptions {
@@ -16,6 +10,9 @@ interface IFindArrayOptions {
 	until?: ObjectId;
 }
 
+/**
+ * provide methods to access MongoDB
+*/
 export default class MongoProvider {
 	constructor(client: MongoClient, dbName: string) {
 		this.client = client;

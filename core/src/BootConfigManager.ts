@@ -4,9 +4,11 @@ import IBootConfig from './IBootConfig';
 import fs from 'fs';
 import { promisify } from 'util';
 import inputLine from './inputLine';
+import question from './question';
 
-const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
-
+/**
+ * provide methods to access server bootstrap config
+*/
 export default class BootConfigManager {
 	static create(mongoUrl: string, dbName: string): IBootConfig {
 		const config: IBootConfig = {

@@ -2,7 +2,8 @@ import inputLine from './inputLine';
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
-type ConsoleMenuItem = { description: string, enable: () => Promise<boolean> | boolean, func: (ctx: { closeMenu: () => void }) => Promise<void> | void };
+type ConsoleMenuItem =
+	{ description: string, enable: () => Promise<boolean> | boolean, func: (ctx: { closeMenu: () => void }) => Promise<void> | void };
 
 export default class ConsoleMenu {
 	constructor(menuName: string) {

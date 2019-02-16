@@ -4,7 +4,9 @@ import passport from 'passport';
 import { ComponentApi } from 'frost-component';
 import { MongoProvider, ActiveConfigManager } from 'frost-core';
 import { IAuthScope, AuthScopes } from './authScope';
-import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
+import {
+	IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument
+} from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
 import buildHttpResResolver from './apiResponse/buildHttpResResolver';

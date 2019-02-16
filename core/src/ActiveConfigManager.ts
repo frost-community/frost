@@ -1,5 +1,8 @@
 import MongoProvider from './MongoProvider';
 
+/**
+ * provide methods to access config items in the database
+*/
 export default class ActiveConfigManager {
 	constructor(db: MongoProvider) {
 		this.db = db;

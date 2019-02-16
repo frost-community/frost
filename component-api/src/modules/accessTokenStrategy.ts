@@ -1,7 +1,9 @@
 import passport from 'passport';
 import { Strategy as BearerStrategy } from 'passport-http-bearer';
 import { MongoProvider } from 'frost-core';
-import { IAppDocument, AppDocument, IUserDocument, UserDocument, ITokenDocument, TokenDocument } from './documents';
+import {
+	IAppDocument, AppDocument, IUserDocument, UserDocument, ITokenDocument, TokenDocument
+} from './documents';
 
 export default (db: MongoProvider) => {
 	passport.use('accessToken', new BearerStrategy(async (accessToken, done) => {

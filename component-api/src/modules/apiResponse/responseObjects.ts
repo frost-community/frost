@@ -2,7 +2,10 @@
 	define typing of API response
 */
 
-import { IUser, IPosting, IApp, IUserRelation, IAppSecret, IToken, IValidationResultValid, IValidationResultInvalid } from './packingObjects';
+import {
+	IUser, IPosting, IApp, IUserRelation, IAppSecret, IToken, IValidationResultValid,
+	IValidationResultInvalid
+} from './packingObjects';
 
 const enum ResultType {
 	message = 'message',
