@@ -27,6 +27,7 @@
     "express": "^4.16.4",
     "frost-component": "../component",
     "frost-core": "../core",
+    "frost-migration": "../migration",
     "vue": "2.5.x",
     "vue-class-component": "6.3.x",
     "vue-property-decorator": "7.3.x"

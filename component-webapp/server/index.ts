@@ -2,7 +2,7 @@ import path from 'path';
 import axios, { AxiosResponse } from 'axios';
 import express from 'express';
 import { ComponentApi, IComponent } from 'frost-component';
-import { MongoProvider, ActiveConfigManager } from 'frost-core';
+import { MongoProvider, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
 import IWebAppConfig from './modules/IWebAppConfig';
 import verifyWebAppConfig from './modules/verifyWebAppConfig';
 import validateCredential from './modules/validateCredential';
@@ -13,10 +13,9 @@ import createToken from './modules/createToken';
 import getTokenByAccessToken from './modules/getTokenByAccessToken';
 import log from './modules/log';
 import setupMenu from './modules/setup/setupMenu';
-import getDataFormatState, { DataFormatState } from './modules/getDataFormatState';
 
 const meta = {
-	currentDataVersion: 1
+	targetDataVersion: 2
 };
 
 export {
@@ -31,7 +30,7 @@ export default (options?: IWebOptions): IComponent => {
 
 		// * setup menu
 
-		const menu = await setupMenu(manager.db, meta.currentDataVersion);
+		const menu = await setupMenu(manager.db, meta.targetDataVersion);
 
 		return {
 			setupMenu: menu
@@ -40,19 +39,20 @@ export default (options?: IWebOptions): IComponent => {
 
 	async function handler(componentApi: ComponentApi) {
 
-		// * data format
+		// * data version
 
-		log('checking dataFormat ...');
-		const dataFormatState: DataFormatState = await getDataFormatState(componentApi.db, meta.currentDataVersion);
-		if (dataFormatState != DataFormatState.ready) {
-			if (dataFormatState == DataFormatState.needInitialization) {
+		log('checking dataVersion ...');
+		const dataVersionState = await getDataVersionState(componentApi.db, meta.targetDataVersion,
+			'webapp.meta', []);
+		if (dataVersionState != DataVersionState.ready) {
+			if (dataVersionState == DataVersionState.needInitialization) {
 				log('please initialize in setup mode.');
 			}
-			else if (dataFormatState == DataFormatState.needMigration) {
+			else if (dataVersionState == DataVersionState.needMigration) {
 				log('migration is required. please migrate database in setup mode.');
 			}
 			else {
-				log('this format is not supported. there is a possibility it was used by a newer webapp component. please clear database and restart.');
+				log('this dataVersion is not supported. there is a possibility it was used by a newer webapp component. please clear database and restart.');
 			}
 			throw new Error('failed to start webapp');
 		}

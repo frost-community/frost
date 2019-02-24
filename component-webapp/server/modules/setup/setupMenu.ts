@@ -1,21 +1,21 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager } from 'frost-core';
-import getDataFormatState, { DataFormatState } from '../getDataFormatState';
-import migrate from './migrate';
+import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
+import { Migrator } from 'frost-migration';
+import migration from './migration';
 import log from '../log';
 import IWebAppConfig from '../IWebAppConfig';
 import verifyWebAppConfig from '../verifyWebAppConfig';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 
-export default async function(db: MongoProvider, currentDataVersion: number) {
+export default async function(db: MongoProvider, targetDataVersion: number) {
 	const activeConfigManager = new ActiveConfigManager(db);
 
 	let config: IWebAppConfig | undefined;
-	let dataFormatState: DataFormatState;
+	let dataVersionState: DataVersionState;
 	const refreshMenu = async () => {
-		dataFormatState = await getDataFormatState(db, currentDataVersion);
+		dataVersionState = await getDataVersionState(db, targetDataVersion, 'webapp.meta', []);
 
 		config = {
 			apiBaseUrl: await activeConfigManager.getItem('webapp', 'apiBaseUrl'),
@@ -46,7 +46,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		ctx.closeMenu();
 	});
 	menu.add('initialize', () => true, async (ctx) => {
-		if (dataFormatState != DataFormatState.needInitialization) {
+		if (dataVersionState != DataVersionState.needInitialization) {
 			const allowClear = await question('(!) are you sure you want to REMOVE ALL COLLECTIONS and ALL DOCUMENTS in target database? (y/n) > ');
 			if (!allowClear) {
 				return;
@@ -62,7 +62,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 
 		const apiBaseUrl = await inputLine('please input apiBaseUrl > ');
 		const hostAccessToken = await inputLine('please input host accessToken > ');
-		const clientScopes = ["user.read", "user.write", "user.account.read", "user.account.write", "post.read", "post.write", "storage.read", "storage.write"];
+		const clientScopes = ['user.read', 'user.write', 'user.account.read', 'user.account.write', 'post.read', 'post.write', 'storage.read', 'storage.write'];
 		const enableRecaptcha = await question('do you want to enable reCAPTCHA? (y/n) > ');
 
 		let recaptchaSiteKey: string | undefined;
@@ -86,24 +86,14 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		await activeConfigManager.setItem('webapp', 'recaptcha.secretKey', recaptchaSecretKey);
 		log('recaptcha configured.');
 
-		await db.create('webapp.meta', { type: 'dataFormat', value: currentDataVersion });
+		await db.create('webapp.meta', { type: 'dataFormat', value: targetDataVersion });
 
 		await refreshMenu();
 	});
-	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), async (ctx) => {
-
-		const dataFormat = await db.find('webapp.meta', { type: 'dataFormat' });
-		if (!dataFormat) {
-			if (await migrate('empty->1')) {
-				log('migration to v1 has completed.');
-			}
-			else {
-				log('migration to v1 has failed.');
-			}
-		}
-		else {
-			log('failed to migration: unknown dataFormat');
-		}
+	menu.add('migrate from old data formats', () => (dataVersionState == DataVersionState.needMigration), async (ctx) => {
+		let dataVersion = await db.find('webapp.meta', { type: 'dataFormat' });
+		const migrator = await Migrator.FromPatchFunc(migration, db);
+		await migrator.migrate(dataVersion.value, targetDataVersion);
 
 		await refreshMenu();
 	});
