@@ -1,4 +1,4 @@
-import Express from 'express';
+import Express, { Express as ExpressInstance } from 'express';
 import passport from 'passport';
 import { MongoProvider, ConsoleMenu } from 'frost-core';
 import ComponentApi from './componentApi/ComponentApi';
@@ -35,6 +35,8 @@ export default class ComponentEngine {
 	private components: IComponent[];
 
 	private setupMenus: { component: IComponent, setupMenu: ConsoleMenu }[];
+
+	http: ExpressInstance | undefined;
 
 	has(componentName: string): boolean {
 		return this.components.find(component => component.name == componentName) != null;
@@ -106,25 +108,25 @@ export default class ComponentEngine {
 
 		log('http: initializing ...');
 
-		const app = Express();
-		app.set('views', apiInternal.http.viewPathes);
-		app.set('view engine', 'pug');
+		this.http = Express();
+		this.http.set('views', apiInternal.http.viewPathes);
+		this.http.set('view engine', 'pug');
 
-		app.use(passport.initialize());
+		this.http.use(passport.initialize());
 
 		log('http: registering init handlers ...');
 
 		for (const initHandler of apiInternal.http.initHandlers) {
-			await initHandler(app);
+			await initHandler(this.http);
 		}
 
 		log('http: registering route handlers ...');
 
 		for (const routeHandler of apiInternal.http.routeHandlers) {
-			await routeHandler(app);
+			await routeHandler(this.http);
 		}
 
-		app.listen(this.httpPort, () => {
+		this.http.listen(this.httpPort, () => {
 			log('http: started server.');
 		});
 
