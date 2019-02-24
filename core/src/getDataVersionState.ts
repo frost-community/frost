@@ -8,7 +8,7 @@ export const enum DataVersionState {
 }
 
 interface IGetDataVersionStateOptions {
-	enableOldMetaCollection: boolean;
+	enableOldMetaCollection?: boolean;
 }
 
 /**
@@ -18,12 +18,13 @@ interface IGetDataVersionStateOptions {
  * 「データバージョン」は、正常に初期化・データ移行するために必要な識別子です。
 */
 export default async function(db: MongoProvider, targetDataVersion: number, metaCollection: string, collections: string[], options?: IGetDataVersionStateOptions): Promise<DataVersionState> {
-	options = options || { enableOldMetaCollection: false };
+	options = options || { };
+	options.enableOldMetaCollection = options.enableOldMetaCollection || false;
 
 	let dataVersion = await db.find(metaCollection, { type: 'dataFormat' });
 
 	// NOTE: this code is left behind for backward compatibility. in the future it will be removed.
-	if (!dataVersion) {
+	if (!dataVersion && options.enableOldMetaCollection) {
 		dataVersion = await db.find('meta', { type: 'dataFormat' });
 	}
 
