@@ -12,7 +12,7 @@ export default class ActiveConfigManager {
 
 	async getItem(configDomain: string, type: string) {
 		const result = await this.db.find(`${configDomain}.config`, { type: type });
-		if (!result || !result.value) {
+		if (result == null || result.value == null) {
 			return null;
 		}
 		return result.value;
