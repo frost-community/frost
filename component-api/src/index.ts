@@ -4,7 +4,7 @@ import glob from 'glob';
 import { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { ComponentApi, IComponent } from 'frost-component';
-import { MongoProvider, ActiveConfigManager } from 'frost-core';
+import { MongoProvider, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
 import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import IApiConfig from './modules/IApiConfig';
@@ -12,11 +12,10 @@ import verifyApiConfig from './modules/verifyApiConfig';
 import accessTokenStrategy from './modules/accessTokenStrategy';
 import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
 import setupMenu from './modules/setup/setupMenu';
-import getDataFormatState, { DataFormatState } from './modules/getDataFormatState';
 import log from './modules/log';
 
 const meta = {
-	currentDataVersion: 2
+	targetDataVersion: 2
 };
 
 export {
@@ -31,7 +30,7 @@ export default (options?: IApiOptions): IComponent => {
 
 		// * setup menu
 
-		const menu = await setupMenu(manager.db, meta.currentDataVersion);
+		const menu = await setupMenu(manager.db, meta.targetDataVersion);
 
 		return {
 			setupMenu: menu
@@ -46,19 +45,22 @@ export default (options?: IApiOptions): IComponent => {
 
 	async function handler(componentApi: ComponentApi) {
 
-		// * data format
+		// * data version
 
-		log('checking dataFormat ...');
-		const dataFormatState: DataFormatState = await getDataFormatState(componentApi.db, meta.currentDataVersion);
-		if (dataFormatState != DataFormatState.ready) {
-			if (dataFormatState == DataFormatState.needInitialization) {
+		log('checking dataVersion ...');
+		const dataVersionState = await getDataVersionState(componentApi.db, meta.targetDataVersion,
+			'api.meta',
+			['api.users', 'api.apps', 'api.tokens', 'api.userRelations', 'api.postings', 'api.storageFiles'],
+			{ enableOldMetaCollection: true });
+		if (dataVersionState != DataVersionState.ready) {
+			if (dataVersionState == DataVersionState.needInitialization) {
 				log('please initialize in setup mode.');
 			}
-			else if (dataFormatState == DataFormatState.needMigration) {
+			else if (dataVersionState == DataVersionState.needMigration) {
 				log('migration is required. please migrate database in setup mode.');
 			}
 			else {
-				log('this format is not supported. there is a possibility it was used by a newer api component. please clear database and restart.');
+				log('this dataVersion is not supported. there is a possibility it was used by a newer api component. please clear database and restart.');
 			}
 			throw new Error('failed to start api');
 		}

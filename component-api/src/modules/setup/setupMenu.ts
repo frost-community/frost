@@ -1,19 +1,19 @@
 import $ from 'cafy';
 import uid from 'uid2';
-import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager } from 'frost-core';
-import getDataFormatState, { DataFormatState } from '../getDataFormatState';
+import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
+import { Migrator } from 'frost-migration';
+import migration from './migration';
 import UserService from '../../services/UserService';
 import AppService from '../../services/AppService';
 import TokenService from '../../services/TokenService';
 import { AuthScopes } from '../authScope';
-import migrate from './migrate';
 import log from '../log';
 import IApiConfig from '../IApiConfig';
 import verifyApiConfig from '../verifyApiConfig';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 
-export default async function(db: MongoProvider, currentDataVersion: number) {
+export default async function(db: MongoProvider, targetDataVersion: number) {
 
 	// services
 	const userService = new UserService(db);
@@ -23,9 +23,12 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 	const activeConfigManager = new ActiveConfigManager(db);
 
 	let config: IApiConfig | undefined;
-	let dataFormatState: DataFormatState;
+	let dataVersionState: DataVersionState;
 	const refreshMenu = async () => {
-		dataFormatState = await getDataFormatState(db, currentDataVersion);
+		dataVersionState = await getDataVersionState(db, targetDataVersion, 'api.meta',
+		['api.users', 'api.apps', 'api.tokens', 'api.userRelations', 'api.postings', 'api.storageFiles'],
+		{ enableOldMetaCollection: true });
+
 
 		config = {
 			appSecretKey: await activeConfigManager.getItem('api', 'appSecretKey'),
@@ -48,7 +51,7 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		ctx.closeMenu();
 	});
 	menu.add('initialize (register root app and root user)', () => true, async (ctx) => {
-		if (dataFormatState != DataFormatState.needInitialization) {
+		if (dataVersionState != DataVersionState.needInitialization) {
 			const allowClear = await question('(!) are you sure you want to REMOVE ALL COLLECTIONS and ALL DOCUMENTS in target database? (y/n) > ');
 			if (!allowClear) {
 				return;
@@ -86,11 +89,11 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 		await activeConfigManager.setItem('api', 'hostToken.scopes', hostTokenScopes);
 		log('hostToken.scopes configured.');
 
-		await db.create('api.meta', { type: 'dataFormat', value: currentDataVersion });
+		await db.create('api.meta', { type: 'dataFormat', value: targetDataVersion });
 
 		await refreshMenu();
 	});
-	menu.add('generate or get token for authorization host', () => (dataFormatState == DataFormatState.ready && config != null), async (ctx) => {
+	menu.add('generate or get token for authorization host', () => (dataVersionState == DataVersionState.ready && config != null), async (ctx) => {
 		const rootUser = await db.find('api.users', { root: true });
 		let rootApp = await db.find('api.apps', { root: true });
 		if (rootApp) {
@@ -113,20 +116,13 @@ export default async function(db: MongoProvider, currentDataVersion: number) {
 
 		await refreshMenu();
 	});
-	menu.add('migrate from old data formats', () => (dataFormatState == DataFormatState.needMigration), async (ctx) => {
-
-		const dataFormat = await db.find('api.meta', { type: 'dataFormat' });
-		if (!dataFormat) {
-			if (await migrate('empty->1')) {
-				log('migration to v1 has completed.');
-			}
-			else {
-				log('migration to v1 has failed.');
-			}
+	menu.add('migrate from old data formats', () => (dataVersionState == DataVersionState.needMigration), async (ctx) => {
+		let dataVersion = await db.find('api.meta', { type: 'dataFormat' });
+		if (!dataVersion) {
+			dataVersion = await db.find('meta', { type: 'dataFormat' });
 		}
-		else {
-			log('failed to migration: unknown dataFormat');
-		}
+		const migrator = await Migrator.FromPatchFunc(migration, db);
+		await migrator.migrate(dataVersion.value, targetDataVersion);
 
 		await refreshMenu();
 	});
