@@ -13,13 +13,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/argv": "0.0.4",
-    "@types/mongodb": "^3.1.18",
     "@types/node": "^10.12.15",
-    "argv": "0.0.2",
-    "frost-core": "../core",
-    "mongodb": "^3.1.10",
-    "uid2": "0.0.3"
+    "frost-core": "../core"
   },
   "devDependencies": {
     "typescript": "^3.2.2"
