@@ -1,4 +1,3 @@
-/// <reference path="../externalTypes/uid2.d.ts" />
 
 export {
 	default as MongoProvider
@@ -17,13 +16,10 @@ export {
 } from './question';
 
 export {
-	default as BootConfigManager
-} from './BootConfigManager';
-
-export {
 	default as ActiveConfigManager
 } from './ActiveConfigManager';
 
 export {
-	default as IBootConfig
-} from './IBootConfig';
+	default as getDataVersionState,
+	DataVersionState
+} from './getDataVersionState';
