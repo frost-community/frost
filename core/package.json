@@ -1,0 +1,26 @@
+{
+  "name": "frost-core",
+  "version": "0.0.1",
+  "description": "The core of the Frost",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "marihachi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/mongodb": "^3.1.18",
+    "@types/node": "^10.12.15",
+    "mongodb": "^3.1.10"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "files": [
+    "built"
+  ]
+}
