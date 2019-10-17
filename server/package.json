@@ -2,7 +2,7 @@
   "private": true,
   "name": "frost-server",
   "version": "0.0.0",
-  "description": "The server core of the Frost",
+  "description": "Server env of the Frost",
   "main": "built/index.js",
   "scripts": {
     "build": "tsc",
@@ -21,9 +21,7 @@
     "@types/node": "^10.12.15",
     "argv": "0.0.2",
     "cafy": "^12.1.0",
-    "frost-component": "../component",
-    "frost-component-api": "../component-api",
-    "frost-component-webapp": "../component-webapp",
+    "frost-component-base": "../component-base",
     "frost-core": "../core"
   },
   "devDependencies": {
