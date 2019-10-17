@@ -1,4 +1,4 @@
-# Frost/Component
+# Frost/Core
 The core of the Frost
 
 ## License
