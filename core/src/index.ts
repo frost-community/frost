@@ -6,7 +6,13 @@ export {
 export {
 	default as IComponent,
 	IComponentBootApi,
-	IComponentInstallApi
+	IComponentInstallApi,
+	ActionResult,
+	isActionOkResult,
+	isActionErrorResult,
+	ActionError,
+	ActionErrorResult,
+	ActionOkResult
 } from './Component';
 
 export {

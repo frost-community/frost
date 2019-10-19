@@ -1,66 +1,25 @@
-//import $ from 'cafy';
+import { EventEmitter } from 'events';
 import argv from 'argv';
 import {
 	MongoProvider,
 	IComponent,
-	IComponentInstallApi,
-	IComponentBootApi,
-	ActiveConfigManager,
-	ConsoleMenu
+	ActiveConfigManager
 } from 'frost-core';
 import showServerSettingMenu from './showServerSettingMenu';
 import { IBootConfig, BootConfigManager } from './BootConfig';
+import {
+	InstallApi,
+	BootApi
+} from './serverEngineApis';
 
 function log(...params: any[]) {
 	console.log('[ServerEngine]', ...params);
 }
 
-class InstallApi implements IComponentInstallApi {
-	constructor(db: MongoProvider) {
-		this.db = db;
-	}
-
-	db: MongoProvider;
-
-	registerSetupMenu(setupMenu: ConsoleMenu): void {
-		// TODO
-	}
-}
-
-class BootApi implements IComponentBootApi {
-	constructor(db: MongoProvider) {
-		this.db = db;
-	}
-
-	db: MongoProvider;
-
-	// action
-	defineAction(actionName: string, handler: (param: {[x: string]: any}) => Promise<{[x: string]: any}>): void {
-		// TODO
-	}
-	async callAction(actionName: string, param: {[x: string]: any}): Promise<{[x: string]: any}> {
-		// TODO
-		return {};
-	}
-
-	// event
-	emitEvent(componentName: string, eventType: string, eventData: {[x: string]: any}): void {
-		// TODO
-	}
-	addEventListener(eventType: string, callback: (eventData: {[x: string]: any}) => void): void {
-		// TODO
-	}
-	removeEventListener(eventType: string, callback: (eventData: {[x: string]: any}) => void): void {
-		// TODO
-	}
-	removeAllEventListeners(eventType?: string): void {
-		// TODO
-	}
-}
-
 export interface ServerContext {
 	components: IComponent[];
 	db: MongoProvider;
+	messenger: EventEmitter;
 }
 
 export default class ServerEngine {
@@ -73,7 +32,7 @@ export default class ServerEngine {
 
 	private static async boot(ctx: ServerContext, component: IComponent): Promise<void> {
 		log(`booting: ${component.name}`);
-		await component.boot(new BootApi(ctx.db));
+		await component.boot(new BootApi(component, ctx.db, ctx.messenger));
 	}
 
 	static async start(bootConfigFilepath: string): Promise<void> {
@@ -146,7 +105,8 @@ export default class ServerEngine {
 
 		const ctx: ServerContext = {
 			db,
-			components: []
+			components: [],
+			messenger: new EventEmitter()
 		};
 
 		for (const componentName of bootConfig.usingComponents) {

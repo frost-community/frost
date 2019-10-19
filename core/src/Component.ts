@@ -1,6 +1,28 @@
 import MongoProvider from './MongoProvider';
 import ConsoleMenu from './ConsoleMenu';
 
+export type ActionResult = ActionOkResult | ActionErrorResult;
+
+export interface ActionOkResult {
+	data: {[x: string]: any};
+}
+export function isActionOkResult(actionResult: {[x: string]: any}): actionResult is ActionOkResult {
+	return actionResult.data != undefined;
+}
+
+export interface ActionError {
+	reason: string;
+	details?: any;
+}
+
+export interface ActionErrorResult {
+	error: ActionError;
+}
+export function isActionErrorResult(actionResult: {[x: string]: any}): actionResult is ActionErrorResult {
+	return actionResult.error != undefined;
+}
+
+
 export interface IComponentInstallApi {
 	db: MongoProvider;
 	registerSetupMenu(setupMenu: ConsoleMenu): void;
@@ -10,8 +32,8 @@ export interface IComponentBootApi {
 	db: MongoProvider;
 
 	// action
-	defineAction(actionName: string, handler: (param: {[x: string]: any}) => Promise<{[x: string]: any}>): void;
-	callAction(actionName: string, param: {[x: string]: any}): Promise<{[x: string]: any}>;
+	defineAction(actionName: string, handler: (data: {[x: string]: any}) => Promise<ActionResult>): void;
+	callAction(componentName: string, actionName: string, data: {[x: string]: any}, options?: { timeout?: number }): Promise<ActionResult>;
 
 	// event
 	emitEvent(componentName: string, eventType: string, eventData: {[x: string]: any}): void;
