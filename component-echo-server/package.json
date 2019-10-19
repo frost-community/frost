@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "component-echo-server",
+  "version": "0.0.1",
+  "description": "test component of echo server",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "marihachi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^10.12.18",
+    "frost-core": "../core"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  }
+}
