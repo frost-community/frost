@@ -1,11 +1,41 @@
-import argv from 'argv';
-import { ComponentEngine } from 'frost-component';
-import frostApi from 'frost-component-api';
-import frostWeb from 'frost-component-webapp';
-import log from './modules/log';
-import initializeServer from './modules/initializeServer';
-import showServerSettingMenu from './modules/showServerSettingMenu';
-import loadServerConfig from './modules/loadServerConfig';
+import $ from 'cafy';
+import { ServerEngine } from './engine';
+import log from './log';
+import path from 'path';
+
+// interface IServerConfig {
+// 	usingComponents: string[];
+// }
+
+// function loadServerConfig() {
+// 	log('loading server config ...');
+
+// 	let serverConfig: IServerConfig;
+// 	if (process.env.FROST_SERVER != null) {
+// 		log(`loading server config from FROST_BOOT FROST_SERVER variable ...`);
+// 		serverConfig = JSON.parse(process.env.FROST_SERVER) as IServerConfig;
+// 	}
+// 	else {
+// 		log(`loading server config from server-config.json ...`);
+// 		serverConfig = require(`../.configs/server-config.json`) as IServerConfig;
+// 	}
+
+// 	try {
+// 		// verify server config
+// 		const verificationServerConfig = $.obj({
+// 			usingComponents: $.array($.str)
+// 		});
+// 		if (verificationServerConfig.nok(serverConfig)) {
+// 			throw new Error('invalid server config');
+// 		}
+// 		log('loaded server config.');
+// 	}
+// 	catch {
+// 		throw new Error('server is not configured. please configure on the server setting menu.');
+// 	}
+
+// 	return serverConfig;
+// }
 
 async function entryPoint() {
 
@@ -13,54 +43,27 @@ async function entryPoint() {
 	console.log('  * Frost  ');
 	console.log('===========');
 
-	// option args
-	argv.option({
-		name: 'serverSetting',
-		type: 'boolean',
-		description: 'Display server setting menu'
-	});
-	argv.option({
-		name: 'componentSetting',
-		type: 'boolean',
-		description: 'Display component setting menu'
-	});
-	const { options } = argv.run();
+	const serverEngine = new ServerEngine();
 
-	const initResult = await initializeServer();
+	// const serverConfig = loadServerConfig();
 
-	// server setting menu
-	if (options.serverSetting) {
-		await showServerSettingMenu(initResult ? initResult.activeConfigManager : undefined);
-		return;
-	}
+	// for (const usingComponent of serverConfig.usingComponents) {
+	// 	let component: any;
+	// 	try {
+	// 		component = require(usingComponent);
+	// 	}
+	// 	catch (err) {
+	// 		log(`failed to load ${usingComponent} component`);
+	// 		continue;
+	// 	}
+	// 	if (component.default) {
+	// 		component = component.default;
+	// 	}
+	// 	serverEngine.use(component());
+	// 	log(`${usingComponent} component is enabled`);
+	// }
 
-	if (!initResult) {
-		throw new Error('boot config is not found. please generate boot config on the server setting menu.');
-	}
-
-	const serverConfig = await loadServerConfig(initResult.activeConfigManager);
-
-	const engine = new ComponentEngine(serverConfig.httpPort!, initResult.db, { });
-
-	if (serverConfig.enableApi) {
-		log('enable API component');
-		engine.use(frostApi());
-	}
-
-	if (serverConfig.enableWebApp) {
-		log('enable WebApp component');
-		engine.use(frostWeb());
-	}
-
-	await engine.initializeComponents();
-
-	// component setting menu
-	if (options.componentSetting) {
-		await engine.showComponentMenu();
-		return;
-	}
-
-	await engine.startComponents();
+	await serverEngine.start(path.resolve(__dirname, '../.configs/boot-config.json'));
 }
 
 entryPoint()

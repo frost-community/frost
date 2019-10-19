@@ -14,11 +14,11 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "start setup of server",
+			"name": "server setting",
 			"console": "integratedTerminal",
 			"program": "${workspaceFolder}/server/built/index.js",
 			"args": [
-				"--setup"
+				"--serverSetting"
 			],
 			"outFiles": [
 				"${workspaceFolder}/**/*.js"

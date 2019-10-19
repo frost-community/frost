@@ -7,8 +7,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node .",
-    "setup": "node . --setup",
-    "init": "node . --init"
+    "componentSetting": "node . --componentSetting",
+    "serverSetting": "node . --serverSetting"
   },
   "author": "marihachi",
   "repository": {

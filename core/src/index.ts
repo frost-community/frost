@@ -1,5 +1,9 @@
 
 export {
+	default as ActiveConfigManager
+} from './ActiveConfigManager';
+
+export {
 	default as IComponent,
 	IComponentBootApi,
 	IComponentInstallApi
