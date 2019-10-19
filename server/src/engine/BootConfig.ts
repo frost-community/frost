@@ -1,5 +1,5 @@
 import $ from 'cafy';
-import uid from 'uid2';
+import randomstring from 'randomstring';
 import { promises as fs } from 'fs';
 import { question, inputLine } from 'frost-core';
 
@@ -19,7 +19,7 @@ export interface IBootConfig {
 export class BootConfigManager {
 	static create(mongoUrl: string, dbName: string, components: string[] = ['frost-component-base'], httpPort?: number): IBootConfig {
 		const config: IBootConfig = {
-			cryptoKey: uid(128),
+			cryptoKey: randomstring.generate({ length: 128 }),
 			mongo: {
 				url: mongoUrl,
 				dbName: dbName

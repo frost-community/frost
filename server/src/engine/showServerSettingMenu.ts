@@ -1,5 +1,4 @@
-import ActiveConfigManager from '../utils/ActiveConfigManager';
-import { ConsoleMenu } from 'frost-core';
+import { ConsoleMenu, ActiveConfigManager } from 'frost-core';
 
 //import inputLine from '../utils/inputLine';
 //import question from '../utils/question';
