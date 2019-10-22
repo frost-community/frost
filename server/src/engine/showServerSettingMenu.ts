@@ -11,7 +11,7 @@ import { BootConfigManager } from './BootConfig';
  */
 export default async function(activeConfigManager?: ActiveConfigManager) {
 	const menu = new ConsoleMenu('server setting menu');
-	menu.add('close', () => true, (ctx) => {
+	menu.add('* close menu *', () => true, (ctx) => {
 		ctx.closeMenu();
 	});
 	menu.add('generate boot config', () => true, async (ctx) => {
