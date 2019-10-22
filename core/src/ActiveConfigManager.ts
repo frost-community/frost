@@ -10,19 +10,19 @@ export default class ActiveConfigManager {
 
 	private db: MongoProvider;
 
-	async getItem(configDomain: string, type: string) {
-		const result = await this.db.find(`${configDomain}.config`, { type: type });
+	async getItem(dbDomain: string, type: string): Promise<any | null> {
+		const result = await this.db.find(`${dbDomain}.config`, { type: type });
 		if (result == null || result.value == null) {
 			return null;
 		}
 		return result.value;
 	}
 
-	async setItem(configDomain: string, type: string, value: any) {
-		await this.db.upsert(`${configDomain}.config`, { type: type }, { type: type, value: value });
+	async setItem(dbDomain: string, type: string, value: any): Promise<void> {
+		await this.db.upsert(`${dbDomain}.config`, { type: type }, { type: type, value: value });
 	}
 
-	async removeItem(configDomain: string, type: string) {
-		await this.setItem(configDomain, type, null);
+	async removeItem(dbDomain: string, type: string): Promise<void> {
+		await this.setItem(dbDomain, type, null);
 	}
 }
