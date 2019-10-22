@@ -14,16 +14,21 @@ import {
 	ActionResultFrame,
 	ActionErrorResultFrame
 } from './actionInterface';
+import { SetupItem } from './showComponentSettingMenu';
 
 export class InstallApi implements IComponentInstallApi {
-	constructor(db: MongoProvider) {
+	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[]) {
+		this.component = component;
 		this.db = db;
+		this.setupItems = setupItems;
 	}
 
+	component: IComponent;
 	db: MongoProvider;
+	setupItems: SetupItem[];
 
 	registerSetupMenu(setupMenu: ConsoleMenu): void {
-		// TODO
+		this.setupItems.push({ component: this.component, setupMenu: setupMenu });
 	}
 }
 
