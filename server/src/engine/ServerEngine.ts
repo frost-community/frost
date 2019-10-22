@@ -11,6 +11,7 @@ import {
 	InstallApi,
 	BootApi
 } from './serverEngineApis';
+import showComponentSettingMenu, { SetupItem } from './showComponentSettingMenu';
 
 function log(...params: any[]) {
 	console.log('[ServerEngine]', ...params);
@@ -20,13 +21,14 @@ export interface ServerContext {
 	components: IComponent[];
 	db: MongoProvider;
 	messenger: EventEmitter;
+	setupItems: SetupItem[];
 }
 
 export default class ServerEngine {
 	private static async install(ctx: ServerContext, component: IComponent): Promise<void> {
 		if (component.install) {
 			log(`installing: ${component.name}`);
-			await component.install(new InstallApi(ctx.db));
+			await component.install(new InstallApi(component, ctx.db, ctx.setupItems));
 		}
 	}
 
@@ -96,6 +98,9 @@ export default class ServerEngine {
 		// server setting menu
 		if (options.serverSetting) {
 			await showServerSettingMenu(activeConfigManager);
+			if (db) {
+				await db.disconnect();
+			}
 			return;
 		}
 
@@ -106,10 +111,15 @@ export default class ServerEngine {
 		const ctx: ServerContext = {
 			db,
 			components: [],
-			messenger: new EventEmitter()
+			messenger: new EventEmitter(),
+			setupItems: []
 		};
 
 		for (const componentName of bootConfig.usingComponents) {
+			if (!/^[a-z0-9_-]+$/i.test(componentName)) {
+				throw new Error(`invalid component name: ${componentName}`);
+			}
+
 			let componentFn;
 			try {
 				componentFn = require(componentName);
@@ -132,7 +142,10 @@ export default class ServerEngine {
 		}
 
 		if (options.componentSetting) {
-			// TODO: show the component setting menu
+			showComponentSettingMenu(ctx.setupItems);
+			if (db) {
+				await db.disconnect();
+			}
 			return;
 		}
 
