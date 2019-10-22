@@ -23,7 +23,7 @@ export default class MongoProvider {
 
 	private db: Db;
 
-	async create(collectionName: string, data: { [x: string]: any }): Promise<any> {
+	async create(collectionName: string, data: {[x: string]: any}): Promise<any> {
 		const result = await this.db.collection(collectionName).insertOne(data);
 		const document = await this.find(collectionName, { _id: result.ops[0]._id });
 
@@ -33,21 +33,21 @@ export default class MongoProvider {
 	/**
 	 * ドキュメントを検索して1つの項目を取得します
 	*/
-	find(collectionName: string, query: { [x: string]: any }, options?: { [x: string]: any }): Promise<any> {
+	find(collectionName: string, query: {[x: string]: any}, options?: {[x: string]: any}): Promise<any> {
 		return this.db.collection(collectionName).findOne(query, options);
 	}
 
 	/**
 	 * ドキュメントIDによりドキュメントを検索して1つの項目を取得します
 	*/
-	findById(collectionName: string, id: string | ObjectId, options?: { [x: string]: any }): Promise<any> {
+	findById(collectionName: string, id: string | ObjectId, options?: {[x: string]: any}): Promise<any> {
 		return this.find(collectionName, { _id: MongoProvider.buildId(id) }, options);
 	}
 
 	/**
 	 * ドキュメントを検索して複数の項目を取得します
 	*/
-	async findArray(collectionName: string, query: { [x: string]: any }, options?: IFindArrayOptions): Promise<any[]> {
+	async findArray(collectionName: string, query: {[x: string]: any}, options?: IFindArrayOptions): Promise<any[]> {
 		options = options || {};
 
 		if (options.since != null || options.until != null) {
@@ -76,14 +76,14 @@ export default class MongoProvider {
 	/**
 	 * クエリに一致するドキュメントの個数を取得します
 	*/
-	async count(collectionName: string, query: { [x: string]: any }): Promise<number> {
+	async count(collectionName: string, query: {[x: string]: any}): Promise<number> {
 		return this.db.collection(collectionName).countDocuments(query);
 	}
 
 	/**
 	 * ドキュメントを更新します
 	*/
-	async update(collectionName: string, query: FilterQuery<any>, data: { [x: string]: any }, options?: UpdateOneOptions & { renewal?: boolean }): Promise<any> {
+	async update(collectionName: string, query: FilterQuery<any>, data: {[x: string]: any}, options?: UpdateOneOptions & { renewal?: boolean }): Promise<any> {
 		if (options == null) options = {};
 
 		const result = await this.db.collection(collectionName).updateOne(query, options.renewal ? data : { $set: data }, options);
@@ -97,7 +97,7 @@ export default class MongoProvider {
 		return document;
 	}
 
-	async updateMany(collectionName: string, query: FilterQuery<any>, data: { [x: string]: any }, options?: UpdateManyOptions & { renewal?: boolean }) {
+	async updateMany(collectionName: string, query: FilterQuery<any>, data: {[x: string]: any}, options?: UpdateManyOptions & { renewal?: boolean }) {
 		if (options == null) options = {};
 		//options.renewal = options.renewal || false;
 
@@ -112,11 +112,11 @@ export default class MongoProvider {
 		return documents;
 	}
 
-	updateById(collectionName: string, id: string | ObjectId, data: { [x: string]: any }, options?: UpdateOneOptions & { renewal?: boolean }) {
+	updateById(collectionName: string, id: string | ObjectId, data: {[x: string]: any}, options?: UpdateOneOptions & { renewal?: boolean }) {
 		return this.update(collectionName, { _id: MongoProvider.buildId(id) }, data, options);
 	}
 
-	upsert(collectionName: string, query: FilterQuery<any>, data: { [x: string]: any }, options?: UpdateOneOptions & { renewal?: boolean }) {
+	upsert(collectionName: string, query: FilterQuery<any>, data: {[x: string]: any}, options?: UpdateOneOptions & { renewal?: boolean }) {
 		if (options == null)
 			options = {};
 
@@ -133,7 +133,7 @@ export default class MongoProvider {
 	 * @param {Object} options
 	 * @return {Promise<void>}
 	*/
-	async remove(collectionName: string, query: { [x: string]: any }, options?: MongoCommonOptions & { single?: boolean }): Promise<WriteOpResult> {
+	async remove(collectionName: string, query: {[x: string]: any}, options?: MongoCommonOptions & { single?: boolean }): Promise<WriteOpResult> {
 		return await this.db.collection(collectionName).remove(query, options);
 	}
 
