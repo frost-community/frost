@@ -3,7 +3,7 @@ import { ConsoleMenu, ActiveConfigManager } from 'frost-core';
 //import inputLine from '../utils/inputLine';
 //import question from '../utils/question';
 
-import { BootConfigManager } from './BootConfig';
+import showInitBootConfig from './showInitBootConfig';
 
 /**
  * show menu of server setting.
@@ -14,8 +14,8 @@ export default async function(activeConfigManager?: ActiveConfigManager) {
 	menu.add('* close menu *', () => true, (ctx) => {
 		ctx.closeMenu();
 	});
-	menu.add('generate boot config', () => true, async (ctx) => {
-		await BootConfigManager.showInit();
+	menu.add('configure boot config', () => true, async (ctx) => {
+		await showInitBootConfig();
 	});
 	// menu.add('configure server', () => (activeConfigManager != null), async (ctx) => {
 	// 	// mongo url

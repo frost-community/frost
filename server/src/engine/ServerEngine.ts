@@ -3,10 +3,12 @@ import argv from 'argv';
 import {
 	MongoProvider,
 	IComponent,
-	ActiveConfigManager
+	ActiveConfigManager,
+	BootConfigManager,
+	IBootConfig,
+	verifyComponent
 } from 'frost-core';
 import showServerSettingMenu from './showServerSettingMenu';
-import { IBootConfig, BootConfigManager } from './BootConfig';
 import {
 	InstallApi,
 	BootApi
@@ -134,6 +136,9 @@ export default class ServerEngine {
 				throw new Error(`failed to load ${componentName} component`);
 			}
 			const component = componentFn();
+			if (!verifyComponent(component)) {
+				throw new Error(`failed to load ${componentName} component`);
+			}
 			ctx.components.push(component);
 		}
 
