@@ -15,7 +15,10 @@
   "dependencies": {
     "@types/mongodb": "^3.1.18",
     "@types/node": "^10.12.15",
-    "mongodb": "^3.1.10"
+    "@types/randomstring": "^1.1.6",
+    "cafy": "^15.1.1",
+    "mongodb": "^3.1.10",
+    "randomstring": "^1.1.5"
   },
   "devDependencies": {
     "typescript": "^3.2.2"

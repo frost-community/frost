@@ -1,3 +1,4 @@
+import $ from 'cafy';
 import MongoProvider from './MongoProvider';
 import ConsoleMenu from './ConsoleMenu';
 
@@ -49,4 +50,13 @@ export default interface IComponent {
 	name: string;
 	install?: (installArg: IComponentInstallApi) => Promise<void>;
 	boot: (bootArg: IComponentBootApi) => Promise<void>;
+}
+
+export function verifyComponent(component: any): boolean {
+	const verificationComponent = $.obj({
+		name: $.str,
+		install: $.nullable.optional.any.pipe(i => typeof i == 'function'),
+		boot: $.any.pipe(i => typeof i == 'function')
+	});
+	return verificationComponent.ok(component);
 }
