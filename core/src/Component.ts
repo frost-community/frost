@@ -25,11 +25,13 @@ export function isActionErrorResult(actionResult: {[x: string]: any}): actionRes
 
 
 export interface IComponentInstallApi {
+	cryptoKey: string;
 	db: MongoProvider;
 	registerSetupMenu(setupMenu: ConsoleMenu): void;
 }
 
 export interface IComponentBootApi {
+	cryptoKey: string;
 	db: MongoProvider;
 
 	// action

@@ -4,11 +4,6 @@ export {
 } from './ActiveConfigManager';
 
 export {
-	BootConfigManager,
-	IBootConfig
-} from './bootConfig';
-
-export {
 	default as IComponent,
 	IComponentBootApi,
 	IComponentInstallApi,

@@ -1,4 +1,5 @@
-import { question, inputLine, BootConfigManager } from 'frost-core';
+import { question, inputLine } from 'frost-core';
+import { BootConfigManager } from './bootConfig';
 
 export default async function showInitBootConfig() {
 	let mongoUrl: string, dbName: string, httpPort: number | undefined;

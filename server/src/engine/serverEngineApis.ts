@@ -15,16 +15,19 @@ import {
 	ActionErrorResultFrame
 } from './actionInterface';
 import { SetupItem } from './showComponentSettingMenu';
+import { IBootConfig } from './bootConfig';
 
 export class InstallApi implements IComponentInstallApi {
-	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[]) {
-		this.component = component;
+	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[], bootConfig: IBootConfig) {
+		this.cryptoKey = bootConfig.cryptoKey;
 		this.db = db;
+		this.component = component;
 		this.setupItems = setupItems;
 	}
 
-	component: IComponent;
+	cryptoKey: string;
 	db: MongoProvider;
+	component: IComponent;
 	setupItems: SetupItem[];
 
 	registerSetupMenu(setupMenu: ConsoleMenu): void {
@@ -33,14 +36,16 @@ export class InstallApi implements IComponentInstallApi {
 }
 
 export class BootApi implements IComponentBootApi {
-	constructor(component: IComponent, db: MongoProvider, messenger: EventEmitter) {
-		this.component = component;
+	constructor(component: IComponent, db: MongoProvider, messenger: EventEmitter, bootConfig: IBootConfig) {
+		this.cryptoKey = bootConfig.cryptoKey;
 		this.db = db;
+		this.component = component;
 		this.messenger = messenger;
 	}
 
-	component: IComponent;
+	cryptoKey: string;
 	db: MongoProvider;
+	component: IComponent;
 	messenger: EventEmitter;
 
 	private buildActionChannelName(actionType: 'request' | 'response', actionName: string, componentName: string): string {

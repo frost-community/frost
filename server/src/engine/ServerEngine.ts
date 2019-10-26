@@ -4,8 +4,6 @@ import {
 	MongoProvider,
 	IComponent,
 	ActiveConfigManager,
-	BootConfigManager,
-	IBootConfig,
 	verifyComponent
 } from 'frost-core';
 import showServerSettingMenu from './showServerSettingMenu';
@@ -14,6 +12,7 @@ import {
 	BootApi
 } from './serverEngineApis';
 import showComponentSettingMenu, { SetupItem } from './showComponentSettingMenu';
+import { BootConfigManager, IBootConfig } from './bootConfig';
 
 function log(...params: any[]) {
 	console.log('[ServerEngine]', ...params);
@@ -27,16 +26,16 @@ export interface ServerContext {
 }
 
 export default class ServerEngine {
-	private static async install(ctx: ServerContext, component: IComponent): Promise<void> {
+	private static async install(ctx: ServerContext, component: IComponent, bootConfig: IBootConfig): Promise<void> {
 		if (component.install) {
 			log(`installing: ${component.name}`);
-			await component.install(new InstallApi(component, ctx.db, ctx.setupItems));
+			await component.install(new InstallApi(component, ctx.db, ctx.setupItems, bootConfig));
 		}
 	}
 
-	private static async boot(ctx: ServerContext, component: IComponent): Promise<void> {
+	private static async boot(ctx: ServerContext, component: IComponent, bootConfig: IBootConfig): Promise<void> {
 		log(`booting: ${component.name}`);
-		await component.boot(new BootApi(component, ctx.db, ctx.messenger));
+		await component.boot(new BootApi(component, ctx.db, ctx.messenger, bootConfig));
 	}
 
 	static async start(bootConfigFilepath: string): Promise<void> {
@@ -143,7 +142,7 @@ export default class ServerEngine {
 		}
 
 		for (const component of ctx.components) {
-			ServerEngine.install(ctx, component);
+			ServerEngine.install(ctx, component, bootConfig);
 		}
 
 		if (options.componentSetting) {
@@ -155,7 +154,7 @@ export default class ServerEngine {
 		}
 
 		for (const component of ctx.components) {
-			ServerEngine.boot(ctx, component);
+			ServerEngine.boot(ctx, component, bootConfig);
 		}
 	}
 
