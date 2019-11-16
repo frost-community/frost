@@ -19,32 +19,7 @@ function log(...params: any[]) {
 }
 
 export default class ServerEngine {
-	private components: IComponent[];
-	private db?: MongoProvider;
-	private messenger: EventEmitter;
-	private setupItems: SetupItem[];
-
-	constructor() {
-		this.components = [];
-		this.messenger = new EventEmitter();
-		this.setupItems = [];
-	}
-
-	private async install(component: IComponent, bootConfig: IBootConfig): Promise<void> {
-		if (!this.db) throw new Error('need to start the ServerEngine');
-		if (component.install) {
-			log(`installing: ${component.name}`);
-			await component.install(new InstallApi(component, this.db, this.setupItems, bootConfig));
-		}
-	}
-
-	private async boot(component: IComponent, bootConfig: IBootConfig): Promise<void> {
-		if (!this.db) throw new Error('need to start the ServerEngine');
-		log(`booting: ${component.name}`);
-		await component.boot(new BootApi(component, this.db, this.messenger, bootConfig));
-	}
-
-	async start(bootConfigFilepath: string): Promise<void> {
+	static async start(bootConfigFilepath: string): Promise<void> {
 		// option args
 		argv.option({
 			name: 'serverSetting',
@@ -57,6 +32,10 @@ export default class ServerEngine {
 			description: 'Display component setting menu'
 		});
 		const { options } = argv.run();
+
+		const components: IComponent[] = [];
+		const setupItems: SetupItem[] = [];
+		const messenger: EventEmitter = new EventEmitter();
 
 		// boot config
 		log('loading boot config ...');
@@ -137,23 +116,28 @@ export default class ServerEngine {
 			if (!verifyComponent(component)) {
 				throw new Error(`failed to load ${componentName} component`);
 			}
-			this.components.push(component);
+			components.push(component);
 		}
 
-		for (const component of this.components) {
-			this.install(component, bootConfig);
+		for (const component of components) {
+			component.api
+			if (component.install) {
+				log(`installing: ${component.name}`);
+				await component.install(new InstallApi(component, db, setupItems, bootConfig));
+			}
 		}
 
 		if (options.componentSetting) {
-			showComponentSettingMenu(this.setupItems);
+			showComponentSettingMenu(setupItems);
 			if (db) {
 				await db.disconnect();
 			}
 			return;
 		}
 
-		for (const component of this.components) {
-			this.boot(component, bootConfig);
+		for (const component of components) {
+			log(`booting: ${component.name}`);
+			await component.boot(new BootApi(component, db, messenger, bootConfig));
 		}
 	}
 }
