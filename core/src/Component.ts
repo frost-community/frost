@@ -43,6 +43,8 @@ export interface IComponentBootApi {
 	addEventListener(eventType: string, callback: (eventData: {[x: string]: any}) => void): void;
 	removeEventListener(eventType: string, callback: (eventData: {[x: string]: any}) => void): void;
 	removeAllEventListeners(eventType?: string): void;
+
+	use(componentName: string): any;
 }
 
 /**
