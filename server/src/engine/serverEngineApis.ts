@@ -36,16 +36,18 @@ export class InstallApi implements IComponentInstallApi {
 }
 
 export class BootApi implements IComponentBootApi {
-	constructor(component: IComponent, db: MongoProvider, messenger: EventEmitter, bootConfig: IBootConfig) {
+	constructor(component: IComponent, components: IComponent[] , db: MongoProvider, messenger: EventEmitter, bootConfig: IBootConfig) {
 		this.cryptoKey = bootConfig.cryptoKey;
 		this.db = db;
 		this.component = component;
+		this.components = components;
 		this.messenger = messenger;
 	}
 
 	cryptoKey: string;
 	db: MongoProvider;
 	component: IComponent;
+	components: IComponent[];
 	messenger: EventEmitter;
 
 	private buildActionChannelName(actionType: 'request' | 'response', actionName: string, componentName: string): string {
@@ -134,5 +136,16 @@ export class BootApi implements IComponentBootApi {
 	}
 	removeAllEventListeners(eventType: string): void {
 		this.messenger.removeAllListeners(this.buildEventChannelName(eventType));
+	}
+
+	use(componentName: string): any {
+		if (this.component.dependencies.indexOf(componentName) == -1) {
+			throw new Error('you need to specify a component from the dependencies of the current component');
+		}
+		const targetComponent = this.components.find(i => i.name == componentName);
+		if (!targetComponent) {
+			throw new Error(`component is not found: ${componentName}`);
+		}
+		return targetComponent.api;
 	}
 }

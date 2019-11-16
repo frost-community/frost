@@ -9,7 +9,9 @@ async function entryPoint() {
 	console.log('===========');
 
 	const bootConfigPath = path.resolve(__dirname, '../.configs/boot-config.json');
-	await ServerEngine.start(bootConfigPath);
+
+	const engine = new ServerEngine();
+	await engine.start(bootConfigPath);
 }
 
 entryPoint()

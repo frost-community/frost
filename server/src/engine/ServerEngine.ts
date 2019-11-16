@@ -20,7 +20,7 @@ function log(...params: any[]) {
 }
 
 export default class ServerEngine {
-	static async start(bootConfigFilepath: string): Promise<void> {
+	async start(bootConfigFilepath: string): Promise<void> {
 		// option args
 		argv.option({
 			name: 'serverSetting',
@@ -145,7 +145,7 @@ export default class ServerEngine {
 
 			for (const component of components) {
 				log(`booting: ${component.name}`);
-				await component.boot(new BootApi(component, db, messenger, bootConfig));
+				await component.boot(new BootApi(component, components, db, messenger, bootConfig));
 			}
 		}
 		finally {
