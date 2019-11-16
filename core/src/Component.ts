@@ -50,13 +50,15 @@ export interface IComponentBootApi {
 */
 export default interface IComponent {
 	name: string;
-	install?: (installArg: IComponentInstallApi) => Promise<void>;
-	boot: (bootArg: IComponentBootApi) => Promise<void>;
+	dependencies: string[];
+	install?: (ctx: IComponentInstallApi) => Promise<void>;
+	boot: (ctx: IComponentBootApi) => Promise<void>;
 }
 
 export function verifyComponent(component: any): boolean {
 	const verificationComponent = $.obj({
 		name: $.str,
+		dependencies: $.array($.str),
 		install: $.nullable.optional.any.pipe(i => typeof i == 'function'),
 		boot: $.any.pipe(i => typeof i == 'function')
 	});
