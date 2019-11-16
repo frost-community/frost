@@ -120,7 +120,6 @@ export default class ServerEngine {
 		}
 
 		for (const component of components) {
-			component.api
 			if (component.install) {
 				log(`installing: ${component.name}`);
 				await component.install(new InstallApi(component, db, setupItems, bootConfig));
