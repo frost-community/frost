@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^10.12.18",
+    "component-echo-server": "../component-echo-server",
     "frost-core": "../core"
   },
   "devDependencies": {

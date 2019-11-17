@@ -6,6 +6,10 @@ import {
 	ConsoleMenu
 } from 'frost-core';
 
+import {
+	IApi as IEchoServerApi
+} from 'component-echo-server';
+
 class EchoClientComponent implements IComponent {
 	name: string = 'echo-client';
 	dependencies: string[] = ['echo-server'];
@@ -19,6 +23,15 @@ class EchoClientComponent implements IComponent {
 	}
 
 	async boot(ctx: IComponentBootApi): Promise<void> {
+		const echoServer: IEchoServerApi = ctx.use('echo-server');
+
+		// use component api test
+		const sendMessage = 'hello';
+		console.log('send message:', sendMessage);
+		const echoMessage = echoServer.echo(sendMessage);
+		console.log('echo message:', echoMessage);
+
+		// action test
 		try {
 			const callData = { message: 'hello' };
 			console.log('the client send data:', callData);
@@ -34,6 +47,7 @@ class EchoClientComponent implements IComponent {
 			console.log('internal error:', err);
 		}
 
+		// event test
 		ctx.emitEvent('echo-server', 'show-message', { message: 'nya' });
 
 		console.log('client boot is finished');
