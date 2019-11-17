@@ -5,26 +5,29 @@ import {
 	ActionOkResult
 } from 'frost-core';
 
-export default function(): IComponent {
+class EchoServerComponent implements IComponent {
+	name: string = 'echo-server';
+	dependencies: string[] = [];
+	api: any = { };
 
-	async function install(installApi: IComponentInstallApi): Promise<void> {
+	async install(ctx: IComponentInstallApi): Promise<void> {
 		console.log('server installation is finished');
 	}
 
-	async function boot(bootApi: IComponentBootApi): Promise<void> {
-		bootApi.defineAction('echo', async (data) => {
+	async boot(ctx: IComponentBootApi): Promise<void> {
+		ctx.defineAction('echo', async (data) => {
 			console.log('the action is called');
 
 			const result: ActionOkResult = { data: data };
 			return result;
 		});
 
+		ctx.addEventListener('show-message', (data) => {
+			console.log('message:', data.message);
+		});
+
 		console.log('server boot is finished');
 	}
+}
 
-	return {
-		name: 'echo-server',
-		install: install,
-		boot: boot
-	};
-};
+export default () => new EchoServerComponent();
