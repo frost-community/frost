@@ -164,7 +164,10 @@ export default class MongoProvider {
 			url.substr(0, url.length - 1);
 		}
 
-		const client = await MongoClient.connect(`${url}/${dbname}`, { useNewUrlParser: true });
+		const client = await MongoClient.connect(`${url}/${dbname}`, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true
+		});
 
 		return new MongoProvider(client, dbname);
 	}
