@@ -6,6 +6,7 @@
   "main": "built/index.js",
   "scripts": {
     "build": "tsc",
+    "watch": "tsc -w",
     "start": "node .",
     "componentSetting": "node . --componentSetting",
     "serverSetting": "node . --serverSetting"

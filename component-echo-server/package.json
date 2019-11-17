@@ -5,7 +5,8 @@
   "description": "test component of echo server",
   "main": "built/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "tsc -w"
   },
   "author": "marihachi",
   "repository": {
