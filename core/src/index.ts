@@ -7,12 +7,6 @@ export {
 	default as IComponent,
 	IComponentBootApi,
 	IComponentInstallApi,
-	ActionResult,
-	isActionOkResult,
-	isActionErrorResult,
-	ActionError,
-	ActionErrorResult,
-	ActionOkResult,
 	verifyComponent
 } from './Component';
 
