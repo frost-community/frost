@@ -143,9 +143,11 @@ export default class ServerEngine {
 				return;
 			}
 
+			const componentApis: any[] = [];
 			for (const component of components) {
 				log(`booting: ${component.name}`);
-				await component.boot(new BootApi(component, components, db, messenger, bootConfig));
+				const componentApi = await component.boot(new BootApi(component, components, componentApis, db, messenger, bootConfig));
+				componentApis.push(componentApi);
 			}
 		}
 		finally {

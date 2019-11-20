@@ -6,13 +6,12 @@ import {
 } from 'frost-core';
 
 import {
-	IApi as IEchoServerApi
+	IEchoServerApi
 } from 'component-echo-server';
 
 class EchoClientComponent implements IComponent {
 	name: string = 'echo-client';
 	dependencies: string[] = ['echo-server'];
-	api: any = { };
 
 	async install(ctx: IComponentInstallApi): Promise<void> {
 		const menu = new ConsoleMenu('setting menu of echo client');
@@ -21,7 +20,7 @@ class EchoClientComponent implements IComponent {
 		console.log('client installation is finished');
 	}
 
-	async boot(ctx: IComponentBootApi): Promise<void> {
+	async boot(ctx: IComponentBootApi): Promise<any> {
 		const echoServer: IEchoServerApi = ctx.use('echo-server');
 
 		// use component api test
@@ -31,6 +30,7 @@ class EchoClientComponent implements IComponent {
 		console.log('echo message:', echoMessage);
 
 		console.log('client boot is finished');
+		return { };
 	}
 }
 

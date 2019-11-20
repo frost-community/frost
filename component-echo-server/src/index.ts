@@ -4,11 +4,11 @@ import {
 	IComponentBootApi
 } from 'frost-core';
 
-export interface IApi {
+export interface IEchoServerApi {
 	echo(message: string): string;
 }
 
-class Api implements IApi {
+class EchoServerApi implements IEchoServerApi {
 	echo(message: string): string {
 		return message;
 	}
@@ -17,14 +17,16 @@ class Api implements IApi {
 class EchoServerComponent implements IComponent {
 	name: string = 'echo-server';
 	dependencies: string[] = [];
-	api: IApi = new Api();
 
 	async install(ctx: IComponentInstallApi): Promise<void> {
 		console.log('server installation is finished');
 	}
 
-	async boot(ctx: IComponentBootApi): Promise<void> {
+	async boot(ctx: IComponentBootApi): Promise<IEchoServerApi> {
+		const api = new EchoServerApi();
+
 		console.log('server boot is finished');
+		return api;
 	}
 }
 
