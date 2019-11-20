@@ -9,7 +9,7 @@ import {
 import { SetupItem } from './showComponentSettingMenu';
 import { IBootConfig } from './bootConfig';
 
-export class InstallApi<T> implements IComponentInstallApi {
+export class InstallApi implements IComponentInstallApi {
 	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[], bootConfig: IBootConfig) {
 		this.cryptoKey = bootConfig.cryptoKey;
 		this.db = db;
@@ -27,7 +27,7 @@ export class InstallApi<T> implements IComponentInstallApi {
 	}
 }
 
-export class BootApi<T> implements IComponentBootApi {
+export class BootApi implements IComponentBootApi {
 	constructor(component: IComponent, components: IComponent[], apis: any[], db: MongoProvider, messenger: EventEmitter, bootConfig: IBootConfig) {
 		this.cryptoKey = bootConfig.cryptoKey;
 		this.db = db;
