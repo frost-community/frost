@@ -2,7 +2,6 @@ import {
 	IComponent,
 	IComponentInstallApi,
 	IComponentBootApi,
-	isActionOkResult,
 	ConsoleMenu
 } from 'frost-core';
 
@@ -30,25 +29,6 @@ class EchoClientComponent implements IComponent {
 		console.log('send message:', sendMessage);
 		const echoMessage = echoServer.echo(sendMessage);
 		console.log('echo message:', echoMessage);
-
-		// action test
-		try {
-			const callData = { message: 'hello' };
-			console.log('the client send data:', callData);
-			const result = await ctx.callAction('echo-server', 'echo', callData);
-			if (isActionOkResult(result)) {
-				console.log('ok result received:', result.data);
-			}
-			else {
-				console.log('error result received:', result.error);
-			}
-		}
-		catch(err) {
-			console.log('internal error:', err);
-		}
-
-		// event test
-		ctx.emitEvent('echo-server', 'show-message', { message: 'nya' });
 
 		console.log('client boot is finished');
 	}
