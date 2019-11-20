@@ -1,8 +1,7 @@
 import {
 	IComponent,
 	IComponentInstallApi,
-	IComponentBootApi,
-	ActionOkResult
+	IComponentBootApi
 } from 'frost-core';
 
 export interface IApi {
@@ -25,19 +24,6 @@ class EchoServerComponent implements IComponent {
 	}
 
 	async boot(ctx: IComponentBootApi): Promise<void> {
-		// action test
-		ctx.defineAction('echo', async (data) => {
-			console.log('the action is called');
-
-			const result: ActionOkResult = { data: data };
-			return result;
-		});
-
-		// event test
-		ctx.addEventListener('show-message', (data) => {
-			console.log('message:', data.message);
-		});
-
 		console.log('server boot is finished');
 	}
 }
