@@ -5,11 +5,13 @@ import {
 } from 'frost-core';
 
 export interface IBaseApi {
-
+	getVersion(): { major: number, minor: number };
 }
 
 class BaseApi implements IBaseApi {
-
+	getVersion() {
+		return { major: 1, minor: 0 };
+	}
 }
 
 class BaseComponent implements IComponent {
