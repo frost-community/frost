@@ -19,6 +19,7 @@ export interface IComponentBootApi {
 */
 export default interface IComponent {
 	name: string;
+	version: { major: number, minor: number };
 	dependencies: string[];
 	install?: (ctx: IComponentInstallApi) => Promise<void>;
 	boot: (ctx: IComponentBootApi) => Promise<any>;
@@ -27,6 +28,10 @@ export default interface IComponent {
 export function verifyComponent(component: any): boolean {
 	const verificationComponent = $.obj({
 		name: $.str,
+		version: $.object({
+			major: $.number.int().range(0, 9999),
+			minor: $.number.int().range(0, 9999)
+		}),
 		dependencies: $.array($.str),
 		install: $.nullable.optional.any.pipe(i => typeof i == 'function'),
 		boot: $.any.pipe(i => typeof i == 'function')
