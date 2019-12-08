@@ -1,33 +1,21 @@
-import { promisify } from 'util';
-import path from 'path';
-import glob from 'glob';
+//import { promisify } from 'util';
+//import path from 'path';
+//import glob from 'glob';
 import Express from 'express';
 import bodyParser from 'body-parser';
 import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
-import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
-import ApiResponseManager, { IApiResponseSource } from './modules/apiResponse/ApiResponseManager';
+//import { IEndpoint, registerEndpoint } from './modules/endpoint';
+import { ApiErrorSources } from './modules/apiResponse/apiError';
+import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
 import { loadBaseConfig } from './modules/baseConfig';
-import accessTokenStrategy from './modules/accessTokenStrategy';
-//import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
+//import accessTokenStrategy from './modules/accessTokenStrategy';
+import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
 import setupMenu from './modules/setup/setupMenu';
 import log from './modules/log';
 import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
-import { ApiErrorUtil } from './modules/apiResponse/apiError';
 
 const meta = {
 	dataVersion: 1
-};
-
-function httpResponseResolver(res: Express.Response) {
-	return (source: IApiResponseSource) => {
-		if (source.resultData != null) {
-			res.status(200).json(source.resultData);
-		}
-		else if (source.errorSource != null) {
-			const statusCode = source.errorSource.httpStatusCode;
-			res.status(statusCode).json(ApiErrorUtil.build(source.errorSource, source.errorDetail));
-		}
-	};
 };
 
 class BaseComponent implements IComponent {
@@ -95,13 +83,13 @@ class BaseComponent implements IComponent {
 
 		// endpoint not found
 		bootApi.http.addRoute(HttpMethod.All, '/api(/*)?', async (req, res) => {
-			const apiRes = new ApiResponseManager(httpResponseResolver(res));
+			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
 			await apiRes.error(ApiErrorSources.endpointNotFound);
 		});
 
 		// error handling
 		bootApi.http.addErrorHandler({ path: '/api' }, (err, req, res, next) => {
-			const apiRes = new ApiResponseManager(httpResponseResolver(res));
+			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
 
 			// authentication error
 			if (err.name == 'AuthenticationError') {
