@@ -5,16 +5,29 @@ import Express from 'express';
 import bodyParser from 'body-parser';
 import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
 import { IEndpoint, ApiErrorSources, registerEndpoint } from './modules/endpoint';
-import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
-import { IBaseConfig, isBaseConfig } from './modules/baseConfig';
+import ApiResponseManager, { IApiResponseSource } from './modules/apiResponse/ApiResponseManager';
+import { loadBaseConfig } from './modules/baseConfig';
 import accessTokenStrategy from './modules/accessTokenStrategy';
-import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
+//import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
 import setupMenu from './modules/setup/setupMenu';
 import log from './modules/log';
 import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
+import { ApiErrorUtil } from './modules/apiResponse/apiError';
 
 const meta = {
 	dataVersion: 1
+};
+
+function httpResponseResolver(res: Express.Response) {
+	return (source: IApiResponseSource) => {
+		if (source.resultData != null) {
+			res.status(200).json(source.resultData);
+		}
+		else if (source.errorSource != null) {
+			const statusCode = source.errorSource.httpStatusCode;
+			res.status(statusCode).json(ApiErrorUtil.build(source.errorSource, source.errorDetail));
+		}
+	};
 };
 
 class BaseComponent implements IComponent {
@@ -23,27 +36,18 @@ class BaseComponent implements IComponent {
 	dependencies: string[] = [];
 
 	async install(ctx: IComponentInstallApi): Promise<void> {
-
 		// * setup menu
-
 		const menu = await setupMenu(ctx.db, meta.dataVersion);
-
 		ctx.registerSetupMenu(menu);
 	}
 
 	async boot(ctx: IComponentBootApi): Promise<IBaseApi> {
-
-		const initMiddlewares = [
-			bodyParser.json()
-		];
+		const activeConfigManager = new ActiveConfigManager(ctx.db);
 
 		// * data version
 
 		log('checking dataVersion ...');
-		const dataVersionState = await getDataVersionState(ctx.db, meta.dataVersion,
-			'base.config',
-			['base.users', 'base.apps', 'base.tokens', 'base.userRelations', 'base.postings', 'base.storageFiles'],
-			{ enableOldMetaCollection: true });
+		const dataVersionState = await getDataVersionState(activeConfigManager, meta.dataVersion, this.name);
 		if (dataVersionState != DataVersionState.ready) {
 			if (dataVersionState == DataVersionState.needInitialization) {
 				log('please initialize in setup mode.');
@@ -52,34 +56,14 @@ class BaseComponent implements IComponent {
 				log('migration is required. please migrate database in setup mode.');
 			}
 			else {
-				log('this dataVersion is not supported. there is a possibility it was used by a newer api component. please clear database and restart.');
+				log('this dataVersion is not supported. there is a possibility it was used by a newer base component. please clear database and restart.');
 			}
-			throw new Error('failed to start api');
+			throw new Error('failed to boot the base component');
 		}
 
-		// * verify config
+		// * load config
 
-		const activeConfigManager = new ActiveConfigManager(ctx.db);
-
-		const config: IBaseConfig = {
-			apiBaseUrl: await activeConfigManager.getItem('base', 'apiBaseUrl'),
-			appSecretKey: await activeConfigManager.getItem('base', 'appSecretKey'),
-			clientToken: {
-				scopes: await activeConfigManager.getItem('base', 'clientToken.scopes')
-			},
-			hostToken: {
-				scopes: await activeConfigManager.getItem('base', 'hostToken.scopes'),
-				accessToken: await activeConfigManager.getItem('base', 'hostToken.accessToken')
-			},
-			recaptcha: {
-				enable: await activeConfigManager.getItem('base', 'recaptcha.enable'),
-				siteKey: await activeConfigManager.getItem('base', 'recaptcha.siteKey'),
-				secretKey: await activeConfigManager.getItem('base', 'recaptcha.secretKey'),
-			}
-		};
-		if (!isBaseConfig(config)) {
-			throw TypeError('base config is invalid');
-		}
+		const config = await loadBaseConfig(activeConfigManager);
 
 		const app = Express();
 		//app.set('views', '');
@@ -90,32 +74,34 @@ class BaseComponent implements IComponent {
 		bootApi.http.registerPreprocessMiddleware();
 		bootApi.http.registerErrorMiddleware();
 
-		// * strategy
+		bootApi.http.addPreprocessHandler({ }, bodyParser.json());
 
-		accessTokenStrategy(ctx.db);
+		// // * strategy
 
-		// * routings
+		// accessTokenStrategy(ctx.db);
 
-		const endpointPaths = await promisify(glob)('**/*.js', {
-			cwd: path.resolve(__dirname, 'endpoints')
-		});
+		// // * routings
 
-		for (let endpointPath of endpointPaths) {
-			endpointPath = endpointPath.replace('.js', '');
-			const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
+		// const endpointPaths = await promisify(glob)('**/*.js', {
+		// 	cwd: path.resolve(__dirname, 'endpoints')
+		// });
 
-			registerEndpoint(endpoint, endpointPath, initMiddlewares, bootApi, ctx.db, activeConfigManager);
-		}
+		// for (let endpointPath of endpointPaths) {
+		// 	endpointPath = endpointPath.replace('.js', '');
+		// 	const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
+
+		// 	registerEndpoint(endpoint, endpointPath, initMiddlewares, bootApi, ctx.db, activeConfigManager);
+		// }
 
 		// endpoint not found
 		bootApi.http.addRoute(HttpMethod.All, '/api(/*)?', async (req, res) => {
-			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
+			const apiRes = new ApiResponseManager(httpResponseResolver(res));
 			await apiRes.error(ApiErrorSources.endpointNotFound);
 		});
 
 		// error handling
 		bootApi.http.addErrorHandler({ path: '/api' }, (err, req, res, next) => {
-			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
+			const apiRes = new ApiResponseManager(httpResponseResolver(res));
 
 			// authentication error
 			if (err.name == 'AuthenticationError') {
@@ -133,6 +119,10 @@ class BaseComponent implements IComponent {
 			console.error('Server error:');
 			console.error(err);
 			apiRes.error(ApiErrorSources.serverError);
+		});
+
+		app.listen(3000, () => {
+			console.log('server is started on port 3000');
 		});
 
 		return bootApi;

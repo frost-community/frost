@@ -1,0 +1,45 @@
+{
+  "name": "frost-component-base",
+  "version": "0.0.1",
+  "description": "The base component of the Frost",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "author": "marihachi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/express": "^4.16.0",
+    "@types/glob": "^7.1.1",
+    "@types/mongodb": "^3.1.18",
+    "@types/node": "^10.12.18",
+    "@types/passport": "^1.0.0",
+    "@types/passport-http-bearer": "^1.0.33",
+    "@types/randomstring": "^1.1.6",
+    "@types/redis": "^2.8.10",
+    "body-parser": "^1.18.3",
+    "cafy": "^12.1.0",
+    "express": "^4.17.1",
+    "frost-core": "../core",
+    "glob": "^7.1.3",
+    "moment": "^2.23.0",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1",
+    "path-to-regexp": "^6.1.0",
+    "randomstring": "1.1.x",
+    "redis": "^2.8.0",
+    "xev": "^2.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "files": [
+    "built",
+    "externalTypes"
+  ]
+}

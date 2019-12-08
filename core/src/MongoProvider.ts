@@ -10,6 +10,14 @@ interface IFindArrayOptions {
 	until?: ObjectId;
 }
 
+interface ICollectionInfo {
+	name: string;
+	type: 'collection';
+	options: Record<string, any>;
+	info: any;
+	idIndex: any;
+}
+
 /**
  * provide methods to access MongoDB
 */
@@ -149,6 +157,11 @@ export default class MongoProvider {
 
 	async rename(collectionName: string, newcollectionName: string) {
 		await this.db.collection(collectionName).rename(newcollectionName);
+	}
+
+	listCollections(): Promise<ICollectionInfo[]> {
+		const cursor = this.db.listCollections();
+		return cursor.toArray();
 	}
 
 	disconnect(): Promise<void> {

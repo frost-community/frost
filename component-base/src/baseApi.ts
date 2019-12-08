@@ -1,5 +1,5 @@
 import Express from 'express';
-import { generateDynamicMiddlerware, generateDynamicErrorMiddleware, DynamicHandler, addHandler } from './modules/dynamicHandling';
+import { PriorityRouter } from './modules/priorityRouting';
 
 export enum HttpMethod {
 	All,
@@ -30,21 +30,19 @@ export class BaseApi implements IBaseApi {
 
 export class HttpApi implements IHttpApi {
 	private app: Express.Application;
-	private preprocessHandlers: DynamicHandler<Express.RequestHandler>[];
-	private errorHandlers: DynamicHandler<Express.ErrorRequestHandler>[];
+	private priorityRouter: PriorityRouter;
 
 	constructor(app: Express.Application) {
 		this.app = app;
-		this.preprocessHandlers = [];
-		this.errorHandlers = [];
+		this.priorityRouter = new PriorityRouter();
 	}
 
 	addPreprocessHandler(options: { priority?: number, path?: string }, ...handlers: Express.RequestHandler[]): void {
-		addHandler(this.preprocessHandlers, options, ...handlers);
+		this.priorityRouter.addHandler(options, ...handlers);
 	}
 
 	addErrorHandler(options: { priority?: number, path?: string }, ...handlers: Express.ErrorRequestHandler[]): void {
-		addHandler(this.errorHandlers, options, ...handlers);
+		this.priorityRouter.addHandler(options, ...handlers);
 	}
 
 	addRoute(method: HttpMethod, path: string, ...handlers: Express.RequestHandler[]): void {
@@ -73,12 +71,12 @@ export class HttpApi implements IHttpApi {
 	}
 
 	registerPreprocessMiddleware() {
-		const preprocessMiddleware = generateDynamicMiddlerware(this.preprocessHandlers);
+		const preprocessMiddleware = this.priorityRouter.generateDynamicMiddlerware();
 		this.app.use(preprocessMiddleware);
 	}
 
 	registerErrorMiddleware() {
-		const errorMiddleware = generateDynamicErrorMiddleware(this.errorHandlers);
+		const errorMiddleware = this.priorityRouter.generateDynamicErrorMiddleware();
 		this.app.use(errorMiddleware);
 	}
 }
