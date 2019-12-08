@@ -80,13 +80,13 @@ export default async function(db: MongoProvider, dataVersion: number) {
 		await activeConfigManager.setItem('base', 'dataVersion', dataVersion);
 		//log('dataVersion configured.');
 
-		await activeConfigManager.setItem('base', 'apiBaseUrl', '/');
+		await activeConfigManager.setItem('base', 'apiBaseUrl', 'http://localhost:3000/api');
 		log('apiBaseUrl configured.');
 
 		await activeConfigManager.setItem('base', 'appSecretKey', appSecretKey);
 		log('appSecretKey configured.');
 
-		await activeConfigManager.setItem('base', 'clientToken.scopes', []);
+		await activeConfigManager.setItem('base', 'clientToken.scopes', ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"]);
 		log('clientToken.scopes configured.');
 
 		await activeConfigManager.setItem('base', 'hostToken.scopes', hostToken.scopes);
