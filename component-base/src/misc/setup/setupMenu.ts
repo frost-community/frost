@@ -26,13 +26,7 @@ export default async function(db: MongoProvider, dataVersion: number) {
 	let config: IBaseConfig | undefined;
 	const refreshMenu = async () => {
 		dataVersionState = await getDataVersionState(activeConfigManager, dataVersion, 'base');
-		try {
-			config = await loadBaseConfig(activeConfigManager);
-		}
-		catch (err) {
-			// if config is invalid, set undefined
-			config = undefined;
-		}
+		config = await loadBaseConfig(activeConfigManager).catch(() => undefined);
 	};
 	await refreshMenu();
 
