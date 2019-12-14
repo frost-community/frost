@@ -62,9 +62,9 @@ export class HttpApi implements IHttpApi {
 
 	preprocess(options: { priority?: number, path?: string }, ...handlers: Express.RequestHandler[]): void {
 		if (options.priority != null) {
-			const priorityValidation = $.number.int().range(1, 3);
+			const priorityValidation = $.number.int().range(1, 5);
 			if (priorityValidation.nok(options.priority)) {
-				throw new Error('priority must be a integer value between from 1 to 3');
+				throw new Error('priority must be a integer value between from 1 to 5');
 			}
 		}
 		for (const handler of handlers) {
@@ -88,9 +88,9 @@ export class HttpApi implements IHttpApi {
 
 	postprocess(options: { priority?: number, path?: string }, ...handlers: Express.RequestHandler[]): void {
 		if (options.priority != null) {
-			const priorityValidation = $.number.int().range(1, 3);
+			const priorityValidation = $.number.int().range(1, 5);
 			if (priorityValidation.nok(options.priority)) {
-				throw new Error('priority must be a integer value between from 1 to 3');
+				throw new Error('priority must be a integer value between from 1 to 5');
 			}
 		}
 		for (const handler of handlers) {
@@ -104,9 +104,9 @@ export class HttpApi implements IHttpApi {
 
 	error(options: { priority?: number, path?: string }, ...handlers: Express.ErrorRequestHandler[]): void {
 		if (options.priority != null) {
-			const priorityValidation = $.number.int().range(1, 3);
+			const priorityValidation = $.number.int().range(1, 5);
 			if (priorityValidation.nok(options.priority)) {
-				throw new Error('priority must be a integer value between from 1 to 3');
+				throw new Error('priority must be a integer value between from 1 to 5');
 			}
 		}
 		for (const handler of handlers) {
@@ -120,12 +120,12 @@ export class HttpApi implements IHttpApi {
 
 	registerPreprocesses() {
 		// sort items by priority
-		const priorityTable: Record<number, PriorityHandler<Express.RequestHandler>[]> = { 1: [], 2: [], 3: [] };
+		const priorityTable: Record<number, PriorityHandler<Express.RequestHandler>[]> = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 		for (const item of this.preprocessHandlers) {
-			const priority = item.priority != null ? item.priority : 2;
+			const priority = item.priority != null ? item.priority : 3;
 			priorityTable[priority].push(item);
 		}
-		for (let i = 3; i > 0; i--) {
+		for (let i = 5; i > 0; i--) {
 			for (const handler of priorityTable[i]) {
 				if (handler.path) {
 					this.app.use(handler.path, handler.handler);
@@ -166,12 +166,12 @@ export class HttpApi implements IHttpApi {
 
 	registerPostprocesses() {
 		// sort items by priority
-		const priorityTable: Record<number, PriorityHandler<Express.RequestHandler>[]> = { 1: [], 2: [], 3: [] };
+		const priorityTable: Record<number, PriorityHandler<Express.RequestHandler>[]> = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 		for (const item of this.postprocessHandlers) {
-			const priority = item.priority != null ? item.priority : 2;
+			const priority = item.priority != null ? item.priority : 3;
 			priorityTable[priority].push(item);
 		}
-		for (let i = 3; i > 0; i--) {
+		for (let i = 5; i > 0; i--) {
 			for (const handler of priorityTable[i]) {
 				if (handler.path) {
 					this.app.use(handler.path, handler.handler);
@@ -185,12 +185,12 @@ export class HttpApi implements IHttpApi {
 
 	registerErrores() {
 		// sort items by priority
-		const priorityTable: Record<number, PriorityHandler<Express.ErrorRequestHandler>[]> = { 1: [], 2: [], 3: [] };
+		const priorityTable: Record<number, PriorityHandler<Express.ErrorRequestHandler>[]> = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 		for (const item of this.errorHandlers) {
-			const priority = item.priority != null ? item.priority : 2;
+			const priority = item.priority != null ? item.priority : 3;
 			priorityTable[priority].push(item);
 		}
-		for (let i = 3; i > 0; i--) {
+		for (let i = 5; i > 0; i--) {
 			for (const handler of priorityTable[i]) {
 				if (handler.path) {
 					this.app.use(handler.path, handler.handler);
