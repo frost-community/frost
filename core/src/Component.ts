@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import $ from 'cafy';
 import MongoProvider from './MongoProvider';
 import ConsoleMenu from './ConsoleMenu';
@@ -11,6 +12,7 @@ export interface IComponentInstallApi {
 export interface IComponentBootApi {
 	cryptoKey: string;
 	db: MongoProvider;
+	messenger: EventEmitter;
 	use(componentName: string): any;
 }
 

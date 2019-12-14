@@ -149,6 +149,8 @@ export default class ServerEngine {
 				const componentApi = await component.boot(new BootApi(component, components, componentApis, db, messenger, bootConfig));
 				componentApis.push(componentApi);
 			}
+
+			messenger.emit('server.bootCompleted');
 		}
 		finally {
 			await disposeDatabase();
