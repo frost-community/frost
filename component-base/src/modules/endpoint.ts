@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
 import { MongoProvider, ActiveConfigManager } from 'frost-core';
-import { IAuthScope } from './authScope';
+import { IAuthScope, AuthScopes } from './authScope';
 import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from './documents';
 import ApiResponseManager, { IApiResponseSource } from './apiResponse/ApiResponseManager';
 import { ApiErrorSources } from './apiResponse/apiError';
@@ -15,6 +15,10 @@ import UserRelationService from '../services/UserRelationService';
 import AppService from '../services/AppService';
 import TokenService from '../services/TokenService';
 import { HttpMethod } from '../baseApi';
+
+export {
+	AuthScopes, ApiErrorSources
+};
 
 export interface IAuthInfo {
 	user: UserDocument;
@@ -103,7 +107,7 @@ export function registerEndpoint(endpoint: IEndpoint, endpointPath: string, midd
 		passport.authenticate('accessToken', { session: false, failWithError: true })(req, res, next);
 	}
 
-	baseApi.http.addRoute(HttpMethod.POST, `/api/${endpointPath}`, ...middlewares, authorization, async (req, res) => {
+	baseApi.http.route(HttpMethod.POST, `/api/${endpointPath}`, ...middlewares, authorization, async (req, res) => {
 		const endpointManager = new EndpointManager(
 			db,
 			activeConfigManager,

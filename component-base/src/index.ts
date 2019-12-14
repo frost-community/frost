@@ -54,15 +54,18 @@ class BaseComponent implements IComponent {
 		const config = await loadBaseConfig(activeConfigManager);
 
 		const app = Express();
+		app.disable('x-powered-by');
 		//app.set('views', '');
 		//app.set('view engine', 'pug');
 
 		const bootApi = new BaseApi(app);
 
-		bootApi.http.registerPreprocessMiddleware();
-		bootApi.http.registerErrorMiddleware();
+		bootApi.http.preprocess({ }, bodyParser.json());
 
-		bootApi.http.addPreprocessHandler({ }, bodyParser.json());
+		bootApi.http.preprocess({ }, (req, res, next) => {
+			console.log(req.method, req.path);
+			next();
+		});
 
 		// // * strategy
 
@@ -82,13 +85,18 @@ class BaseComponent implements IComponent {
 		// }
 
 		// endpoint not found
-		bootApi.http.addRoute(HttpMethod.All, '/api(/*)?', async (req, res) => {
+		bootApi.http.postprocess({ path: '/api' }, async (req, res) => {
 			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
 			await apiRes.error(ApiErrorSources.endpointNotFound);
 		});
 
-		// error handling
-		bootApi.http.addErrorHandler({ path: '/api' }, (err, req, res, next) => {
+		// endpoint not found
+		bootApi.http.postprocess({ }, async (req, res) => {
+			res.status(404).send('pageNotFound');
+		});
+
+		// api error handling
+		bootApi.http.error({ path: '/api' }, (err, req, res, next) => {
 			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
 
 			// authentication error
@@ -109,8 +117,24 @@ class BaseComponent implements IComponent {
 			apiRes.error(ApiErrorSources.serverError);
 		});
 
-		app.listen(3000, () => {
-			console.log('server is started on port 3000');
+		// general error handling
+		bootApi.http.error({ }, (err, req, res, next) => {
+			// server error
+			console.error('Server error:');
+			console.error(err);
+			res.status(500).send('ServerError');
+		});
+
+		// when the all components have been started
+		ctx.messenger.once('server.bootCompleted', () => {
+			bootApi.http.registerPreprocesses();
+			bootApi.http.registerRoutes();
+			bootApi.http.registerPostprocesses();
+			bootApi.http.registerErrores();
+
+			app.listen(3000, () => {
+				console.log('server is started on port 3000');
+			});
 		});
 
 		return bootApi;
