@@ -1,8 +1,8 @@
 import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
-import { IUserRelationDocument, UserRelationDocument, UserDocument, IUserRelationDocumentSoruce } from 'local/src/api/documents';
-import { IUserRelation } from 'local/src/api/response/packingObjects';
-import { EndpointManager } from 'local/src/api/routing/endpoint';
+import { IUserRelationDocument, UserRelationDocument, UserDocument, IUserRelationDocumentSoruce } from '../documents';
+import { IUserRelation } from '../response/packingObjects';
+import { EndpointManager } from '../routing/endpoint';
 
 export default class UserRelationService {
 	constructor(db: MongoProvider, manager: EndpointManager) {

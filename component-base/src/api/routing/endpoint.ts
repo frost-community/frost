@@ -2,19 +2,19 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import $, { Context as CafyContext } from 'cafy';
 import passport from 'passport';
 import { MongoProvider, ActiveConfigManager } from 'frost-core';
-import { IAuthScope, AuthScopes } from 'local/src/api/misc/authScope';
-import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from 'local/src/api/documents';
-import ApiResponseManager, { IApiResponseSource } from 'local/src/api/response/responseManager';
-import { ApiErrorSources } from 'local/src/api/response/error';
-import buildHttpResResolver from 'local/src/api/response/buildHttpResResolver';
-import { HttpMethod } from 'local/src/baseApi';
-import { IBaseApi } from 'local/src/index';
+import { IAuthScope, AuthScopes } from '../misc/authScope';
+import { IDocument, TokenDocument, UserDocument, AppDocument, IPopulatableDocument } from '../documents';
+import ApiResponseManager, { IApiResponseSource } from '../response/responseManager';
+import { ApiErrorSources } from '../response/error';
+import buildHttpResResolver from '../response/buildHttpResResolver';
+import { HttpMethod } from '../../baseApi';
+import { IBaseApi } from '../../index';
 
-import UserService from 'local/src/api/services/UserService';
-import PostingService from 'local/src/api/services/PostingService';
-import UserRelationService from 'local/src/api/services/UserRelationService';
-import AppService from 'local/src/api/services/AppService';
-import TokenService from 'local/src/api/services/TokenService';
+import UserService from '../services/UserService';
+import PostingService from '../services/PostingService';
+import UserRelationService from '../services/UserRelationService';
+import AppService from '../services/AppService';
+import TokenService from '../services/TokenService';
 
 export {
 	AuthScopes, ApiErrorSources

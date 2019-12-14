@@ -1,6 +1,6 @@
 import Express from 'express';
-import { IApiResponseSource } from 'local/src/api/response/responseManager';
-import { ApiErrorUtil } from 'local/src/api/response/error';
+import { IApiResponseSource } from './responseManager';
+import { ApiErrorUtil } from './error';
 
 export default (res: Express.Response) => {
 	return (source: IApiResponseSource) => {

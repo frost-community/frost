@@ -1,4 +1,4 @@
-import MongoProvider from 'local/src/MongoProvider';
+import MongoProvider from './MongoProvider';
 
 /**
  * provide methods to access config items in the database

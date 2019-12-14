@@ -2,15 +2,15 @@
 import randomstring from 'randomstring';
 import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
 //import { Migrator } from 'frost-migration';
-//import migration from 'local/src/misc/setup/migration';
-import log from 'local/src/misc/log';
-import { IBaseConfig, loadBaseConfig } from 'local/src/misc/baseConfig';
-//import verifyApiConfig from 'local/src/misc/verifyApiConfig';
+//import migration from '@/misc/setup/migration';
+import log from '../log';
+import { IBaseConfig, loadBaseConfig } from '../baseConfig';
+//import verifyApiConfig from '@/misc/verifyApiConfig';
 
-import UserService from 'local/src/api/services/UserService';
-import AppService from 'local/src/api/services/AppService';
-import TokenService from 'local/src/api/services/TokenService';
-import { AuthScopes } from 'local/src/api/misc/authScope';
+import UserService from '../../api/services/UserService';
+import AppService from '../../api/services/AppService';
+import TokenService from '../../api/services/TokenService';
+import { AuthScopes } from '../../api/misc/authScope';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 

@@ -1,8 +1,8 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from 'local/src/api/routing/endpoint';
-import { ObjectIdContext } from 'local/src/misc/cafyValidators';
-import { PostingResponseObject } from 'local/src/api/response/responseObjects';
-import { ChatPostingDocument } from 'local/src/api/documents';
+import { define, AuthScopes, ApiErrorSources } from '../../endpoint';
+import { ObjectIdContext } from '../../../../misc/cafyValidators';
+import { PostingResponseObject } from '../../../response/responseObjects';
+import { ChatPostingDocument } from '../../../documents';
 
 export default define({
 	params: {

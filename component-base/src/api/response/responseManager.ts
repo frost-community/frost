@@ -1,5 +1,5 @@
-import { IResponseObject, MessageResponseObject } from 'local/src/api/response/responseObjects';
-import { IApiErrorSource } from 'local/src/api/response/error';
+import { IResponseObject, MessageResponseObject } from './responseObjects';
+import { IApiErrorSource } from './error';
 
 export interface IApiResponseSource {
 	resultData?: IResponseObject<any>;

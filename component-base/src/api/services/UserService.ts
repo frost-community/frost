@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { MongoProvider } from 'frost-core';
-import { IUserDocumentSoruce, IUserDocument, UserDocument } from 'local/src/api/documents';
-import buildHash from 'local/src/misc/buildHash';
+import { IUserDocumentSoruce, IUserDocument, UserDocument } from '../documents';
+import buildHash from '../../misc/buildHash';
 
 function randomRange(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;

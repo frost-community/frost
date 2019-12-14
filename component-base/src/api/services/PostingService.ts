@@ -1,6 +1,6 @@
 import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
-import { ChatPostingDocument, IChatPostingDocumentSoruce, IChatPostingDocument } from 'local/src/api/documents';
+import { ChatPostingDocument, IChatPostingDocumentSoruce, IChatPostingDocument } from '../documents';
 
 export default class PostingService {
 	constructor(db: MongoProvider) {

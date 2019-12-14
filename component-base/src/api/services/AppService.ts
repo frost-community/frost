@@ -1,6 +1,6 @@
 import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
-import { AppDocument, IAppDocument, IAppDocumentSoruce, UserDocument } from 'local/src/api/documents';
+import { AppDocument, IAppDocument, IAppDocumentSoruce, UserDocument } from '../documents';
 
 export interface IAppCreateOptions {
 	root?: boolean;

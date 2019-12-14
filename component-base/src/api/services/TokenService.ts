@@ -1,7 +1,7 @@
 import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
 import randomstring from 'randomstring';
-import { IAppDocument, IUserDocument, ITokenDocumentSource, ITokenDocument, TokenDocument } from 'local/src/api/documents';
+import { IAppDocument, IUserDocument, ITokenDocumentSource, ITokenDocument, TokenDocument } from '../documents';
 
 export default class TokenService {
 	constructor(db: MongoProvider) {

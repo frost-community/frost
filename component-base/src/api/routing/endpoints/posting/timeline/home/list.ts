@@ -1,7 +1,7 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from 'local/src/api/routing/endpoint';
-import timeline from 'local/src/api/misc/timeline';
-import { PostingsResponseObject } from 'local/src/api/response/responseObjects';
+import { define, AuthScopes, ApiErrorSources } from '../../../../endpoint';
+import timeline from '../../../../../misc/timeline';
+import { PostingsResponseObject } from '../../../../../response/responseObjects';
 
 export default define({
 	params: {

@@ -1,11 +1,11 @@
 import { EventEmitter } from 'events';
 import argv from 'argv';
 import { MongoProvider, IComponent, ActiveConfigManager, verifyComponent } from 'frost-core';
-import showServerSettingMenu from 'local/src/engine/showServerSettingMenu';
-import { InstallApi, BootApi } from 'local/src/engine/serverEngineApis';
-import showComponentSettingMenu, { SetupItem } from 'local/src/engine/showComponentSettingMenu';
-import { BootConfigManager, IBootConfig } from 'local/src/engine/bootConfig';
-import resolveDependency from 'local/src/engine/resolveDependency';
+import showServerSettingMenu from './showServerSettingMenu';
+import { InstallApi, BootApi } from './serverEngineApis';
+import showComponentSettingMenu, { SetupItem } from './showComponentSettingMenu';
+import { BootConfigManager, IBootConfig } from './bootConfig';
+import resolveDependency from './resolveDependency';
 
 function log(...params: any[]) {
 	console.log('[ServerEngine]', ...params);

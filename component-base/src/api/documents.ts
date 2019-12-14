@@ -6,8 +6,8 @@ import { ObjectId } from 'mongodb';
 import moment from 'moment';
 import randomstring from 'randomstring';
 import { MongoProvider, ActiveConfigManager } from 'frost-core';
-import { IChatPosting, IUser, IUserRelation, IApp, IToken } from 'local/src/api/response/packingObjects';
-import buildHash from 'local/src/misc/buildHash';
+import { IChatPosting, IUser, IUserRelation, IApp, IToken } from './response/packingObjects';
+import buildHash from '../misc/buildHash';
 
 export interface IDocument<PackingObject> {
 	pack(db: MongoProvider): Promise<PackingObject>;

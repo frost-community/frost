@@ -1,6 +1,6 @@
 import path from 'path';
-import { ServerEngine } from 'local/src/engine';
-import log from 'local/src/log';
+import { ServerEngine } from './engine';
+import log from './log';
 
 async function entryPoint() {
 

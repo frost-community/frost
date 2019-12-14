@@ -4,16 +4,16 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
-//import accessTokenStrategy from 'local/src/api/misc/accessTokenStrategy';
-import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from 'local/src/baseApi';
+//import accessTokenStrategy from '@/api/misc/accessTokenStrategy';
+import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
 
-import { IEndpoint, registerEndpoint } from 'local/src/api/routing/endpoint';
-import { ApiErrorSources } from 'local/src/api/response/error';
-import ApiResponseManager from 'local/src/api/response/responseManager';
-import { loadBaseConfig } from 'local/src/misc/baseConfig';
-import buildHttpResResolver from 'local/src/api/response/buildHttpResResolver';
-import setupMenu from 'local/src/misc/setup/setupMenu';
-import log from 'local/src/misc/log';
+import { IEndpoint, registerEndpoint } from './api/routing/endpoint';
+import { ApiErrorSources } from './api/response/error';
+import ApiResponseManager from './api/response/responseManager';
+import { loadBaseConfig } from './misc/baseConfig';
+import buildHttpResResolver from './api/response/buildHttpResResolver';
+import setupMenu from './misc/setup/setupMenu';
+import log from './misc/log';
 
 const meta = {
 	dataVersion: 1

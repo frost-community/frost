@@ -1,8 +1,8 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from 'local/src/api/routing/endpoint';
-import { AppSecretResponseObject } from 'local/src/api/response/responseObjects';
-import { IAppDocument, AppDocument } from 'local/src/api/documents';
-import { ObjectIdContext } from 'local/src/misc/cafyValidators';
+import { define, AuthScopes, ApiErrorSources } from '../../../endpoint';
+import { AppSecretResponseObject } from '../../../../response/responseObjects';
+import { IAppDocument, AppDocument } from '../../../../documents';
+import { ObjectIdContext } from '../../../../../misc/cafyValidators';
 
 export default define({
 	params: {

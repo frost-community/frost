@@ -1,7 +1,7 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from 'local/src/api/routing/endpoint';
-import { AppResponseObject } from 'local/src/api/response/responseObjects';
-import { AppDocument } from 'local/src/api/documents';
+import { define, AuthScopes, ApiErrorSources } from '../../endpoint';
+import { AppResponseObject } from '../../../response/responseObjects';
+import { AppDocument } from '../../../documents';
 
 function isAvailableScope(scopeId: string): boolean {
 	const scope = AuthScopes.toArray().find(s => s.id == scopeId);

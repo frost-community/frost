@@ -1,6 +1,6 @@
 import $ from 'cafy';
-import { define, AuthScopes, ApiErrorSources } from 'local/src/api/routing/endpoint';
-import { CredentialValidationResponseObject } from 'local/src/api/response/responseObjects';
+import { define, AuthScopes, ApiErrorSources } from '../../../endpoint';
+import { CredentialValidationResponseObject } from '../../../../response/responseObjects';
 
 export default define({
 	params: {

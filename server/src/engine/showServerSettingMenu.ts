@@ -1,6 +1,6 @@
 import { ConsoleMenu, ActiveConfigManager } from 'frost-core';
 
-import showInitBootConfig from 'local/src/engine/showInitBootConfig';
+import showInitBootConfig from './showInitBootConfig';
 
 /**
  * show menu of server setting.
