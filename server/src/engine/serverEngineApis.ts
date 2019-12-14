@@ -6,8 +6,8 @@ import {
 	MongoProvider,
 	ConsoleMenu
 } from 'frost-core';
-import { SetupItem } from './showComponentSettingMenu';
-import { IBootConfig } from './bootConfig';
+import { SetupItem } from 'local/src/engine/showComponentSettingMenu';
+import { IBootConfig } from 'local/src/engine/bootConfig';
 
 export class InstallApi implements IComponentInstallApi {
 	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[], bootConfig: IBootConfig) {

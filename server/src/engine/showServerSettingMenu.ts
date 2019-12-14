@@ -1,9 +1,6 @@
 import { ConsoleMenu, ActiveConfigManager } from 'frost-core';
 
-//import inputLine from '../utils/inputLine';
-//import question from '../utils/question';
-
-import showInitBootConfig from './showInitBootConfig';
+import showInitBootConfig from 'local/src/engine/showInitBootConfig';
 
 /**
  * show menu of server setting.

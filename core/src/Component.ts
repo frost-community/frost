@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import $ from 'cafy';
-import MongoProvider from './MongoProvider';
-import ConsoleMenu from './ConsoleMenu';
+import MongoProvider from 'local/src/MongoProvider';
+import ConsoleMenu from 'local/src/ConsoleMenu';
 
 export interface IComponentInstallApi {
 	cryptoKey: string;

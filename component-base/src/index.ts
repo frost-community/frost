@@ -4,15 +4,16 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
-//import { IEndpoint, registerEndpoint } from './modules/endpoint';
-import { ApiErrorSources } from './modules/apiResponse/apiError';
-import ApiResponseManager from './modules/apiResponse/ApiResponseManager';
-import { loadBaseConfig } from './modules/baseConfig';
-//import accessTokenStrategy from './modules/accessTokenStrategy';
-import buildHttpResResolver from './modules/apiResponse/buildHttpResResolver';
-import setupMenu from './modules/setup/setupMenu';
-import log from './modules/log';
-import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
+//import accessTokenStrategy from 'local/src/api/misc/accessTokenStrategy';
+import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from 'local/src/baseApi';
+
+import { IEndpoint, registerEndpoint } from 'local/src/api/routing/endpoint';
+import { ApiErrorSources } from 'local/src/api/response/error';
+import ApiResponseManager from 'local/src/api/response/responseManager';
+import { loadBaseConfig } from 'local/src/misc/baseConfig';
+import buildHttpResResolver from 'local/src/api/response/buildHttpResResolver';
+import setupMenu from 'local/src/misc/setup/setupMenu';
+import log from 'local/src/misc/log';
 
 const meta = {
 	dataVersion: 1
@@ -61,11 +62,6 @@ class BaseComponent implements IComponent {
 		const bootApi = new BaseApi(app);
 
 		bootApi.http.preprocess({ }, bodyParser.json());
-
-		bootApi.http.preprocess({ }, (req, res, next) => {
-			console.log(req.method, req.path);
-			next();
-		});
 
 		// // * strategy
 

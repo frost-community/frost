@@ -1,32 +1,32 @@
 
 export {
 	default as ActiveConfigManager
-} from './ActiveConfigManager';
+} from 'local/src/ActiveConfigManager';
 
 export {
 	default as IComponent,
 	IComponentBootApi,
 	IComponentInstallApi,
 	verifyComponent
-} from './Component';
+} from 'local/src/Component';
 
 export {
 	default as ConsoleMenu
-} from './ConsoleMenu';
+} from 'local/src/ConsoleMenu';
 
 export {
 	default as getDataVersionState,
 	DataVersionState
-} from './getDataVersionState';
+} from 'local/src/getDataVersionState';
 
 export {
 	default as inputLine
-} from './inputLine';
+} from 'local/src/inputLine';
 
 export {
 	default as MongoProvider
-} from './MongoProvider';
+} from 'local/src/MongoProvider';
 
 export {
 	default as question
-} from './question';
+} from 'local/src/question';

@@ -25,6 +25,7 @@
     "cafy": "15.1.x",
     "frost-component-base": "../component-base",
     "frost-core": "../core",
+    "local": ".",
     "randomstring": "1.1.x"
   },
   "devDependencies": {

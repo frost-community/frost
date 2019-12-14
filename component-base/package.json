@@ -27,6 +27,7 @@
     "express": "^4.17.1",
     "frost-core": "../core",
     "glob": "^7.1.3",
+    "local": ".",
     "moment": "^2.23.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",

@@ -1,4 +1,4 @@
-import ActiveConfigManager from './ActiveConfigManager';
+import ActiveConfigManager from 'local/src/ActiveConfigManager';
 
 export const enum DataVersionState {
 	ready,

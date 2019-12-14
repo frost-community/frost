@@ -1,4 +1,4 @@
-import inputLine from './inputLine';
+import inputLine from 'local/src/inputLine';
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
