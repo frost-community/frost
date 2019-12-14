@@ -6,7 +6,8 @@ Frostについての全般的な質問・意見については[こちら](https:
 
 ## Requirements
 
-Node.js >= v12
+- Node.js >= v12
+- npm
 
 ## Packages
 
