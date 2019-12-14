@@ -4,6 +4,10 @@
 
 Frostについての全般的な質問・意見については[こちら](https://github.com/Frost-Dev/Frost/issues)にお寄せください
 
+## Requirements
+
+Node.js >= v12
+
 ## Packages
 
 ### **server**
