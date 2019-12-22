@@ -127,7 +127,7 @@ export default class ServerEngine {
 
 			// server config mode
 			if (options.config) {
-				showServerMenu(setupItems, activeConfigManager);
+				await showServerMenu(setupItems, activeConfigManager);
 				return;
 			}
 
