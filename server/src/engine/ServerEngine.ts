@@ -1,98 +1,94 @@
 import { EventEmitter } from 'events';
 import argv from 'argv';
-import { MongoProvider, IComponent, ActiveConfigManager, verifyComponent } from 'frost-core';
-import showServerSettingMenu from './showServerSettingMenu';
+import { MongoProvider, IComponent, ActiveConfigManager, verifyComponent, getDataVersionState, DataVersionState } from 'frost-core';
 import { InstallApi, BootApi } from './serverEngineApis';
-import showComponentSettingMenu, { SetupItem } from './showComponentSettingMenu';
+import showServerInit from './showServerInit';
+import showServerMenu, { SetupItem } from './showServerMenu';
 import { BootConfigManager, IBootConfig } from './bootConfig';
 import resolveDependency from './resolveDependency';
+import { loadServerConfig } from './serverConfig';
 
 function log(...params: any[]) {
 	console.log('[ServerEngine]', ...params);
 }
 
+export const meta = {
+	dataVersion: 1
+};
+
 export default class ServerEngine {
 	async start(bootConfigFilepath: string): Promise<void> {
-		// option args
+		// parse the option args
 		argv.option({
-			name: 'serverSetting',
+			name: 'init',
 			type: 'boolean',
-			description: 'Display server setting menu'
+			description: 'Initialize the server'
 		});
 		argv.option({
-			name: 'componentSetting',
+			name: 'config',
 			type: 'boolean',
-			description: 'Display component setting menu'
+			description: 'Display the config menu'
 		});
 		const { options } = argv.run();
+
+		// server init mode
+		if (options.init) {
+			await showServerInit();
+			return;
+		}
 
 		const components: IComponent[] = [];
 		const setupItems: SetupItem[] = [];
 		const messenger: EventEmitter = new EventEmitter();
+		let bootConfig: IBootConfig;
+		let db: MongoProvider;
+		let activeConfigManager: ActiveConfigManager;
 
 		// boot config
-		log('loading boot config ...');
-		let bootConfig: IBootConfig | undefined;
-		let db: MongoProvider | undefined;
-		let activeConfigManager: ActiveConfigManager | undefined;
-
-		async function disposeDatabase() {
-			if (db) {
-				await db.disconnect();
+		try {
+			//log('loading boot config ...');
+			if (process.env.FROST_BOOT != null) {
+				log(`loading boot config from FROST_BOOT env variable ...`);
+				bootConfig = JSON.parse(process.env.FROST_BOOT) as IBootConfig;
 			}
+			else {
+				log(`loading boot config from boot-config.json ...`);
+				bootConfig = require(bootConfigFilepath) as IBootConfig;
+			}
+			BootConfigManager.verify(bootConfig);
+			log('loaded boot config.');
+		}
+		catch (err) {
+			log('server error: failed to load the boot config. please execute a command `npm run init` to initialize the server.');
+			return;
 		}
 
+		// database connection
+		log('connecting db ...');
+		db = await MongoProvider.connect(bootConfig.mongo.url, bootConfig.mongo.dbName);
+		log('connected db.');
+
 		try {
-			try {
-				if (process.env.FROST_BOOT != null) {
-					log(`loading boot config from FROST_BOOT env variable ...`);
-					bootConfig = JSON.parse(process.env.FROST_BOOT) as IBootConfig;
+			// active config manager
+			activeConfigManager = new ActiveConfigManager(db);
+
+			// data version
+			log('checking dataVersion ...');
+			const dataVersionState = await getDataVersionState(activeConfigManager, meta.dataVersion, 'server');
+			if (dataVersionState != DataVersionState.ready) {
+				if (dataVersionState == DataVersionState.needInitialization) {
+					log('please initialize in setup mode.');
 				}
 				else {
-					log(`loading boot config from boot-config.json ...`);
-					bootConfig = require(bootConfigFilepath) as IBootConfig;
+					log('this dataVersion is not supported. please clear database and restart.');
 				}
-				BootConfigManager.verify(bootConfig);
-				log('loaded boot config.');
-
-				// PORT env variable
-				if (process.env.PORT != null) {
-					const parsed = parseInt(process.env.PORT);
-					if (Number.isNaN(parsed)) {
-						throw new Error('PORT env variable is invalid value');
-					}
-					bootConfig.httpPort = parsed;
-				}
-
-				if (!bootConfig.httpPort) {
-					throw new Error('httpPort is not configured');
-				}
-
-				// database connection
-				if (bootConfig) {
-					log('connecting db ...');
-					db = await MongoProvider.connect(bootConfig.mongo.url, bootConfig.mongo.dbName);
-					log('connected db.');
-
-					activeConfigManager = new ActiveConfigManager(db);
-				}
-			}
-			catch (err) {
-				log('valid boot config was not found:');
-				log(err.message);
+				throw new Error('server error: data version is invalid.');
 			}
 
-			// server setting menu
-			if (options.serverSetting) {
-				await showServerSettingMenu(activeConfigManager);
-				return;
-			}
+			// load config
+			const serverConfig = await loadServerConfig(activeConfigManager);
 
-			if (!bootConfig || !activeConfigManager || !db) {
-				throw new Error('please generate a valid boot config on the server setting menu.');
-			}
-
-			for (const componentName of bootConfig.usingComponents) {
+			for (const componentName of serverConfig.components) {
 				if (!/^[a-z0-9_-]+$/i.test(componentName)) {
 					throw new Error(`invalid component name: ${componentName}`);
 				}
@@ -104,15 +100,15 @@ export default class ServerEngine {
 						componentFn = componentFn.default;
 					}
 					if (typeof componentFn != 'function') {
-						throw new Error(`component module must be a function that returns IComponent.(component name: ${componentName})`);
+						throw new Error(`server error: component module must be a function that returns IComponent.(component name: ${componentName})`);
 					}
 				}
 				catch (err) {
-					throw new Error(`failed to load ${componentName} component`);
+					throw new Error(`server error: failed to load ${componentName} component.`);
 				}
 				const component = componentFn();
 				if (!verifyComponent(component)) {
-					throw new Error(`failed to load ${componentName} component`);
+					throw new Error(`server error: failed to load ${componentName} component.`);
 				}
 				components.push(component);
 			}
@@ -125,26 +121,27 @@ export default class ServerEngine {
 			for (const component of components) {
 				if (component.install) {
 					log(`installing: ${component.name}`);
-					await component.install(new InstallApi(component, db, setupItems, bootConfig));
+					await component.install(new InstallApi(component, db, setupItems));
 				}
 			}
 
-			if (options.componentSetting) {
-				showComponentSettingMenu(setupItems);
+			// server config mode
+			if (options.config) {
+				showServerMenu(setupItems, activeConfigManager);
 				return;
 			}
 
 			const componentApis: any[] = [];
 			for (const component of components) {
 				log(`booting: ${component.name}`);
-				const componentApi = await component.boot(new BootApi(component, components, componentApis, db, messenger, bootConfig));
+				const componentApi = await component.boot(new BootApi(component, components, componentApis, db, messenger));
 				componentApis.push(componentApi);
 			}
 
 			messenger.emit('server.bootCompleted');
 		}
 		finally {
-			await disposeDatabase();
+			await db.disconnect();
 		}
 	}
 }

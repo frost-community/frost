@@ -6,18 +6,15 @@ import {
 	MongoProvider,
 	ConsoleMenu
 } from 'frost-core';
-import { SetupItem } from './showComponentSettingMenu';
-import { IBootConfig } from './bootConfig';
+import { SetupItem } from './showServerMenu';
 
 export class InstallApi implements IComponentInstallApi {
-	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[], bootConfig: IBootConfig) {
-		this.cryptoKey = bootConfig.cryptoKey;
+	constructor(component: IComponent, db: MongoProvider, setupItems: SetupItem[]) {
 		this.db = db;
 		this.component = component;
 		this.setupItems = setupItems;
 	}
 
-	cryptoKey: string;
 	db: MongoProvider;
 	component: IComponent;
 	setupItems: SetupItem[];
@@ -28,8 +25,7 @@ export class InstallApi implements IComponentInstallApi {
 }
 
 export class BootApi implements IComponentBootApi {
-	constructor(component: IComponent, components: IComponent[], apis: any[], db: MongoProvider, messenger: EventEmitter, bootConfig: IBootConfig) {
-		this.cryptoKey = bootConfig.cryptoKey;
+	constructor(component: IComponent, components: IComponent[], apis: any[], db: MongoProvider, messenger: EventEmitter) {
 		this.db = db;
 		this.component = component;
 		this.components = components;
@@ -37,7 +33,6 @@ export class BootApi implements IComponentBootApi {
 		this.apis = apis;
 	}
 
-	cryptoKey: string;
 	db: MongoProvider;
 	component: IComponent;
 	components: IComponent[];

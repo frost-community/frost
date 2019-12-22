@@ -4,13 +4,11 @@ import MongoProvider from './MongoProvider';
 import ConsoleMenu from './ConsoleMenu';
 
 export interface IComponentInstallApi {
-	cryptoKey: string;
 	db: MongoProvider;
 	registerSetupMenu(setupMenu: ConsoleMenu): void;
 }
 
 export interface IComponentBootApi {
-	cryptoKey: string;
 	db: MongoProvider;
 	messenger: EventEmitter;
 	use(componentName: string): any;

@@ -1,6 +1,9 @@
 import path from 'path';
 import { ServerEngine } from './engine';
-import log from './misc/log';
+
+function log(...params: any[]) {
+	console.log('[Server]', ...params);
+}
 
 async function entryPoint() {
 

@@ -7,9 +7,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "start": "node .",
-    "componentSetting": "node . --componentSetting",
-    "serverSetting": "node . --serverSetting"
+    "init": "node . --init",
+    "config": "node . --config",
+    "start": "node ."
   },
   "author": "marihachi",
   "repository": {
