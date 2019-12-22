@@ -20,7 +20,8 @@ export {
 } from './getDataVersionState';
 
 export {
-	default as inputLine
+	default as inputLine,
+	InputCanceledError
 } from './inputLine';
 
 export {

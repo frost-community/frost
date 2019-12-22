@@ -44,7 +44,7 @@ export function isBaseConfig(config: any): config is IBaseConfig {
 	return verificationConfig.ok(config);
 };
 
-export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): Promise<IBaseConfig> {
+export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): Promise<IBaseConfig | undefined> {
 	const [
 		config_dataVersion,
 		config_apiBaseUrl,
@@ -86,7 +86,7 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 	};
 
 	if (!isBaseConfig(config)) {
-		throw new Error('failed to load the base config');
+		return undefined;
 	}
 
 	return config;

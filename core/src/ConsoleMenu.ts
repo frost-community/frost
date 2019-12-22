@@ -42,7 +42,7 @@ export default class ConsoleMenu {
 				}
 			}
 			const index = parseInt(await inputLine('> '));
-			if ($.number.max(enabledItems.length - 1).ok(index)) {
+			if ($.number.range(0, enabledItems.length - 1).ok(index)) {
 				await enabledItems[index].func({ closeMenu: () => { this.isCloseMenu = true; }});
 			}
 			await delay(100);

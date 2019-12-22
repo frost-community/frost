@@ -53,6 +53,9 @@ class BaseComponent implements IComponent {
 		// * load config
 
 		const config = await loadBaseConfig(activeConfigManager);
+		if (!config) {
+			throw new Error('failed to load the base config');
+		}
 
 		const app = Express();
 		app.disable('x-powered-by');
