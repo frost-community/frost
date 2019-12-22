@@ -1,4 +1,5 @@
 import inputLine from './inputLine';
+import $ from 'cafy';
 
 const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
@@ -41,10 +42,10 @@ export default class ConsoleMenu {
 				}
 			}
 			const index = parseInt(await inputLine('> '));
-			if (Number.isInteger(index) && index < enabledItems.length) {
+			if ($.number.max(enabledItems.length - 1).ok(index)) {
 				await enabledItems[index].func({ closeMenu: () => { this.isCloseMenu = true; }});
 			}
-			await delay(200);
+			await delay(100);
 		}
 	}
 }

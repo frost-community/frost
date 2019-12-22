@@ -19,5 +19,5 @@ async function entryPoint() {
 
 entryPoint()
 .catch(err => {
-	log(err);
+	log('error:', err);
 });
