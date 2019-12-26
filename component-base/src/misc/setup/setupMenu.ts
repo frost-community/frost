@@ -1,4 +1,4 @@
-//import $ from 'cafy';
+import $ from 'cafy';
 import randomstring from 'randomstring';
 import { MongoProvider, ConsoleMenu, inputLine, ActiveConfigManager, getDataVersionState, DataVersionState } from 'frost-core';
 //import { Migrator } from 'frost-migration';
@@ -63,14 +63,16 @@ export default async function(db: MongoProvider, dataVersion: number) {
 			let httpPortStr: string;
 			httpPortStr = await inputLine('port of http server(default: 3000) > ');
 			if (httpPortStr == '') httpPortStr = '3000';
-
-			if (!/^[0-9]*$/.test(httpPortStr)) {
+			if (!/^[0-9]+$/.test(httpPortStr)) {
 				console.log('error: invalid input');
+				continue;
 			}
-			else {
-				httpPort = parseInt(httpPortStr);
-				break;
+			httpPort = parseInt(httpPortStr);
+			if ($.number.range(1, 65535).nok(httpPort)) {
+				console.log('error: invalid input');
+				continue;
 			}
+			break;
 		}
 
 		const appSecretKey = randomstring.generate({ length: 128 });
