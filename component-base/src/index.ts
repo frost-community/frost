@@ -131,8 +131,8 @@ class BaseComponent implements IComponent {
 			bootApi.http.registerPostprocesses();
 			bootApi.http.registerErrores();
 
-			app.listen(3000, () => {
-				console.log('server is started on port 3000');
+			app.listen(config.httpPort, () => {
+				console.log(`server is started on port ${config.httpPort}`);
 			});
 		});
 

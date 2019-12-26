@@ -4,7 +4,7 @@ import { ActiveConfigManager } from 'frost-core';
 
 export interface IBaseConfig {
 	dataVersion: number;
-	apiBaseUrl: string;
+	httpPort: number;
 	appSecretKey: string;
 	clientToken: {
 		scopes: string[];
@@ -26,7 +26,7 @@ export function isBaseConfig(config: any): config is IBaseConfig {
 	// verify api config
 	const verificationConfig = $.obj({
 		dataVersion: $.number,
-		apiBaseUrl: $.str,
+		httpPort: $.number,
 		appSecretKey: $.str,
 		clientToken: $.obj({
 			scopes: $.array($.str.pipe(scope => allScopes.find(s => s.id == scope) != null)).unique()
@@ -47,7 +47,7 @@ export function isBaseConfig(config: any): config is IBaseConfig {
 export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): Promise<IBaseConfig | undefined> {
 	const [
 		config_dataVersion,
-		config_apiBaseUrl,
+		config_httpPort,
 		config_appSecretKey,
 		config_clientToken_scopes,
 		config_hostToken_scopes,
@@ -57,7 +57,7 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 		config_recaptcha_secretKey
 	] = await Promise.all([
 		activeConfigManager.getItem('base', 'dataVersion'),
-		activeConfigManager.getItem('base', 'apiBaseUrl'),
+		activeConfigManager.getItem('base', 'httpPort'),
 		activeConfigManager.getItem('base', 'appSecretKey'),
 		activeConfigManager.getItem('base', 'clientToken.scopes'),
 		activeConfigManager.getItem('base', 'hostToken.scopes'),
@@ -69,7 +69,7 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 
 	const config: IBaseConfig = {
 		dataVersion: config_dataVersion,
-		apiBaseUrl: config_apiBaseUrl,
+		httpPort: config_httpPort,
 		appSecretKey: config_appSecretKey,
 		clientToken: {
 			scopes: config_clientToken_scopes

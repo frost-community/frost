@@ -53,8 +53,25 @@ export default async function(db: MongoProvider, dataVersion: number) {
 			}
 		}
 
+		// input: app name
 		let appName = await inputLine('app name(default: Frost) > ');
 		if (appName == '') appName = 'Frost';
+
+		// input: http port
+		let httpPort: number;
+		while (true) {
+			let httpPortStr: string;
+			httpPortStr = await inputLine('port of http server(default: 3000) > ');
+			if (httpPortStr == '') httpPortStr = '3000';
+
+			if (!/^[0-9]*$/.test(httpPortStr)) {
+				console.log('error: invalid input');
+			}
+			else {
+				httpPort = parseInt(httpPortStr);
+				break;
+			}
+		}
 
 		const appSecretKey = randomstring.generate({ length: 128 });
 		const hostTokenScopes = ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"];
@@ -75,8 +92,8 @@ export default async function(db: MongoProvider, dataVersion: number) {
 		await activeConfigManager.setItem('base', 'dataVersion', dataVersion);
 		//log('dataVersion configured.');
 
-		await activeConfigManager.setItem('base', 'apiBaseUrl', 'http://localhost:3000/api');
-		log('apiBaseUrl configured.');
+		await activeConfigManager.setItem('base', 'httpPort', httpPort);
+		log('httpPort configured.');
 
 		await activeConfigManager.setItem('base', 'appSecretKey', appSecretKey);
 		log('appSecretKey configured.');
