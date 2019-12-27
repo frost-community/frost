@@ -91,7 +91,7 @@ class BaseComponent implements IComponent {
 
 		// endpoint not found
 		bootApi.http.postprocess({ }, async (req, res) => {
-			res.status(404).send('pageNotFound');
+			res.status(404).send('NotFound');
 		});
 
 		// api error handling
