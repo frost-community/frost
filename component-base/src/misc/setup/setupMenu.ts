@@ -76,7 +76,6 @@ export default async function(db: MongoProvider, dataVersion: number) {
 		}
 
 		const appSecretKey = randomstring.generate({ length: 128 });
-		const hostTokenScopes = ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"];
 
 		// create documents
 
@@ -85,9 +84,6 @@ export default async function(db: MongoProvider, dataVersion: number) {
 
 		const appDoc = await appService.create(appName, userDoc, userDoc.description, AuthScopes.toArray().map(s => s.id), { root: true });
 		log('root app was created.');
-
-		const hostToken = await tokenService.create(appDoc, userDoc, hostTokenScopes, true);
-		log('host token was created:', hostToken);
 
 		// set config
 
@@ -102,12 +98,6 @@ export default async function(db: MongoProvider, dataVersion: number) {
 
 		await activeConfigManager.setItem('base', 'clientToken.scopes', ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"]);
 		log('clientToken.scopes configured.');
-
-		await activeConfigManager.setItem('base', 'hostToken.scopes', hostToken.scopes);
-		log('hostToken.scopes configured.');
-
-		await activeConfigManager.setItem('base', 'hostToken.accessToken', hostToken.accessToken);
-		log('hostToken.accessToken configured.');
 
 		await activeConfigManager.setItem('base', 'recaptcha.enable', false);
 		log('recaptcha.enable configured.');

@@ -9,10 +9,6 @@ export interface IBaseConfig {
 	clientToken: {
 		scopes: string[];
 	};
-	hostToken: {
-		scopes: string[];
-		accessToken: string;
-	};
 	recaptcha: {
 		enable: boolean;
 		siteKey: string;
@@ -31,10 +27,6 @@ export function isBaseConfig(config: any): config is IBaseConfig {
 		clientToken: $.obj({
 			scopes: $.array($.str.pipe(scope => allScopes.find(s => s.id == scope) != null)).unique()
 		}),
-		hostToken: $.obj({
-			scopes: $.array($.str.pipe(scope => allScopes.find(s => s.id == scope) != null)).unique(),
-			accessToken: $.str,
-		}),
 		recaptcha: $.obj({
 			enable: $.boolean,
 			siteKey: $.str,
@@ -50,8 +42,6 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 		config_httpPort,
 		config_appSecretKey,
 		config_clientToken_scopes,
-		config_hostToken_scopes,
-		config_hostToken_accessToken,
 		config_recaptcha_enable,
 		config_recaptcha_siteKey,
 		config_recaptcha_secretKey
@@ -60,8 +50,6 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 		activeConfigManager.getItem('base', 'httpPort'),
 		activeConfigManager.getItem('base', 'appSecretKey'),
 		activeConfigManager.getItem('base', 'clientToken.scopes'),
-		activeConfigManager.getItem('base', 'hostToken.scopes'),
-		activeConfigManager.getItem('base', 'hostToken.accessToken'),
 		activeConfigManager.getItem('base', 'recaptcha.enable'),
 		activeConfigManager.getItem('base', 'recaptcha.siteKey'),
 		activeConfigManager.getItem('base', 'recaptcha.secretKey')
@@ -73,10 +61,6 @@ export async function loadBaseConfig(activeConfigManager: ActiveConfigManager): 
 		appSecretKey: config_appSecretKey,
 		clientToken: {
 			scopes: config_clientToken_scopes
-		},
-		hostToken: {
-			scopes: config_hostToken_scopes,
-			accessToken: config_hostToken_accessToken
 		},
 		recaptcha: {
 			enable: config_recaptcha_enable,
