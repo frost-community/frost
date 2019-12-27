@@ -13,12 +13,12 @@ export default async function(ctx: IComponentBootApi, bootApi: BaseApi, activeCo
 	accessTokenStrategy(ctx.db);
 
 	const endpointPaths = await promisify(glob)('**/*.js', {
-		cwd: path.resolve(__dirname, './api/routing/endpoints')
+		cwd: path.resolve(__dirname, './endpoints')
 	});
 
 	for (let endpointPath of endpointPaths) {
 		endpointPath = endpointPath.replace('.js', '');
-		const endpoint: IEndpoint = require(`./api/routing/endpoints/${endpointPath}`).default;
+		const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
 		registerEndpoint(endpoint, endpointPath, [], bootApi, ctx.db, activeConfigManager);
 	}
 
