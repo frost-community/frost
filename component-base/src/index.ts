@@ -1,19 +1,12 @@
-import { promisify } from 'util';
-import path from 'path';
-import glob from 'glob';
-import Express from 'express';
 import bodyParser from 'body-parser';
-import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
-import accessTokenStrategy from './api/misc/accessTokenStrategy';
-import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
-
-import { IEndpoint, registerEndpoint } from './api/routing/endpoint';
-import { ApiErrorSources } from './api/response/error';
-import ApiResponseManager from './api/response/responseManager';
+import Express from 'express';
+import { ActiveConfigManager, DataVersionState, getDataVersionState, IComponent, IComponentBootApi, IComponentInstallApi } from 'frost-core';
+import apiRouting from './api/routing';
+import backendRouting from './backend/routing';
+import { BaseApi, IBaseApi, IHttpApi } from './baseApi';
 import { loadBaseConfig } from './misc/baseConfig';
-import buildHttpResResolver from './api/response/buildHttpResResolver';
-import setupMenu from './misc/setup/setupMenu';
 import log from './misc/log';
+import setupMenu from './misc/setup/setupMenu';
 
 const meta = {
 	dataVersion: 1
@@ -66,54 +59,15 @@ class BaseComponent implements IComponent {
 
 		bootApi.http.preprocess({ }, bodyParser.json());
 
-		// * strategy
+		// api routing
+		await apiRouting(ctx, bootApi, activeConfigManager);
 
-		accessTokenStrategy(ctx.db);
-
-		// * routings
-
-		const endpointPaths = await promisify(glob)('**/*.js', {
-			cwd: path.resolve(__dirname, './api/routing/endpoints')
-		});
-
-		for (let endpointPath of endpointPaths) {
-			endpointPath = endpointPath.replace('.js', '');
-			const endpoint: IEndpoint = require(`./api/routing/endpoints/${endpointPath}`).default;
-
-			registerEndpoint(endpoint, endpointPath, [], bootApi, ctx.db, activeConfigManager); // initMiddlewares
-		}
-
-		// endpoint not found
-		bootApi.http.postprocess({ path: '/api' }, async (req, res) => {
-			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
-			await apiRes.error(ApiErrorSources.endpointNotFound);
-		});
+		// backend routing
+		await backendRouting(ctx, bootApi, activeConfigManager);
 
 		// endpoint not found
 		bootApi.http.postprocess({ }, async (req, res) => {
 			res.status(404).send('NotFound');
-		});
-
-		// api error handling
-		bootApi.http.error({ path: '/api' }, (err, req, res, next) => {
-			const apiRes = new ApiResponseManager(buildHttpResResolver(res));
-
-			// authentication error
-			if (err.name == 'AuthenticationError') {
-				apiRes.error(ApiErrorSources.nonAuthorized);
-				return;
-			}
-
-			// json parsing error
-			if (err instanceof SyntaxError && err.message.indexOf('JSON') != -1) {
-				apiRes.error(ApiErrorSources.invalidJson);
-				return;
-			}
-
-			// server error
-			console.error('Server error:');
-			console.error(err);
-			apiRes.error(ApiErrorSources.serverError);
 		});
 
 		// general error handling

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { IChatPostingDocument, ChatPostingDocument } from '../documents';
-import { EndpointManager } from '../routing/endpoint';
+import { EndpointManager } from '../endpoints';
 import { IChatPosting } from '../response/packingObjects';
 
 export default async function(manager: EndpointManager, userIds: ObjectId[]): Promise<IChatPosting[]> {

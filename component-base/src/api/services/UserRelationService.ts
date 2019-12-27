@@ -2,7 +2,7 @@ import { MongoProvider } from 'frost-core';
 import { ObjectId } from 'mongodb';
 import { IUserRelationDocument, UserRelationDocument, UserDocument, IUserRelationDocumentSoruce } from '../documents';
 import { IUserRelation } from '../response/packingObjects';
-import { EndpointManager } from '../routing/endpoint';
+import { EndpointManager } from '../endpoints';
 
 export default class UserRelationService {
 	constructor(db: MongoProvider, manager: EndpointManager) {

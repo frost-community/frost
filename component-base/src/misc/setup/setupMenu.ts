@@ -9,7 +9,6 @@ import { IBaseConfig, loadBaseConfig } from '../baseConfig';
 
 import UserService from '../../api/services/UserService';
 import AppService from '../../api/services/AppService';
-import TokenService from '../../api/services/TokenService';
 import { AuthScopes } from '../../api/misc/authScope';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
@@ -19,7 +18,6 @@ export default async function(db: MongoProvider, dataVersion: number) {
 	// services
 	const userService = new UserService(db);
 	const appService = new AppService(db);
-	const tokenService = new TokenService(db);
 
 	const activeConfigManager = new ActiveConfigManager(db);
 	let dataVersionState: DataVersionState;
