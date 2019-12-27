@@ -1,10 +1,10 @@
-//import { promisify } from 'util';
-//import path from 'path';
-//import glob from 'glob';
+import { promisify } from 'util';
+import path from 'path';
+import glob from 'glob';
 import Express from 'express';
 import bodyParser from 'body-parser';
 import { IComponent, IComponentInstallApi, IComponentBootApi, getDataVersionState, DataVersionState, ActiveConfigManager } from 'frost-core';
-//import accessTokenStrategy from '@/api/misc/accessTokenStrategy';
+import accessTokenStrategy from './api/misc/accessTokenStrategy';
 import { IBaseApi, IHttpApi, BaseApi, HttpMethod } from './baseApi';
 
 import { IEndpoint, registerEndpoint } from './api/routing/endpoint';
@@ -66,22 +66,22 @@ class BaseComponent implements IComponent {
 
 		bootApi.http.preprocess({ }, bodyParser.json());
 
-		// // * strategy
+		// * strategy
 
-		// accessTokenStrategy(ctx.db);
+		accessTokenStrategy(ctx.db);
 
-		// // * routings
+		// * routings
 
-		// const endpointPaths = await promisify(glob)('**/*.js', {
-		// 	cwd: path.resolve(__dirname, 'endpoints')
-		// });
+		const endpointPaths = await promisify(glob)('**/*.js', {
+			cwd: path.resolve(__dirname, './api/routing/endpoints')
+		});
 
-		// for (let endpointPath of endpointPaths) {
-		// 	endpointPath = endpointPath.replace('.js', '');
-		// 	const endpoint: IEndpoint = require(`./endpoints/${endpointPath}`).default;
+		for (let endpointPath of endpointPaths) {
+			endpointPath = endpointPath.replace('.js', '');
+			const endpoint: IEndpoint = require(`./api/routing/endpoints/${endpointPath}`).default;
 
-		// 	registerEndpoint(endpoint, endpointPath, initMiddlewares, bootApi, ctx.db, activeConfigManager);
-		// }
+			registerEndpoint(endpoint, endpointPath, [], bootApi, ctx.db, activeConfigManager); // initMiddlewares
+		}
 
 		// endpoint not found
 		bootApi.http.postprocess({ path: '/api' }, async (req, res) => {
