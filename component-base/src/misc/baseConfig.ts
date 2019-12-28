@@ -1,5 +1,5 @@
 import $ from 'cafy';
-import { AuthScopes } from '../api/misc/authScope';
+import { AuthScopes } from '../server/api/misc/authScope';
 import { ActiveConfigManager } from 'frost-core';
 
 export interface IBaseConfig {

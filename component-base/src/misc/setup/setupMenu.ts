@@ -7,9 +7,9 @@ import log from '../log';
 import { IBaseConfig, loadBaseConfig } from '../baseConfig';
 //import verifyApiConfig from '@/misc/verifyApiConfig';
 
-import UserService from '../../api/services/UserService';
-import AppService from '../../api/services/AppService';
-import { AuthScopes } from '../../api/misc/authScope';
+import UserService from '../../server/services/UserService';
+import AppService from '../../server/services/AppService';
+import { AuthScopes } from '../../server/api/misc/authScope';
 
 const question = async (str: string) => (await inputLine(str)).toLowerCase().indexOf('y') === 0;
 

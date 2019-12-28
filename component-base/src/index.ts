@@ -1,8 +1,8 @@
 import bodyParser from 'body-parser';
 import Express from 'express';
 import { ActiveConfigManager, DataVersionState, getDataVersionState, IComponent, IComponentBootApi, IComponentInstallApi } from 'frost-core';
-import apiRouting from './api/routing';
-import backendRouting from './backend/routing';
+import apiRouting from './server/api/routing';
+import backendRouting from './server/backend/routing';
 import { BaseApi, IBaseApi, IHttpApi } from './baseApi';
 import { loadBaseConfig } from './misc/baseConfig';
 import log from './misc/log';
