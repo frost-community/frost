@@ -29,7 +29,8 @@ const path = require('path');
 const projects = [
 	'core',
 	'server',
-	'component-base'
+	'component-base',
+	'frontend-basic'
 ];
 
 async function entry() {

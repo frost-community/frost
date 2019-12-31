@@ -1,0 +1,40 @@
+{
+  "name": "frost-frontend-basic",
+  "version": "0.0.1",
+  "description": "A basic frontend component of the Frost",
+  "main": "built/index.js",
+  "scripts": {
+    "build:server": "tsc",
+    "build:client": "webpack",
+    "build": "npm run build:client && npm run build:server"
+  },
+  "author": "marihachi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Frost-Dev/Frost.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "frost-component-base": "../component-base",
+    "frost-core": "../core"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/node": "^10.12.18",
+    "css-loader": "2.1.x",
+    "moment": "^2.23.0",
+    "node-sass": "4.12.x",
+    "sass-loader": "7.1.x",
+    "ts-loader": "6.2.x",
+    "typescript": "3.7.x",
+    "vue-loader": "15.6.x",
+    "vue-style-loader": "4.1.x",
+    "vue-template-compiler": "2.5.x",
+    "webpack": "4.29.x",
+    "webpack-cli": "3.3.x"
+  },
+  "files": [
+    "built"
+  ]
+}
