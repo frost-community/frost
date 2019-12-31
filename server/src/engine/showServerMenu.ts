@@ -49,7 +49,7 @@ export default async function(setupItems: SetupItem[], activeConfigManager: Acti
 
 		console.log(`adding ${component.name} component ...`);
 		const components: string[] = await activeConfigManager.getItem('server', 'components');
-		components.push('packageName');
+		components.push(packageName);
 		await activeConfigManager.setItem('server', 'components', components);
 		console.log(`specified component was added to the server.`);
 	});
