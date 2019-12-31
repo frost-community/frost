@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import Express from 'express';
 import { ActiveConfigManager, DataVersionState, getDataVersionState, IComponent, IComponentBootApi, IComponentInstallApi } from 'frost-core';
-import { BaseApi, IBaseApi, IHttpApi } from './baseApi';
+import { BaseApi, IBaseApi, HttpMethod } from './baseApi';
 import { loadBaseConfig } from './misc/baseConfig';
 import log from './misc/log';
 import setupMenu from './misc/setup/setupMenu';
@@ -100,5 +100,5 @@ export default () => new BaseComponent();
 
 export {
 	IBaseApi,
-	IHttpApi
+	HttpMethod
 };

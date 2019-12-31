@@ -5,7 +5,7 @@
   "main": "built/index.js",
   "scripts": {
     "build:server": "tsc",
-    "build:client": "webpack",
+    "build:client": "webpack && cpx ./src/client/static/* ./built/client",
     "build": "npm run build:client && npm run build:server"
   },
   "author": "marihachi",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@types/express": "^4.16.0",
     "@types/node": "^10.12.18",
+    "cpx": "1.5.x",
     "css-loader": "2.1.x",
     "moment": "^2.23.0",
     "node-sass": "4.12.x",

@@ -1,5 +1,5 @@
 import Express from 'express';
-import { IBaseApi } from 'frost-component-base';
+import { IBaseApi, HttpMethod } from 'frost-component-base';
 import { IComponent, IComponentBootApi } from 'frost-core';
 import path from 'path';
 import log from './misc/log';
@@ -13,8 +13,14 @@ class FrontendComponent implements IComponent {
 		const base: IBaseApi = ctx.use('base');
 
 		log('adding routing ...');
-		// deliver pages
+
+		// deliver static resources
 		base.http.preprocess({ }, Express.static(path.resolve(__dirname, './client')));
+
+		// page
+		base.http.route(HttpMethod.GET, '/*', (req, res) => {
+			res.sendFile(path.resolve(__dirname, './client/index.html'));
+		});
 	}
 }
 

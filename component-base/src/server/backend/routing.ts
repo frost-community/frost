@@ -75,9 +75,4 @@ export default async function(ctx: IComponentBootApi, bootApi: BaseApi, activeCo
 			res.status(500).json({ error: { reason: 'server_error' } });
 		}
 	});
-
-	// page
-	bootApi.http.route(HttpMethod.GET, '/', (req, res) => {
-		res.send('Frost');
-	});
 }
