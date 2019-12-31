@@ -11,7 +11,7 @@ export interface IComponentInstallApi {
 export interface IComponentBootApi {
 	db: MongoProvider;
 	messenger: EventEmitter;
-	use(componentName: string): any;
+	use(componentName: string): IComponentLink;
 }
 
 /**
@@ -37,4 +37,10 @@ export function verifyComponent(component: any): boolean {
 		boot: $.any.pipe(i => typeof i == 'function')
 	});
 	return verificationComponent.ok(component);
+}
+
+export interface IComponentLink {
+	name: string;
+	version: { major: number, minor: number };
+	api: any;
 }

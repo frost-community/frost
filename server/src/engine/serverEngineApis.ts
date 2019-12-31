@@ -3,6 +3,7 @@ import {
 	IComponent,
 	IComponentInstallApi,
 	IComponentBootApi,
+	IComponentLink,
 	MongoProvider,
 	ConsoleMenu
 } from 'frost-core';
@@ -39,7 +40,7 @@ export class BootApi implements IComponentBootApi {
 	messenger: EventEmitter;
 	apis: any[];
 
-	use(componentName: string): any {
+	use(componentName: string): IComponentLink {
 		if (this.component.dependencies.indexOf(componentName) == -1) {
 			throw new Error('you need to specify a component from the dependencies of the current component');
 		}
@@ -47,6 +48,14 @@ export class BootApi implements IComponentBootApi {
 		if (index == -1) {
 			throw new Error(`component is not found: ${componentName}`);
 		}
-		return this.apis[index];
+
+		return {
+			name: this.component.name,
+			version: {
+				major: this.component.version.major,
+				minor: this.component.version.minor
+			},
+			api: this.apis[index]
+		};
 	}
 }

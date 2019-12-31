@@ -1,6 +1,6 @@
 {
   "name": "frost-core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The core of the Frost",
   "main": "built/index.js",
   "scripts": {

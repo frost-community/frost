@@ -1,6 +1,6 @@
 {
   "name": "frost-component-base",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The base component of the Frost",
   "main": "built/index.js",
   "scripts": {

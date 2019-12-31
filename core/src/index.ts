@@ -7,7 +7,8 @@ export {
 	default as IComponent,
 	IComponentBootApi,
 	IComponentInstallApi,
-	verifyComponent
+	verifyComponent,
+	IComponentLink
 } from './Component';
 
 export {
