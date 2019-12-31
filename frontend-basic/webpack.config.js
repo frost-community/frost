@@ -1,6 +1,9 @@
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
+const isProduction = false;
+
 module.exports = {
+	mode: isProduction ? 'production' : 'development',
 	entry: './src/client/mainEntry.ts',
 	output: {
 		path: `${__dirname}/built/client`,
@@ -37,7 +40,7 @@ module.exports = {
 		]
 	},
 	resolve: {
-		extensions: ['.ts', '.js', '.vue'],
+		extensions: ['.ts'],
 		alias: {
 			vue$: 'vue/dist/vue.esm.js',
 		}
