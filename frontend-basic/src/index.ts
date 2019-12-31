@@ -2,6 +2,7 @@ import Express from 'express';
 import { IBaseApi } from 'frost-component-base';
 import { IComponent, IComponentBootApi } from 'frost-core';
 import path from 'path';
+import log from './misc/log';
 
 class FrontendComponent implements IComponent {
 	name: string = 'frontend-basic';
@@ -10,6 +11,8 @@ class FrontendComponent implements IComponent {
 
 	async boot(ctx: IComponentBootApi): Promise<void> {
 		const base: IBaseApi = ctx.use('base');
+
+		log('adding routing ...');
 		// deliver pages
 		base.http.preprocess({ }, Express.static(path.resolve(__dirname, './client')));
 	}

@@ -1,12 +1,12 @@
 import bodyParser from 'body-parser';
 import Express from 'express';
 import { ActiveConfigManager, DataVersionState, getDataVersionState, IComponent, IComponentBootApi, IComponentInstallApi } from 'frost-core';
-import apiRouting from './server/api/routing';
-import backendRouting from './server/backend/routing';
 import { BaseApi, IBaseApi, IHttpApi } from './baseApi';
 import { loadBaseConfig } from './misc/baseConfig';
 import log from './misc/log';
 import setupMenu from './misc/setup/setupMenu';
+import apiRouting from './server/api/routing';
+import backendRouting from './server/backend/routing';
 
 const meta = {
 	dataVersion: 1
@@ -45,11 +45,13 @@ class BaseComponent implements IComponent {
 
 		// * load config
 
+		log('loading config ...');
 		const config = await loadBaseConfig(activeConfigManager);
 		if (!config) {
 			throw new Error('failed to load the base config');
 		}
 
+		log('adding routes ...');
 		const app = Express();
 		app.disable('x-powered-by');
 		//app.set('views', '');
@@ -73,8 +75,8 @@ class BaseComponent implements IComponent {
 		// general error handling
 		bootApi.http.error({ }, (err, req, res, next) => {
 			// server error
-			console.error('Server error:');
-			console.error(err);
+			log('Server error:');
+			log(err);
 			res.status(500).send('ServerError');
 		});
 
@@ -86,7 +88,7 @@ class BaseComponent implements IComponent {
 			bootApi.http.registerErrores();
 
 			app.listen(config.httpPort, () => {
-				console.log(`server is started on port ${config.httpPort}`);
+				log(`server is started on port ${config.httpPort}`);
 			});
 		});
 
