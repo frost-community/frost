@@ -94,7 +94,7 @@ export default async function(db: MongoProvider, dataVersion: number) {
 		await activeConfigManager.setItem('base', 'appSecretKey', appSecretKey);
 		log('appSecretKey configured.');
 
-		await activeConfigManager.setItem('base', 'clientToken.scopes', ["user.read", "app.read", "app.host", "auth.host", "user.create", "user.delete"]);
+		await activeConfigManager.setItem('base', 'clientToken.scopes', ["user.read", "user.write", "post.read", "post.write", "storage.read", "storage.write", "app.read"]);
 		log('clientToken.scopes configured.');
 
 		await activeConfigManager.setItem('base', 'recaptcha.enable', false);
