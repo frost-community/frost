@@ -1,6 +1,5 @@
 import $ from 'cafy';
 import { ActiveConfigManager, IComponentBootApi } from 'frost-core';
-import path from 'path';
 import { BaseApi, HttpMethod } from '../../baseApi';
 import log from '../../misc/log';
 import UserService from '../services/UserService';
