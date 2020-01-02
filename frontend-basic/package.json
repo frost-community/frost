@@ -33,9 +33,12 @@
     "typescript": "3.7.x",
     "vue": "2.6.x",
     "vue-loader": "15.6.x",
+    "vue-property-decorator": "^8.3.0",
     "vue-router": "3.1.x",
     "vue-style-loader": "4.1.x",
     "vue-template-compiler": "2.6.x",
+    "vuex": "^3.1.2",
+    "vuex-module-decorators": "^0.11.0",
     "webpack": "4.29.x",
     "webpack-cli": "3.3.x"
   },

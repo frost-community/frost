@@ -1,41 +1,24 @@
 <template>
 	<div>
 		<p>entrance</p>
-		<input type="text" placeholder="username" v-model="username">
-		<input type="password" placeholder="password" v-model="password">
-		<button @click="login()">login</button>
-		<button @click="register()">register</button>
+		<div v-if="isLoggedIn">
+			<p>logged in</p>
+		</div>
+		<session-form v-else></session-form>
 	</div>
 </template>
 
 <script lang="ts">
-import callApi from '../misc/callApi';
-import Vue from 'vue';
+import { Vue, Component } from 'vue-property-decorator';
+import { credentialModule } from '../store';
+import sessionForm from '../components/sessionForm.vue';
 
-export default Vue.extend({
-	data() {
-		return {
-			username: '',
-			password: ''
-		};
-	},
-	methods: {
-		async register() {
-			const res = await callApi('/session/register', {
-				screenName: this.username,
-				password: this.password
-			});
-			console.log(res);
-		},
-		async login() {
-			const res = await callApi('/session', {
-				screenName: this.username,
-				password: this.password
-			});
-			console.log(res);
-		}
+@Component({ components: { sessionForm } })
+export default class extends Vue {
+	get isLoggedIn() {
+		return credentialModule.accessToken != null;
 	}
-});
+}
 </script>
 
 <style lang="scss" scoped>

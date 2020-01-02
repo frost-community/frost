@@ -7,45 +7,54 @@ module.exports = {
 	entry: './src/client/mainEntry.ts',
 	output: {
 		path: `${__dirname}/built/client`,
-		filename: 'bundle.js'
+		publicPath: '/', // base path of URL
+		filename: 'bundle.js',
+		chunkFilename: "bundle.[name].js",
 	},
 	module: {
 		rules: [
 			{
 				test: /\.vue$/,
+				exclude: /node_modules/,
 				use: [
-					'vue-loader'
-				]
+					{ loader: 'vue-loader' },
+				],
+			},
+			{
+				test: /\.ts$/,
+				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'ts-loader',
+						options: { configFile: 'tsconfig.client.json', appendTsSuffixTo: [/\.vue$/] },
+					},
+				],
 			},
 			{
 				test: /\.scss$/,
 				use: [
-					'vue-style-loader',
-					'css-loader',
-					'sass-loader'
-				]
+					{ loader: 'vue-style-loader' },
+					{ loader: 'css-loader' },
+					{ loader: 'sass-loader' },
+				],
 			},
-			{
-				test: /\.ts$/,
-				use: [
-					{
-						loader: 'ts-loader',
-						options: {
-							configFile: 'tsconfig.client.json',
-							appendTsSuffixTo: [/\.vue$/]
-						}
-					}
-				]
-			}
 		]
 	},
 	resolve: {
 		extensions: ['.ts'],
-		alias: {
-			vue$: 'vue/dist/vue.esm.js',
-		}
 	},
 	plugins: [
-		new VueLoaderPlugin()
-	]
+		new VueLoaderPlugin(),
+	],
+	// optimization: {
+	// 	splitChunks: {
+	// 		cacheGroups: {
+	// 			vendor: {
+	// 				name: "vendor",
+	// 				test: /[\\/]node_modules[\\/]/,
+	// 				chunks: "all",
+	// 			}
+	// 		},
+	// 	},
+	// },
 };

@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<h1>404 Page Not Found</h1>
-		<p>The requested URL was not found.</p>
+		<h1>User page</h1>
+		<p>Welcome. {{ $route.params.screenName }}</p>
 	</div>
 </template>
 
