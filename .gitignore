@@ -1,10 +1,22 @@
-node_modules
-dist
+# General
+.env
 Makefile
-*.old
 *.local
 logs
 *.log
+
+# Node.js
+node_modules
 npm-debug.log*
 lerna-debug.log*
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# App
+dist
 FRONTEND_DIST
