@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "description": "",
+  "author": "marihachi <marihachi0620@gmail.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Frost-Dev/Frost.git"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "typescript": "^4.6.3"
+  }
+}
