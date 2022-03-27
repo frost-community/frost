@@ -1,6 +1,10 @@
 node_modules
 dist
-package-lock.json
 Makefile
-yarn.lock
 *.old
+*.local
+logs
+*.log
+npm-debug.log*
+lerna-debug.log*
+FRONTEND_DIST

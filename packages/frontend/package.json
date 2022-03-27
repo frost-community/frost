@@ -1,25 +1,29 @@
 {
+  "private": true,
   "name": "frontend",
   "version": "0.0.0",
   "description": "",
-  "author": "marihachi <marihachi0620@gmail.com>",
   "license": "MIT",
-  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Frost-Dev/Frost.git"
   },
   "scripts": {
-    "build": "tsc"
+    "dev": "vite",
+    "clean": "rimraf ../../FRONTEND_DIST",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "directories": {
-    "lib": "src",
-    "test": "test"
-  },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
-    "typescript": "^4.6.3"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@vitejs/plugin-react": "^1.0.7",
+    "rimraf": "^3.0.2",
+    "typescript": "4.6.3",
+    "vite": "^2.8.0"
   }
 }

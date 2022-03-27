@@ -5,7 +5,11 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "lerna run build"
+    "init": "lerna bootstrap",
+    "clean": "lerna exec -- npm run clean",
+    "build": "lerna run build",
+    "serve": "cd ./packages/backend && npm run serve",
+    "test": "lerna run test"
   },
   "devDependencies": {
     "lerna": "^4.0.0"
