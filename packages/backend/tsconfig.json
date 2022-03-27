@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "declaration": true,
     "outDir": "./dist/",
+    "baseUrl": "./",
     "removeComments": true,
     "strict": true,
     "strictFunctionTypes": true,
@@ -11,12 +12,10 @@
     "experimentalDecorators": true,
     "noImplicitReturns": true,
     "esModuleInterop": true,
-  },
-  "include": [
-    "src/**/*",
-  ],
-  "exclude": [
-    "node_modules",
-    "test/**/*.ts",
-  ]
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "incremental": true,
+    "skipLibCheck": true
+  }
 }

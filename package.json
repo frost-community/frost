@@ -8,7 +8,7 @@
     "init": "lerna bootstrap",
     "clean": "lerna exec -- npm run clean",
     "build": "lerna run build",
-    "serve": "cd ./packages/backend && npm run serve",
+    "start": "cd ./packages/backend && npm run start",
     "test": "lerna run test"
   },
   "devDependencies": {
