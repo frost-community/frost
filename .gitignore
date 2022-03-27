@@ -1,5 +1,5 @@
 node_modules
-built
+dist
 package-lock.json
 Makefile
 yarn.lock
