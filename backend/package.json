@@ -1,0 +1,16 @@
+{
+  "name": "frost-backend",
+  "main": "./dist/index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node .",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "5.5.x"
+  },
+  "dependencies": {
+    "pg": "8.12.x"
+  }
+}
