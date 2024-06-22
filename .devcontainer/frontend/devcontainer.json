@@ -7,6 +7,9 @@
   },
   "updateRemoteUserUID": true,
   "workspaceFolder": "/workspaces/Frost/frontend",
+  "mounts": [
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+  ],
   "postCreateCommand": "/workspaces/Frost/.devcontainer/frontend/post_create.sh",
   "shutdownAction": "none"
 }
