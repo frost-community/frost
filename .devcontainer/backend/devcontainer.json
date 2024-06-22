@@ -1,0 +1,12 @@
+{
+  "name": "Frost-Backend",
+  "build": {
+    "dockerfile": "../../backend/Dockerfile",
+    "context": "../../",
+    "target": "devcontainer"
+  },
+  "updateRemoteUserUID": true,
+  "workspaceFolder": "/workspaces/frost/backend",
+  "postCreateCommand": "/workspaces/frost/.devcontainer/backend/post_create.sh",
+  "shutdownAction": "none"
+}
