@@ -15,5 +15,6 @@ jobs:
         with:
           node-version: "latest"
           cache: "pnpm"
+      - run: cd frontend
       - run: pnpm i
       - run: pnpm lint
