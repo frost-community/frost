@@ -21,5 +21,6 @@ jobs:
         with:
           node-version: "latest"
           cache: "pnpm"
+          cache-dependency-path: ./frontend/pnpm-lock.yaml
       - run: pnpm i
       - run: pnpm lint
