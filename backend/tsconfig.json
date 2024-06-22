@@ -1,20 +1,17 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    "rootDir": "./src",
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
     "outDir": "./dist",
-    "target": "ES2022",
-    "module": "Node16",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "./src/**/*.test.ts"
-  ]
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true
+  }
 }
