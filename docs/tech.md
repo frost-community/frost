@@ -2,9 +2,9 @@
 
 ## バックエンド
 ### 技術選定
-- 言語 TypeScript(Node.js)
-- フレームワーク Nest.js
-- データベース PostgreSQL
+- 言語: TypeScript(Node.js)
+- フレームワーク: Nest.js
+- データベース: PostgreSQL
 
 ### WebSocket使用禁止
 ソケットの同時接続数が増加するため。スケーラビリティに影響を与える。  
@@ -15,7 +15,7 @@
 
 ## フロントエンド
 ### 技術選定
-- 言語 TypeScript
-- モジュールバンドラ Vite
-- フレームワーク React
-- UIフレームワーク 未定
+- 言語: TypeScript
+- モジュールバンドラ: Vite
+- フレームワーク: React
+- UIフレームワーク: 未定
