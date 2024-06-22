@@ -1,0 +1,12 @@
+{
+  "name": "Frost-Frontend",
+  "build": {
+    "dockerfile": "../../frontend/Dockerfile",
+    "context": "../../",
+    "target": "devcontainer"
+  },
+  "updateRemoteUserUID": true,
+  "workspaceFolder": "/workspaces/frost/frontend",
+  "postCreateCommand": "/workspaces/frost/.devcontainer/frontend/post_create.sh",
+  "shutdownAction": "none"
+}
