@@ -1,10 +1,10 @@
 name: ESLint CI
 
-on: 
+on:
   push:
-    paths: 
-      - 'frontend/'
-      - '.github/workflows/frontend/lint.yml'
+    paths:
+      - 'frontend/**'
+      - 'lint.yml'
 
 jobs:
   lint:
