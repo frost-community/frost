@@ -6,7 +6,7 @@ IFS=$'\n\t'
 # Constants
 USER_NAME=vscode
 GROUP_NAME=vscode
-WORKSPACE_DIR=/workspaces/frost
+WORKSPACE_DIR=/workspaces/Frost
 BUILT_NODE_MODULES_DIR=/tmp/project_dependencies/node_modules
 NODE_MODULES_DESTINATION_PATH="${WORKSPACE_DIR}/backend/node_modules"
 
