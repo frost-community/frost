@@ -1,20 +1,23 @@
 name: ESLint CI
 
-on: [push]
+on: 
+  push:
+    paths: 
+      - 'frontend/'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - run: cd frontend
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: "latest"
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: "latest"
           cache: "pnpm"
-      - run: cd frontend
       - run: pnpm i
       - run: pnpm lint
