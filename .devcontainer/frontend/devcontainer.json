@@ -6,7 +6,7 @@
     "target": "devcontainer"
   },
   "updateRemoteUserUID": true,
-  "workspaceFolder": "/workspaces/frost/frontend",
-  "postCreateCommand": "/workspaces/frost/.devcontainer/frontend/post_create.sh",
+  "workspaceFolder": "/workspaces/Frost/frontend",
+  "postCreateCommand": "/workspaces/Frost/.devcontainer/frontend/post_create.sh",
   "shutdownAction": "none"
 }
