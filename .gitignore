@@ -1,5 +1,6 @@
 node_modules
 dist
+tsconfig.build.tsbuildinfo
 
 logs
 *.log
@@ -11,3 +12,4 @@ lerna-debug.log*
 
 .temp
 .tmp
+
