@@ -2,5 +2,11 @@
   "name": "frost",
   "version": "0.1.0",
   "license": "MIT",
+  "author": "marihachi",
+  "contributors": [
+    "ikasoba",
+    "Simirall",
+    "ThinaticSystem"
+  ],
   "private": true
 }
