@@ -24,6 +24,8 @@ VS Code (on Linux or WSL)を想定。
    [Docker公式ドキュメントのインストール手順](https://docs.docker.com/engine/install/)を参考にDocker Engineをインストールする。
 
    ℹ️WSLの環境ではWindowsホストではなくLinuxへのDocker Engineインストールで動作を確認済みです。
+
+   ※ Snap から Docker Engine をインストールした場合、Dev Container が動かなくなるので注意すること。
 1. **リポジトリを開く**\
    VS Codeでリポジトリのディレクトリを開く。
 1. **拡張機能のインストール**\
