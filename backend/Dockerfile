@@ -22,6 +22,11 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
+# やってること:
+# 1. ローカルのpackage.jsonとpnpm-lock.yamlを、コンテナの/tmp/project_dependencies/にコピー
+# 2. 作業ディレクトリを変更: /tmp/project_dependencies/
+# 3. コピーしてきたpackage.jsonとpnpm-lock.yamlを使ってpnpm install、node_modulesを生成する。
+
 # Copy: (local) backend/package.json backend/pnpm-lock.yaml to (container) /tmp/project_dependencies/
 COPY \
   --chown=${USER_NAME}:${GROUP_NAME} \
