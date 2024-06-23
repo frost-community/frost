@@ -22,6 +22,8 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
+# まだホスト環境をマウントしていないため、このタイミングではpackage.jsonとpnpm-lock.yamlなどが存在しない
+
 # やってること:
 # 1. ローカルのpackage.jsonとpnpm-lock.yamlを、コンテナの/workspaces/Frost/frontend/にコピー
 # 2. 作業ディレクトリを変更: /workspaces/Frost/frontend/
