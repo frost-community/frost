@@ -22,6 +22,13 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
+# やってること:
+# 1. ローカルのpackage.jsonとpnpm-lock.yamlを、コンテナの/workspaces/Frost/backend/にコピー
+# 2. 作業ディレクトリを変更: /workspaces/Frost/backend/
+# 3. コピーしてきたpackage.jsonとpnpm-lock.yamlを使ってpnpm install、node_modulesを生成する。
+#    node_modulesは所有者が違うため、post_createのタイミングでchownする。
+
+# Copy: (local) backend/package.json backend/pnpm-lock.yaml to (container) /workspaces/Frost/backend/
 COPY \
   --chown=${USER_NAME}:${GROUP_NAME} \
   --link \
