@@ -22,6 +22,11 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
+COPY \
+  --chown=${USER_NAME}:${GROUP_NAME} \
+  --link \
+  backend/package.json backend/pnpm-lock.yaml /workspaces/Frost/backend/
+
 # Set working directory
 WORKDIR /workspaces/Frost/backend/
 

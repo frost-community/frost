@@ -9,7 +9,7 @@
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/Frost/backend",
   "mounts": [
-    "source=${localWorkspaceFolder}/backend/node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localWorkspaceFolderBasename}-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
   ],
   "shutdownAction": "none"
