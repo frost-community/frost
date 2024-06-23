@@ -6,6 +6,7 @@
     "target": "devcontainer"
   },
   "updateRemoteUserUID": true,
+  "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/Frost/backend",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
