@@ -9,7 +9,6 @@
   "remoteUser": "vscode",
   "workspaceFolder": "/workspaces/Frost/frontend",
   "mounts": [
-    "source=${localWorkspaceFolder}/node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
   ],
   "postCreateCommand": "/workspaces/Frost/.devcontainer/frontend/post_create.sh",
