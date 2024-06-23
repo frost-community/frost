@@ -16,22 +16,27 @@ ARG GROUP_NAME=${USER_NAME}
 RUN deluser ubuntu
 
 # Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 RUN \
   --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/var/cache/apt/archives \
-  apt-get update \
-  && apt-get install --yes \
-  nodejs
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+  apt-get install -y nodejs
 
+# Enable pnpm
+RUN corepack enable pnpm
+
+# Copy the local files to the container
 COPY \
   --chown=${USER_NAME}:${GROUP_NAME} \
   --link \
   frontend/package.json frontend/pnpm-lock.yaml /tmp/project_dependencies/
-WORKDIR /tmp/project_dependencies/
-# Install pnpm
-RUN corepack enable pnpm
-# Install project dependencies
+
+# Switch user
 USER ${USER_NAME}
+
+# Set working directory
+WORKDIR /tmp/project_dependencies/
+
+# Install project dependencies
 RUN --mount=type=cache,target=/vscode/.pnpm-store \
   pnpm install

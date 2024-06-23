@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # Bash Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
 IFS=$'\n\t'
@@ -6,9 +7,9 @@ IFS=$'\n\t'
 # Constants
 USER_NAME=vscode
 GROUP_NAME=vscode
-WORKSPACE_DIR=/workspaces/Frost
+PROJECT_DIR=/workspaces/Frost
 BUILT_NODE_MODULES_DIR=/tmp/project_dependencies/node_modules
-NODE_MODULES_DESTINATION_PATH="${WORKSPACE_DIR}/frontend/node_modules"
+NODE_MODULES_DESTINATION_PATH="${PROJECT_DIR}/frontend/node_modules"
 
 # Dockerイメージでビルド済みの node_modules/ をワークスペースへ移動
 # TODO: symlink時代の対応 近いうちに消す
