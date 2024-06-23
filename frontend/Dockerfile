@@ -10,7 +10,7 @@
 
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04 AS devcontainer
 ARG USER_NAME=vscode
-ARG GROUP_NAME=${USER_NAME}
+ARG GROUP_NAME=vscode
 
 # ホスト側のファイル所有者とのUID衝突を避けるためユーザーを削除
 RUN deluser ubuntu
@@ -22,20 +22,20 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
-# Enable pnpm
-RUN corepack enable pnpm
-
-# Copy the local files to the container
+# Copy: (local) frontend/package.json frontend/pnpm-lock.yaml to (container) /tmp/project_dependencies/
 COPY \
   --chown=${USER_NAME}:${GROUP_NAME} \
   --link \
   frontend/package.json frontend/pnpm-lock.yaml /tmp/project_dependencies/
 
-# Switch user
-USER ${USER_NAME}
-
 # Set working directory
 WORKDIR /tmp/project_dependencies/
+
+# Enable pnpm
+RUN corepack enable pnpm
+
+# Switch user
+USER ${USER_NAME}
 
 # Install project dependencies
 RUN --mount=type=cache,target=/vscode/.pnpm-store \
