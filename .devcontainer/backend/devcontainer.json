@@ -12,5 +12,6 @@
     "source=${localWorkspaceFolderBasename}-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
   ],
+  "postCreateCommand": "/workspaces/Frost/.devcontainer/backend/post_create.sh",
   "shutdownAction": "none"
 }
