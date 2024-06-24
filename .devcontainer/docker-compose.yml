@@ -2,9 +2,29 @@ version: '3.8'
 
 services:
   frost-devcontainer:
+    ???
 
-  frost-backend:
+  frost-backend-dev:
+    build:
+      dockerfile: ../backend/Dockerfile
+      context: ../
+      target: devcontainer
 
-  frost-frontend:
+  frost-frontend-dev:
+    build:
+      dockerfile: ../frontend/Dockerfile
+      context: ../
+      target: devcontainer
 
-  frost-db:
+  frost-db-dev:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - frost-db-volume-dev:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+volumes:
+  frost-db-volume-dev:
