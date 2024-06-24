@@ -26,6 +26,8 @@ VS Code (on Linux or WSL)を想定。
    ℹ️WSLの環境ではWindowsホストではなくLinuxへのDocker Engineインストールで動作を確認済みです。
 
    ※ Snap から Docker Engine をインストールした場合、Dev Container が動かなくなるので注意すること。
+1. **Docker Composeのインストール**\
+   TODO
 1. **リポジトリを開く**\
    VS Codeでリポジトリのディレクトリを開く。
 1. **拡張機能のインストール**\
