@@ -6,8 +6,9 @@ RUN deluser ubuntu
 
 # Install Node.js
 RUN \
-  --mount=type=cache,target=/var/lib/apt/lists \
-  --mount=type=cache,target=/var/cache/apt/archives \
+# 動かないのでひとまず無効化。動く方法が分かったら使いたい
+#  --mount=type=cache,target=/var/lib/apt/lists \
+#  --mount=type=cache,target=/var/cache/apt/archives \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 

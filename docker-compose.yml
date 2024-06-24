@@ -1,10 +1,12 @@
-version: "3.4"
+version: "3.7"
 
 services:
   frost-frontend:
     build:
       context: ./frontend/
       dockerfile: ./Dockerfile
+    command: sleep infinity
+    init: true
     volumes:
       - frost-frontend-node-modules:/workspaces/Frost/frontend/node_modules
     network_mode: host
@@ -15,6 +17,8 @@ services:
     build:
       context: ./backend/
       dockerfile: ./Dockerfile
+    command: sleep infinity
+    init: true
     volumes:
       - frost-backend-node-modules:/workspaces/Frost/backend/node_modules
     network_mode: host
