@@ -1,11 +1,10 @@
-version: 3.3
+version: "3.3"
 
 services:
   frost-frontend:
     build:
-      dockerfile: ./frontend/Dockerfile
       context: ./frontend/
-      target: devcontainer
+      dockerfile: ./Dockerfile
     volumes:
       - frost-frontend-node-modules:/workspaces/Frost/frontend/node_modules
     network_mode: host
@@ -14,9 +13,8 @@ services:
 
   frost-backend:
     build:
-      dockerfile: ./backend/Dockerfile
       context: ./backend/
-      target: devcontainer
+      dockerfile: ./Dockerfile
     volumes:
       - frost-backend-node-modules:/workspaces/Frost/backend/node_modules
     network_mode: host
