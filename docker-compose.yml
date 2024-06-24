@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  frost-frontend:
+    build:
+      dockerfile: ./frontend/Dockerfile
+      context: ./frontend/
+      target: devcontainer
+    volumes:
+      - frost-frontend-node-modules:/workspaces/Frost/frontend/node_modules
+    network_mode: host
+    depends_on:
+      - frost-backend
+
+  frost-backend:
+    build:
+      dockerfile: ./backend/Dockerfile
+      context: ./backend/
+      target: devcontainer
+    volumes:
+      - frost-backend-node-modules:/workspaces/Frost/backend/node_modules
+    network_mode: host
+    depends_on:
+      - frost-db
+
+  frost-db:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - frost-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    network_mode: host
+
+volumes:
+  frost-backend-node-modules:
+  frost-frontend-node-modules:
+  frost-db-data:

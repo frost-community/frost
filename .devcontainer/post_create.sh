@@ -1,22 +1,26 @@
 #!/usr/bin/env bash
 
+# +----------------------------------------------------------------------------------------+ #
+# |  _____                                          _             _                        | #
+# | |  __ \                                        | |           (_)                       | #
+# | | |  | |   ___  __   __   ___    ___    _ __   | |_    __ _   _   _ __     ___   _ __  | #
+# | | |  | |  / _ \ \ \ / /  / __|  / _ \  | '_ \  | __|  / _` | | | | '_ \   / _ \ | '__| | #
+# | | |__| | |  __/  \ V /  | (__  | (_) | | | | | \ |_  | (_| | | | | | | | |  __/ | |    | #
+# | |_____/   \___|   \_/    \___|  \___/  |_| |_|  \__|  \__,_| |_| |_| |_|  \___| |_|    | #
+# |                                                                                        | #
+# +----------------------------------------------------------------------------------------+ #
+
 # Bash Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
 IFS=$'\n\t'
 
 # Constants
-USER_NAME=vscode
-GROUP_NAME=vscode
 PROJECT_DIR=/workspaces/Frost
-BE_NODE_MODULES_PATH="${PROJECT_DIR}/backend/node_modules"
-FE_NODE_MODULES_PATH="${PROJECT_DIR}/frontend/node_modules"
+BE_PATH="${PROJECT_DIR}/backend"
+FE_PATH="${PROJECT_DIR}/frontend"
 
-# 生成されたnode_modulesの所有者を変更
-if [ -d "$BE_NODE_MODULES_PATH" ]; then
-  sudo chown "${USER_NAME}:${GROUP_NAME}" --recursive "$BE_NODE_MODULES_PATH"
-fi
+cd ${BE_PATH}
+pnpm install
 
-# 生成されたnode_modulesの所有者を変更
-if [ -d "$FE_NODE_MODULES_PATH" ]; then
-  sudo chown "${USER_NAME}:${GROUP_NAME}" --recursive "$FE_NODE_MODULES_PATH"
-fi
+cd ${FE_PATH}
+pnpm install

@@ -1,12 +1,7 @@
 {
   "name": "Frost",
-  "dockerComposeFile": "docker-compose.yml",
-  "service": "frost-devcontainer",
-  // "build": {
-  //   "dockerfile": "../frontend/Dockerfile",
-  //   "context": "../",
-  //   "target": "devcontainer"
-  // },
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "frost-frontend",
   "workspaceFolder": "/workspaces/Frost",
   "postCreateCommand": "/workspaces/Frost/.devcontainer/post_create.sh",
   // "updateRemoteUserUID": true,
@@ -14,7 +9,6 @@
   "shutdownAction": "none",
   // "forwardPorts": [3000, 5432],
   "mounts": [
-    "source=frost-backend-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
   ],
   "customizations": {
