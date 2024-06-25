@@ -3,7 +3,7 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "frost",
   "workspaceFolder": "/workspaces",
-  "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
+  //"postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
   "remoteUser": "vscode",
   "shutdownAction": "none",
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
