@@ -1,14 +1,9 @@
-
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04 AS backend
-
-# ホスト側のファイル所有者とのUID衝突を避けるためユーザーを削除
-RUN deluser ubuntu
 
 # Install Node.js
 RUN \
-# 動かないのでひとまず無効化。動く方法が分かったら使いたい
-#  --mount=type=cache,target=/var/lib/apt/lists \
-#  --mount=type=cache,target=/var/cache/apt/archives \
+ --mount=type=cache,target=/var/lib/apt/lists \
+ --mount=type=cache,target=/var/cache/apt/archives \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
