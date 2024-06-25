@@ -1,0 +1,21 @@
+services:
+  frost:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces:cached
+
+#   frost-db:
+#     image: postgres:latest
+#     restart: unless-stopped
+#     volumes:
+#       - frost-db-data:/var/lib/postgresql/data
+#     environment:
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_USER: postgres
+#       POSTGRES_DB: postgres
+
+# volumes:
+#   frost-db-data:
