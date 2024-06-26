@@ -20,5 +20,5 @@ RUN \
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
   apt-get install -y nodejs
 
-# Install pnpm
+# Corepackにpnpmを管理してもらうよう設定
 RUN corepack enable pnpm
