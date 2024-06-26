@@ -15,7 +15,8 @@ services:
       - frost-net-backend
 
   frost-db:
-    image: postgres:latest
+    container_name: frost-db
+    image: postgres:15
     restart: unless-stopped
     volumes:
       - frost-db-data:/var/lib/postgresql/data
@@ -23,6 +24,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
     networks:
       - frost-net-backend
 
