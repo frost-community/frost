@@ -1,6 +1,6 @@
 {
   "name": "Frost",
-  "dockerComposeFile": "docker-compose.yml",
+  "dockerComposeFile": "compose.yaml",
   "service": "frost",
   "workspaceFolder": "/workspaces",
   //"postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
