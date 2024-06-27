@@ -4,6 +4,12 @@
 # Node.js 20 image on Debian 12 (bookworm)
 FROM node:20-bookworm AS setup-common
 
+# Install packages
+RUN apt-get update && apt-get install -y \
+  sudo \
+  iputils-ping \
+  net-tools
+
 # Install pnpm
 RUN corepack enable pnpm
 

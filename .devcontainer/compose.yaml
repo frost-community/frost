@@ -18,10 +18,12 @@ services:
     volumes:
       - ..:/workspaces:cached
     command: sleep infinity
+    ports:
+      - "3000:3000"
     depends_on:
       - db
-    # networks:
-    #   - frost-net-internal
+    networks:
+      - frost-net-internal
 
   db:
     container_name: frost-db
@@ -39,8 +41,9 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
-    # networks:
-    #   - frost-net-internal
+    networks:
+      - frost-net-internal
 
-# networks:
-#   frost-net-internal:
+networks:
+  frost-net-internal:
+
