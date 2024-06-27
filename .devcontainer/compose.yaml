@@ -1,36 +1,46 @@
+# +----------------------------------------------------------------------------------------+ #
+# |  _____                                          _             _                        | #
+# | |  __ \                                        | |           (_)                       | #
+# | | |  | |   ___  __   __   ___    ___    _ __   | |_    __ _   _   _ __     ___   _ __  | #
+# | | |  | |  / _ \ \ \ / /  / __|  / _ \  | '_ \  | __|  / _` | | | | '_ \   / _ \ | '__| | #
+# | | |__| | |  __/  \ V /  | (__  | (_) | | | | | \ |_  | (_| | | | | | | | |  __/ | |    | #
+# | |_____/   \___|   \_/    \___|  \___/  |_| |_|  \__|  \__,_| |_| |_| |_|  \___| |_|    | #
+# |                                                                                        | #
+# +----------------------------------------------------------------------------------------+ #
+
 services:
   frost:
     build:
-      context: .
-      dockerfile: Dockerfile
-    command: sleep infinity
+      context: ..
+      dockerfile: ./Dockerfile
+      target: full
+    working_dir: /workspaces
     volumes:
       - ..:/workspaces:cached
+    command: sleep infinity
+    depends_on:
+      - db
+    # networks:
+    #   - frost-net-internal
 
-  frost-backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-    networks:
-      - frost-net-backend
-
-  frost-db:
+  db:
     container_name: frost-db
-    image: postgres:15
-    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: ./Dockerfile
+      target: db
     volumes:
-      - frost-db-data:/var/lib/postgresql/data
+      - ../db/data:/var/lib/postgresql/data
+      - ../db/init:/docker-entrypoint-initdb.d
+    command: sleep infinity
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: frost
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
-    networks:
-      - frost-net-backend
+    # networks:
+    #   - frost-net-internal
 
-volumes:
-  frost-db-data:
-
-networks:
-  frost-net-backend:
+# networks:
+#   frost-net-internal:

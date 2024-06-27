@@ -4,7 +4,7 @@
   "service": "frost",
   "workspaceFolder": "/workspaces",
   "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
-  "remoteUser": "vscode",
+  "remoteUser": "node",
   "shutdownAction": "none",
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
