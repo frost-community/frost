@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
   iputils-ping \
   net-tools
 
+# sudo setting
+RUN echo "node ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
 # Install pnpm
 RUN corepack enable pnpm
 
