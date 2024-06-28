@@ -4,14 +4,17 @@
 # Node.js 20 image on Debian 12 (bookworm)
 FROM node:20-bookworm AS setup-common
 
-# Install packages
-RUN apt-get update && apt-get install -y \
-  sudo \
-  iputils-ping \
-  net-tools
+RUN apt-get update
 
-# sudo setting
+# Install sudo
+RUN apt-get install -y sudo
 RUN echo "node ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
+# Install ping
+RUN apt-get install -y iputils-ping net-tools
+
+# Install PostgreSQL
+RUN apt-get install -y postgresql postgresql-contrib
 
 # Install pnpm
 RUN corepack enable pnpm
