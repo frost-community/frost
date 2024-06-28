@@ -9,17 +9,45 @@
 # +----------------------------------------------------------------------------------------+ #
 
 services:
-  frost:
+  development:
     build:
       context: ..
-      dockerfile: ./Dockerfile
-      target: full
+      dockerfile: ./.devcontainer/Dockerfile
+      target: development
+    working_dir: /workspaces
+    volumes:
+      - ..:/workspaces:cached
+    command: sleep infinity
+    networks:
+      - frost-net-internal
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: frontend
     working_dir: /workspaces
     volumes:
       - ..:/workspaces:cached
     command: sleep infinity
     ports:
       - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - frost-net-internal
+
+  backend:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: backend
+    working_dir: /workspaces
+    volumes:
+      - ..:/workspaces:cached
+    command: sleep infinity
+    ports:
+      - "3001:3001"
     depends_on:
       - db
     networks:
@@ -29,7 +57,7 @@ services:
     container_name: frost-db
     build:
       context: ..
-      dockerfile: ./Dockerfile
+      dockerfile: ./docker/Dockerfile
       target: db
     volumes:
       - ../db/data:/var/lib/postgresql/data
@@ -46,4 +74,3 @@ services:
 
 networks:
   frost-net-internal:
-

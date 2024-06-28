@@ -1,7 +1,7 @@
 {
   "name": "Frost",
   "dockerComposeFile": "compose.yaml",
-  "service": "frost",
+  "service": "development",
   "workspaceFolder": "/workspaces",
   "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
   "remoteUser": "node",
