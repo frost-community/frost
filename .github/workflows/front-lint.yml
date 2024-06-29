@@ -3,8 +3,8 @@ name: ESLint CI
 on:
   push:
     paths:
-      - 'frontend/**'
-      - '.github/workflows/front-lint.yml'
+      - "frontend/src/**"
+      - ".github/workflows/front-lint.yml"
 
 jobs:
   lint:
