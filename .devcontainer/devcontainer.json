@@ -1,8 +1,8 @@
 {
   "name": "Frost",
   "dockerComposeFile": [
-    "compose.yaml",
-    "../docker/compose.yaml"
+    "../compose.dev.yaml",
+    "../compose.yaml"
   ],
   "service": "development",
   "workspaceFolder": "/workspaces",
@@ -10,7 +10,7 @@
   "remoteUser": "node",
   "shutdownAction": "none",
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [3000],
+  "forwardPorts": [3000, 3001, 3002],
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
   ],

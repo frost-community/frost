@@ -11,12 +11,12 @@
 services:
   development:
     build:
-      context: ..
+      context: .
       dockerfile: ./.devcontainer/Dockerfile
       target: development
-    working_dir: /workspaces
     volumes:
-      - ..:/workspaces:cached
+      - .:/workspaces:cached
+    working_dir: /workspaces
     command: sleep infinity
     networks:
       - frost-net-internal
