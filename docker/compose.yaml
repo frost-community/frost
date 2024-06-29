@@ -11,15 +11,15 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - server
     networks:
       - frost-net-internal
 
-  backend:
+  server:
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
-      target: backend
+      target: server
     working_dir: /workspaces
     volumes:
       - ..:/workspaces:cached
@@ -27,26 +27,45 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - db
+      - server-db
     networks:
       - frost-net-internal
 
-  db:
-    container_name: frost-db
+  server-db:
+    container_name: server-db
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
-      target: db
+      target: server-db
     volumes:
       - ../db/data:/var/lib/postgresql/data
       - ../db/init:/docker-entrypoint-initdb.d
     command: sleep infinity
     environment:
-      POSTGRES_DB: frost
+      POSTGRES_DB: frost_server
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
+    networks:
+      - frost-net-internal
+
+  identity-db:
+    container_name: identity-db
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: identity-db
+    volumes:
+      - ../db/data:/var/lib/postgresql/data
+      - ../db/init:/docker-entrypoint-initdb.d
+    command: sleep infinity
+    environment:
+      POSTGRES_DB: frost_identity
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # ports:
+    #   - "5432:5432"
     networks:
       - frost-net-internal
 

@@ -1,5 +1,5 @@
 # アーキテクチャ
-Frost (Backend)で採用するアーキテクチャについて
+Frost (Server)で採用するアーキテクチャについて
 
 ## 技術選定
 - 言語: TypeScript(Node.js)
