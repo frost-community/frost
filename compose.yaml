@@ -1,12 +1,12 @@
 services:
   frontend:
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./frontend/Dockerfile
       target: frontend
     working_dir: /workspaces
     volumes:
-      - ..:/workspaces:cached
+      - .:/workspaces:cached
     command: sleep infinity
     ports:
       - "3000:3000"
@@ -17,12 +17,12 @@ services:
 
   server:
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./server/Dockerfile
       target: server
     working_dir: /workspaces
     volumes:
-      - ..:/workspaces:cached
+      - .:/workspaces:cached
     command: sleep infinity
     ports:
       - "3001:3001"
@@ -34,12 +34,12 @@ services:
   server-db:
     container_name: server-db
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./server-db/Dockerfile
       target: server-db
     volumes:
-      - ../server-db/data:/var/lib/postgresql/data
-      - ../server-db/init:/docker-entrypoint-initdb.d
+      - ./server-db/data:/var/lib/postgresql/data
+      - ./server-db/init:/docker-entrypoint-initdb.d
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_server
@@ -50,15 +50,31 @@ services:
     networks:
       - frost-net-internal
 
+  identity:
+    build:
+      context: .
+      dockerfile: ./identity/Dockerfile
+      target: identity
+    working_dir: /workspaces
+    volumes:
+      - .:/workspaces:cached
+    command: sleep infinity
+    ports:
+      - "3001:3001"
+    depends_on:
+      - identity-db
+    networks:
+      - frost-net-internal
+
   identity-db:
     container_name: identity-db
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./identity-db/Dockerfile
       target: identity-db
     volumes:
-      - ../identity-db/data:/var/lib/postgresql/data
-      - ../identity-db/init:/docker-entrypoint-initdb.d
+      - ./identity-db/data:/var/lib/postgresql/data
+      - ./identity-db/init:/docker-entrypoint-initdb.d
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_identity
