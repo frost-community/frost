@@ -10,3 +10,5 @@ Frost開発者全員に使わせていきたいVS Code拡張機能を導入す�
 ## Docker composeの設定ファイルはリポジトリ直下に置く
 Docker composeは最初に読み込まれた設定ファイルのディレクトリを相対パスのベースとして使用するようです。  
 ベースパスを分かりやすくするため、このプロジェクトではリポジトリの直下にDocker composeの設定ファイルを配置することに決めます。
+
+https://github.com/docker/compose/issues/3874
