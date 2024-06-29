@@ -8,17 +8,29 @@
 # |                                                                                        | #
 # +----------------------------------------------------------------------------------------+ #
 
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04 AS devcontainer
+# ------------------------------------------------- #
+# [target] development
 
-# ホスト側のファイル所有者とのUID衝突を避けるためユーザーを削除
-RUN deluser ubuntu
+# Node.js 20 image on Debian 12 (bookworm)
+FROM node:20-bookworm AS development
+ARG USERNAME=node
 
-# Install Node.js
-RUN \
-  --mount=type=cache,target=/var/lib/apt/lists \
-  --mount=type=cache,target=/var/cache/apt/archives \
-  curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-  apt-get install -y nodejs
+RUN apt-get update
 
-# Corepackにpnpmを管理してもらうよう設定
+# Install sudo
+RUN apt-get install -y sudo
+RUN echo "node ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
+# Install ping
+RUN apt-get install -y iputils-ping net-tools
+
+# Install PostgreSQL
+RUN apt-get install -y postgresql postgresql-contrib
+
+# Install pnpm
 RUN corepack enable pnpm
+
+# Switch user
+# この操作により権限が一般ユーザーになります。
+USER $USERNAME
+WORKDIR /home/$USERNAME/

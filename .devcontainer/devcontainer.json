@@ -1,15 +1,15 @@
 {
   "name": "Frost",
   "dockerComposeFile": "compose.yaml",
-  "service": "frost",
+  "service": "development",
   "workspaceFolder": "/workspaces",
   "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
-  "remoteUser": "vscode",
+  "remoteUser": "node",
   "shutdownAction": "none",
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
+  "forwardPorts": [3000],
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
   ],
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
@@ -23,7 +23,8 @@
         "github.vscode-github-actions",
         "timonwong.shellcheck",
         "ms-azuretools.vscode-docker",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "ckolkman.vscode-postgres"
       ]
     }
   }

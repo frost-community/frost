@@ -1,21 +1,76 @@
+# +----------------------------------------------------------------------------------------+ #
+# |  _____                                          _             _                        | #
+# | |  __ \                                        | |           (_)                       | #
+# | | |  | |   ___  __   __   ___    ___    _ __   | |_    __ _   _   _ __     ___   _ __  | #
+# | | |  | |  / _ \ \ \ / /  / __|  / _ \  | '_ \  | __|  / _` | | | | '_ \   / _ \ | '__| | #
+# | | |__| | |  __/  \ V /  | (__  | (_) | | | | | \ |_  | (_| | | | | | | | |  __/ | |    | #
+# | |_____/   \___|   \_/    \___|  \___/  |_| |_|  \__|  \__,_| |_| |_| |_|  \___| |_|    | #
+# |                                                                                        | #
+# +----------------------------------------------------------------------------------------+ #
+
 services:
-  frost:
+  development:
     build:
-      context: .
-      dockerfile: Dockerfile
-    command: sleep infinity
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+      target: development
+    working_dir: /workspaces
     volumes:
       - ..:/workspaces:cached
+    command: sleep infinity
+    networks:
+      - frost-net-internal
 
-#   frost-db:
-#     image: postgres:latest
-#     restart: unless-stopped
-#     volumes:
-#       - frost-db-data:/var/lib/postgresql/data
-#     environment:
-#       POSTGRES_PASSWORD: postgres
-#       POSTGRES_USER: postgres
-#       POSTGRES_DB: postgres
+  frontend:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: frontend
+    working_dir: /workspaces
+    volumes:
+      - ..:/workspaces:cached
+    command: sleep infinity
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - frost-net-internal
 
-# volumes:
-#   frost-db-data:
+  backend:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: backend
+    working_dir: /workspaces
+    volumes:
+      - ..:/workspaces:cached
+    command: sleep infinity
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    networks:
+      - frost-net-internal
+
+  db:
+    container_name: frost-db
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      target: db
+    volumes:
+      - ../db/data:/var/lib/postgresql/data
+      - ../db/init:/docker-entrypoint-initdb.d
+    command: sleep infinity
+    environment:
+      POSTGRES_DB: frost
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - frost-net-internal
+
+networks:
+  frost-net-internal:
