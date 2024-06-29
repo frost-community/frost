@@ -1,7 +1,7 @@
 {
   "name": "Frost",
   "dockerComposeFile": [
-    "compose.yaml",
+    "../compose.dev.yaml",
     "../compose.yaml"
   ],
   "service": "development",

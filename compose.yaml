@@ -61,7 +61,7 @@ services:
     #   - .:/workspaces:cached
     # command: sleep infinity
     ports:
-      - "3001:3001"
+      - "3002:3002"
     depends_on:
       - identity-db
     networks:
