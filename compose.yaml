@@ -5,9 +5,9 @@ services:
       dockerfile: ./frontend/Dockerfile
       target: frontend
     working_dir: /workspaces
-    volumes:
-      - .:/workspaces:cached
-    command: sleep infinity
+    # volumes:
+    #   - .:/workspaces:cached
+    # command: sleep infinity
     ports:
       - "3000:3000"
     depends_on:
@@ -21,9 +21,9 @@ services:
       dockerfile: ./server/Dockerfile
       target: server
     working_dir: /workspaces
-    volumes:
-      - .:/workspaces:cached
-    command: sleep infinity
+    # volumes:
+    #   - .:/workspaces:cached
+    # command: sleep infinity
     ports:
       - "3001:3001"
     depends_on:
@@ -40,7 +40,8 @@ services:
     volumes:
       - ./server-db/data:/var/lib/postgresql/data
       - ./server-db/init:/docker-entrypoint-initdb.d
-    command: sleep infinity
+    working_dir: /workspaces
+    # command: sleep infinity
     environment:
       POSTGRES_DB: frost_server
       POSTGRES_USER: postgres
@@ -56,9 +57,9 @@ services:
       dockerfile: ./identity/Dockerfile
       target: identity
     working_dir: /workspaces
-    volumes:
-      - .:/workspaces:cached
-    command: sleep infinity
+    # volumes:
+    #   - .:/workspaces:cached
+    # command: sleep infinity
     ports:
       - "3001:3001"
     depends_on:
@@ -75,7 +76,8 @@ services:
     volumes:
       - ./identity-db/data:/var/lib/postgresql/data
       - ./identity-db/init:/docker-entrypoint-initdb.d
-    command: sleep infinity
+    working_dir: /workspaces
+    # command: sleep infinity
     environment:
       POSTGRES_DB: frost_identity
       POSTGRES_USER: postgres

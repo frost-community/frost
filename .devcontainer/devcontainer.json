@@ -2,7 +2,7 @@
   "name": "Frost",
   "dockerComposeFile": [
     "compose.yaml",
-    "../docker/compose.yaml"
+    "../compose.yaml"
   ],
   "service": "development",
   "workspaceFolder": "/workspaces",
