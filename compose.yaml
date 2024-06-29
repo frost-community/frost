@@ -4,12 +4,11 @@ services:
       context: .
       dockerfile: ./frontend/Dockerfile
       target: frontend
-    working_dir: /workspaces
     # volumes:
-    #   - .:/workspaces:cached
-    command: sleep infinity
+    # working_dir: /workspaces
     ports:
       - "3000:3000"
+    command: sleep infinity
     depends_on:
       - server
     networks:
@@ -20,12 +19,11 @@ services:
       context: .
       dockerfile: ./server/Dockerfile
       target: server
-    working_dir: /workspaces
     # volumes:
-    #   - .:/workspaces:cached
-    command: sleep infinity
+    # working_dir: /workspaces
     ports:
       - "3001:3001"
+    command: sleep infinity
     depends_on:
       - server-db
     networks:
@@ -40,14 +38,14 @@ services:
     volumes:
       - ./server-db/data:/var/lib/postgresql/data
       - ./server-db/init:/docker-entrypoint-initdb.d
-    working_dir: /workspaces
+    # working_dir: /workspaces
+    # ports:
+    #   - "5432:5432"
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_server
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    # ports:
-    #   - "5432:5432"
     networks:
       - frost-net-internal
 
@@ -56,12 +54,11 @@ services:
       context: .
       dockerfile: ./identity/Dockerfile
       target: identity
-    working_dir: /workspaces
     # volumes:
-    #   - .:/workspaces:cached
-    command: sleep infinity
+    # working_dir: /workspaces
     ports:
       - "3002:3002"
+    command: sleep infinity
     depends_on:
       - identity-db
     networks:
@@ -76,14 +73,14 @@ services:
     volumes:
       - ./identity-db/data:/var/lib/postgresql/data
       - ./identity-db/init:/docker-entrypoint-initdb.d
-    working_dir: /workspaces
+    # working_dir: /workspaces
+    # ports:
+    #   - "5432:5432"
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_identity
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    # ports:
-    #   - "5432:5432"
     networks:
       - frost-net-internal
 
