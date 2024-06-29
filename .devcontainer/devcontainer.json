@@ -27,7 +27,8 @@
         "timonwong.shellcheck",
         "ms-azuretools.vscode-docker",
         "ms-vscode-remote.remote-containers",
-        "ckolkman.vscode-postgres"
+        "ckolkman.vscode-postgres",
+        "editorconfig.editorconfig"
       ]
     }
   }
