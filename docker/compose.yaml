@@ -38,8 +38,8 @@ services:
       dockerfile: ./docker/Dockerfile
       target: server-db
     volumes:
-      - ../db/data:/var/lib/postgresql/data
-      - ../db/init:/docker-entrypoint-initdb.d
+      - ../server-db/data:/var/lib/postgresql/data
+      - ../server-db/init:/docker-entrypoint-initdb.d
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_server
@@ -57,8 +57,8 @@ services:
       dockerfile: ./docker/Dockerfile
       target: identity-db
     volumes:
-      - ../db/data:/var/lib/postgresql/data
-      - ../db/init:/docker-entrypoint-initdb.d
+      - ../identity-db/data:/var/lib/postgresql/data
+      - ../identity-db/init:/docker-entrypoint-initdb.d
     command: sleep infinity
     environment:
       POSTGRES_DB: frost_identity
