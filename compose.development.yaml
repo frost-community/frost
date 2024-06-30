@@ -24,35 +24,18 @@ services:
     networks:
       - frost-development-local
 
-  server-db:
-    # container_name: server-db
+  db:
+    # container_name: db
     image: postgres:15
     volumes:
-      - ./server-db/data:/var/lib/postgresql/data
-      - ./server-db/init:/docker-entrypoint-initdb.d
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
     # working_dir: /workspaces
     # ports:
     #   - "5432:5432"
     command: sleep infinity
     environment:
-      POSTGRES_DB: frost_server
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    networks:
-      - frost-development-local
-
-  identity-db:
-    # container_name: identity-db
-    image: postgres:15
-    volumes:
-      - ./identity-db/data:/var/lib/postgresql/data
-      - ./identity-db/init:/docker-entrypoint-initdb.d
-    # working_dir: /workspaces
-    # ports:
-    #   - "5432:5432"
-    command: sleep infinity
-    environment:
-      POSTGRES_DB: frost_identity
+      POSTGRES_DB: frost
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     networks:
