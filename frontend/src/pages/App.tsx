@@ -1,15 +1,24 @@
-import { Button, Image, useMantineColorScheme } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Image,
+  useMantineColorScheme,
+} from "@mantine/core";
 
 import deleteParrot from "/deletedparrot.gif";
 
 import { useToggle } from "@mantine/hooks";
+import { MoonStars, Sun } from "@phosphor-icons/react";
 
 export const App = () => {
   const [deleted, toggleDeleted] = useToggle();
-  const { toggleColorScheme } = useMantineColorScheme();
 
   return (
     <>
+      <Group p="12" justify="flex-end">
+        <ColorSchemeToggleButton />
+      </Group>
       <Image
         src={deleteParrot}
         h={100}
@@ -19,14 +28,28 @@ export const App = () => {
         }}
       />
       <Button
-        color="red"
         onClick={() => {
           toggleDeleted();
         }}
       >
-        DeleteParrotをDelete
+        DeleteParrotを{deleted ? "Restore" : "Delete"}
       </Button>
-      <Button onClick={toggleColorScheme}>Change DarkMode</Button>
     </>
+  );
+};
+
+const ColorSchemeToggleButton = () => {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+  return (
+    <ActionIcon
+      color="yellow"
+      variant="light"
+      size="lg"
+      radius="xl"
+      onClick={toggleColorScheme}
+    >
+      {colorScheme === "light" ? <MoonStars /> : <Sun />}
+    </ActionIcon>
   );
 };
