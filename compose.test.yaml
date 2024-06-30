@@ -35,69 +35,37 @@ services:
     #   - "3000:3000"
     command: sleep infinity
     depends_on:
-      - server
+      - backend
     networks:
       - frost-test-local
 
-  server:
+  backend:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
-      target: server
+      dockerfile: ./backend/Dockerfile
+      target: backend
     # volumes:
     # working_dir: /workspaces
     # ports:
     #   - "3001:3000"
     command: sleep infinity
     depends_on:
-      - server-db
+      - db
     networks:
       - frost-test-local
 
-  identity:
-    build:
-      context: .
-      dockerfile: ./identity/Dockerfile
-      target: identity
-    # volumes:
-    # working_dir: /workspaces
-    # ports:
-    #   - "3002:3000"
-    command: sleep infinity
-    depends_on:
-      - identity-db
-    networks:
-      - frost-test-local
-
-  server-db:
-    # container_name: server-db
+  db:
+    # container_name: db
     image: postgres:15
     volumes:
-      - ./server-db/data:/var/lib/postgresql/data
-      - ./server-db/init:/docker-entrypoint-initdb.d
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
     # working_dir: /workspaces
     # ports:
     #   - "5432:5432"
     command: sleep infinity
     environment:
-      POSTGRES_DB: frost_server
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    networks:
-      - frost-test-local
-
-  identity-db:
-    # container_name: identity-db
-    image: postgres:15
-    volumes:
-      - ./identity-db/data:/var/lib/postgresql/data
-      - ./identity-db/init:/docker-entrypoint-initdb.d
-    # working_dir: /workspaces
-    # ports:
-    #   - "5432:5432"
-    command: sleep infinity
-    environment:
-      POSTGRES_DB: frost_identity
+      POSTGRES_DB: frost
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     networks:

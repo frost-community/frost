@@ -1,5 +1,5 @@
 # Node.js 20 image on Debian 12 (bookworm)
-FROM node:20-bookworm AS server
+FROM node:20-bookworm AS backend
 ARG USERNAME=node
 
 # Install pnpm
