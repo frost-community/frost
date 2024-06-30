@@ -1,8 +1,9 @@
 # アーキテクチャ
-Frost (Frontend)で採用するアーキテクチャについて
+Frost Frontendで採用するアーキテクチャについて
 
 ## 技術選定
 - 言語: TypeScript
 - モジュールバンドラ: Vite
 - フレームワーク: React
-- UIフレームワーク: 未定
+- UIフレームワーク: Mantine
+- アイコンフォント: Phosphor Icons
