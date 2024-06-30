@@ -1,0 +1,68 @@
+# +----------------------------------------------------------------------------------------+ #
+# |  _____                                          _             _                        | #
+# | |  __ \                                        | |           (_)                       | #
+# | | |  | |   ___  __   __   ___    ___    _ __   | |_    __ _   _   _ __     ___   _ __  | #
+# | | |  | |  / _ \ \ \ / /  / __|  / _ \  | '_ \  | __|  / _` | | | | '_ \   / _ \ | '__| | #
+# | | |__| | |  __/  \ V /  | (__  | (_) | | | | | \ |_  | (_| | | | | | | | |  __/ | |    | #
+# | |_____/   \___|   \_/    \___|  \___/  |_| |_|  \__|  \__,_| |_| |_| |_|  \___| |_|    | #
+# |                                                                                        | #
+# +----------------------------------------------------------------------------------------+ #
+
+name: frost-development
+
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+      target: devcontainer
+    volumes:
+      - .:/workspaces:cached
+    working_dir: /workspaces
+    # ports:
+    command: sleep infinity
+    networks:
+      - frost-development-local
+
+  server-db:
+    # container_name: server-db
+    build:
+      context: .
+      dockerfile: ./server-db/Dockerfile
+      target: server-db
+    volumes:
+      - ./server-db/data:/var/lib/postgresql/data
+      - ./server-db/init:/docker-entrypoint-initdb.d
+    # working_dir: /workspaces
+    # ports:
+    #   - "5432:5432"
+    command: sleep infinity
+    environment:
+      POSTGRES_DB: frost_server
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - frost-development-local
+
+  identity-db:
+    # container_name: identity-db
+    build:
+      context: .
+      dockerfile: ./identity-db/Dockerfile
+      target: identity-db
+    volumes:
+      - ./identity-db/data:/var/lib/postgresql/data
+      - ./identity-db/init:/docker-entrypoint-initdb.d
+    # working_dir: /workspaces
+    # ports:
+    #   - "5432:5432"
+    command: sleep infinity
+    environment:
+      POSTGRES_DB: frost_identity
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - frost-development-local
+
+networks:
+  frost-development-local:
