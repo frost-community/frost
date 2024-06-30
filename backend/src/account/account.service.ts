@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-export type User = {
-  userId: string;
-};
-
 export type Account = {
   // userId: string,
   accountId: string;
@@ -13,10 +9,10 @@ export type Account = {
 @Injectable()
 export class AccountService {
   getAccountById(accountId: string): Account {
-    // TODO
+    // TODO: fetch from table
     return {
       accountId: accountId,
-      accountName: accountId,
+      accountName: 'Test Account',
     };
   }
 }

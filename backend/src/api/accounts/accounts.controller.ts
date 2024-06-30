@@ -1,12 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
-import { Account, AccountService } from './account.service.js';
+import { Controller, Get, Param } from '@nestjs/common';
+import { Account, AccountService } from '../../account/account.service';
 
-@Controller()
+@Controller('api/accounts')
 export class AccountsController {
   constructor(private readonly accountService: AccountService) {}
 
-  @Get()
-  getAccount(): Account {
-    return this.accountService.getAccountById('testUser');
+  @Get(":id")
+  getAccount(@Param() params: { id: string }): Account {
+    return this.accountService.getAccountById(params.id);
   }
 }
