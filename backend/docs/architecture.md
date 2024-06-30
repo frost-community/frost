@@ -5,4 +5,5 @@ Frost Backendで採用するアーキテクチャについて
 - 言語: TypeScript(Node.js)
 - フレームワーク: Nest.js
 - データベース: PostgreSQL
+- ORMライブラリ: Dizzle
 - テンプレートエンジン: EJS
