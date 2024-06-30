@@ -6,8 +6,7 @@
 A software of social media.
 </p>
 
-## Community
-Frost Community (Discord)\
+## Official Discord
 Everyone is welcome to join!\
 We also hold Frost development meetings here, where you can see the development status.\
 https://discord.gg/KKWw5u4K
