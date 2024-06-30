@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { HelloworldModule } from './helloworld/helloworld.module.js';
+import { ApiModule } from './api/api.module.js';
 
 @Module({
-  imports: [HelloworldModule],
+  imports: [ApiModule],
   controllers: [],
   providers: [],
 })
