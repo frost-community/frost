@@ -12,6 +12,8 @@ VS Code (on Linux or WSL)での開発を想定しています。
    ℹ️WSLの環境ではWindowsホストではなくLinuxへのDocker Engineインストールで動作を確認済みです。
 
    ※ Snap から Docker Engine をインストールした場合、Dev Container が動かなくなるので注意すること
+1. **VS Codeの設定変更**\
+   VS Codeの設定を開き、設定項目 `Dev > Containers: Docker Compose Path` を `docker compose` に変更する。
 1. **リポジトリを開く**\
    VS Codeでリポジトリのディレクトリを開く。
 1. **Dev Containerを開く**\
