@@ -8,11 +8,8 @@
 # |                                                                                        | #
 # +----------------------------------------------------------------------------------------+ #
 
-# ------------------------------------------------- #
-# [target] development
-
 # Node.js 20 image on Debian 12 (bookworm)
-FROM node:20-bookworm AS development
+FROM node:20-bookworm AS devcontainer
 ARG USERNAME=node
 
 RUN apt-get update
