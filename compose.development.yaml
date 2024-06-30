@@ -26,10 +26,7 @@ services:
 
   server-db:
     # container_name: server-db
-    build:
-      context: .
-      dockerfile: ./server-db/Dockerfile
-      target: server-db
+    image: postgres:15
     volumes:
       - ./server-db/data:/var/lib/postgresql/data
       - ./server-db/init:/docker-entrypoint-initdb.d
@@ -46,10 +43,7 @@ services:
 
   identity-db:
     # container_name: identity-db
-    build:
-      context: .
-      dockerfile: ./identity-db/Dockerfile
-      target: identity-db
+    image: postgres:15
     volumes:
       - ./identity-db/data:/var/lib/postgresql/data
       - ./identity-db/init:/docker-entrypoint-initdb.d
