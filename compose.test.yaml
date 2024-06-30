@@ -35,7 +35,7 @@ services:
     #   - "3000:3000"
     command: sleep infinity
     depends_on:
-      - server
+      - backend
     networks:
       - frost-test-local
 

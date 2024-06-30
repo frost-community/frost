@@ -12,22 +12,22 @@ services:
     #   - "3000:3000"
     command: sleep infinity
     depends_on:
-      - server
+      - backend
     networks:
       - frost-local
 
-  server:
+  backend:
     build:
       context: .
-      dockerfile: ./server/Dockerfile
-      target: server
+      dockerfile: ./backend/Dockerfile
+      target: backend
     # volumes:
     # working_dir: /workspaces
     # ports:
     #   - "3001:3000"
     command: sleep infinity
     depends_on:
-      - server-db
+      - db
     networks:
       - frost-local
 
