@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { AccountService } from 'src/account/account.service';
-import { User, UserService } from 'src/user/user.service';
+import { AccountService } from 'src/services/account/account.service';
+import { User, UserService } from 'src/services/user/user.service';
 
 @Controller('api/me')
 export class MeController {

@@ -1,9 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ApiModule } from './api/api.module';
-import { UserModule } from './user/user.module';
-import { AccountModule } from './account/account.module';
+import { AccountsControllerModule } from './controllers/accounts/accountsController.module';
+import { MeControllerModule } from './controllers/me/meController.module';
+import { AccountServiceModule } from './services/account/accountService.module';
+import { UserServiceModule } from './services/user/userService.module';
 
 @Module({
-  imports: [ApiModule, UserModule, AccountModule]
+  // ここに全てのモジュールを記載
+  imports: [
+    // controllers
+    AccountsControllerModule,
+    MeControllerModule,
+
+    // services
+    AccountServiceModule,
+    UserServiceModule
+  ]
 })
 export class AppModule { }

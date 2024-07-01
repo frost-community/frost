@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Account } from 'src/account/account.service';
+import { Account } from 'src/services/account/account.service';
 
 export type User = {
   userId: string;
