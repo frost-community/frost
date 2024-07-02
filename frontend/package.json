@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "generate-routes": "tsr generate",
+    "generate-html-template": "pnpm exec tsx --tsconfig tsconfig.app.json --import=./scripts/ignore-assets-loader/register.js scripts/generate-template-html.js",
     "watch-routes": "tsr watch",
     "dev": "vite",
-    "build": "generate-routes && tsc -b && vite build && node ./scripts/generate-ejs.js",
+    "build": "pnpm run generate-routes && pnpm run generate-html-template && tsc -b && vite build && node ./scripts/generate-ejs.js",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "pnpm lint --fix",
