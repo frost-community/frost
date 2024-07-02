@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AccountsRouteModule } from './accounts/accountsRoute';
-import { MeRouteModule } from './me/meRoute';
+import { AccountsRouteModule } from './accounts/accountsRoute.module';
+import { MeRouteModule } from './me/meRoute.module';
 
 @Module({
   imports: [

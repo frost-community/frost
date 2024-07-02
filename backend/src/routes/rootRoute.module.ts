@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ApiRouteModule } from './api/apiRoute';
+import { ApiRouteModule } from './api/apiRoute.module';
 
 @Module({
   imports: [
