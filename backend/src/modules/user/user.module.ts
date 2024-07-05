@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   // このモジュールに含まれるサービス
@@ -9,6 +10,6 @@ import { UserService } from './user.service';
   exports: [UserService],
 
   // 依存モジュール
-  imports: []
+  imports: [DatabaseModule]
 })
 export class UserModule {}

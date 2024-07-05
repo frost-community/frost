@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AccountService } from './account.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   // このモジュールに含まれるサービス
@@ -9,6 +10,6 @@ import { AccountService } from './account.service';
   exports: [AccountService],
 
   // 依存モジュール
-  imports: []
+  imports: [DatabaseModule]
 })
 export class AccountModule {}

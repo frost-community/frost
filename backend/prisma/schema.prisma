@@ -15,20 +15,19 @@ generator client {
 
 generator kysely {
   provider     = "prisma-kysely"
-  output       = "../src/db"
+  output       = "../src/modules/database"
   fileName     = "types.gen.ts"
   enumFileName = "enums.gen.ts"
 }
 
 model User {
-  userId  String    @id
+  userId  String    @id @db.Uuid
   Profile Profile[]
 }
 
 model Profile {
-  profileId   String @id
+  profileId   String @id @db.Uuid
   userId      String @unique
   user        User   @relation(fields: [userId], references: [userId])
   accountName String
-  name        String
 }
