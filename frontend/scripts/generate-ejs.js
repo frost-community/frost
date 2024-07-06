@@ -8,7 +8,7 @@ const distFile = process.cwd() + '/dist/index.ejs';
 const source = fs.readFileSync(sourceFile, { encoding: 'utf8' });
 
 // ejsのコメントを全てejs構文に置換
-const dist = source.replace(/<!--[ \t]*(%.+?%)[ \t]*-->/g, '<$1>');
+const dist = source.replace(/<!--[ \t]*(%.+?%)[ \t]*-->/gs, '<$1>');
 
 // ejsファイルへ書き込み
 fs.writeFileSync(distFile, dist);
