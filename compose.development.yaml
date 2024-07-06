@@ -21,25 +21,32 @@ services:
     working_dir: /workspaces
     # ports:
     command: sleep infinity
+    environment:
+      DB_URL: postgresql://postgres:postgres@db:5432/frost
+    depends_on:
+      - db
     networks:
       - frost-development-local
 
   db:
     # container_name: db
-    image: postgres:15
+    image: postgres:16
+    restart: always
     volumes:
-      - ./db/data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
+      - frost-db-data:/var/lib/postgresql/data
     # working_dir: /workspaces
     # ports:
     #   - "5432:5432"
-    command: sleep infinity
+    # command: sleep infinity
     environment:
       POSTGRES_DB: frost
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     networks:
       - frost-development-local
+
+volumes:
+  frost-db-data:
 
 networks:
   frost-development-local:

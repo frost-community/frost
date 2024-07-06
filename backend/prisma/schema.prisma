@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider     = "prisma-kysely"
+  output       = "../src/modules/database"
+  fileName     = "types.gen.ts"
+  enumFileName = "enums.gen.ts"
+}
+
+model User {
+  userId  String    @id @db.Uuid
+  Profile Profile[]
+}
+
+model Profile {
+  profileId   String @id @db.Uuid
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [userId])
+  accountName String
+}
