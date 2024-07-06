@@ -12,13 +12,14 @@ export type Profile = {
 @Injectable()
 export class ProfileService {
   async get(profileId: string, db: NodePgDatabase<typeof schema>): Promise<Profile | undefined> {
-    const profileRows = await db
-      .select({
-        profileId: ProfilesTable.id,
-        name: ProfilesTable.name,
-      })
-      .from(ProfilesTable)
-      .where(eq(ProfilesTable.id, profileId));
+    const profileRows = await db.select({
+      profileId: ProfilesTable.id,
+      name: ProfilesTable.name,
+    }).from(
+      ProfilesTable
+    ).where(
+      eq(ProfilesTable.id, profileId)
+    );
 
     if (profileRows.length == 0) {
       return undefined;
