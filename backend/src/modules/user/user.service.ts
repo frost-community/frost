@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-//import { DATABASE } from 'src/constants';
 import * as schema from 'src/database/schema';
 import { UsersTable } from 'src/database/schema';
 import { Profile, ProfileService } from '../profile/profile.service';
@@ -15,7 +14,6 @@ export type User = {
 export class UserService {
   constructor(
     private readonly profileService: ProfileService,
-    //@Inject(DATABASE) private readonly db: NodePgDatabase<typeof schema>,
   ) {}
 
   async get(userId: string, db: NodePgDatabase<typeof schema>): Promise<User | undefined> {
