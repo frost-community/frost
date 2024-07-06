@@ -1,11 +1,13 @@
 ## DBのマイグレーションを作成する
-開発時にDBのスキーマ(Prisma Schema)の変更が生じた場合は、\
-以下のコマンドを実行してDBのマイグレーションを作成してください。
+開発時にDrizzleのスキーマの変更が生じた場合は、\
+以下のコマンドを実行してDBのマイグレーションを作成・適用してください。
 ```
-prisma migrate dev --name [このマイグレーションの名前]
+pnpm migration:generate --name [このマイグレーションの名前]
+pnpm migration:apply
 ```
 
 例:
 ```
-prisma migrate dev --name nice-migration
+pnpm migration:generate --name honi
+pnpm migration:apply
 ```
