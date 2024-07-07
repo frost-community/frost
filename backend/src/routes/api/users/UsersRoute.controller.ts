@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, HttpStatus, Inject, Param } from '@nest
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE } from 'src/constants';
 import * as schema from 'src/database/schema';
-import { User, UserService } from 'src/modules/user/urser.service';
+import { User, UserService } from 'src/modules/user/user.service';
 
 @Controller('api/users')
 export class UsersRouteController {
