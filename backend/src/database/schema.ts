@@ -1,23 +1,23 @@
 import * as D from 'drizzle-orm/pg-core';
 
-// users
+// account
 
-export const UsersTable = D.pgTable('users', {
-  id: D.uuid('id').primaryKey(),
+export const AccountTable = D.pgTable('account', {
+  id: D.uuid('id').primaryKey().defaultRandom(),
 });
 
-export type UserRow = typeof UsersTable.$inferSelect;
+export type AccountRow = typeof AccountTable.$inferSelect;
 
-export type UserInsertParams = typeof UsersTable.$inferInsert;
+export type AccountInsertParams = typeof AccountTable.$inferInsert;
 
-// profiles
+// user
 
-export const ProfilesTable = D.pgTable('profiles', {
-  id: D.uuid('id').primaryKey(),
-  userId: D.uuid('userId').notNull(),
+export const UserTable = D.pgTable('user', {
+  id: D.uuid('id').primaryKey().defaultRandom(),
+  accountId: D.uuid('accountId').notNull(),
   name: D.varchar('name', { length: 64 }).notNull().default('frost user'),
 });
 
-export type ProfileRow = typeof ProfilesTable.$inferSelect;
+export type UserRow = typeof UserTable.$inferSelect;
 
-export type ProfileInsertParams = typeof ProfilesTable.$inferInsert;
+export type UserInsertParams = typeof UserTable.$inferInsert;

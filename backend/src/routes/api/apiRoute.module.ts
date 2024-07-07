@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MeRouteModule } from './me/meRoute.module';
-import { ProfilesRouteModule } from './profiles/profilesRoute.module';
+import { UsersRouteModule } from './users/UsersRoute.module';
 
 @Module({
   // このモジュールに含まれるコントローラー
@@ -8,7 +8,7 @@ import { ProfilesRouteModule } from './profiles/profilesRoute.module';
 
   // 依存モジュール
   imports: [
-    ProfilesRouteModule,
+    UsersRouteModule,
     MeRouteModule
   ]
 })

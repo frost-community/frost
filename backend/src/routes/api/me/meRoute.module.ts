@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from 'src/modules/user/user.module';
+import { AccountModule } from 'src/modules/account/account.module';
 import { MeRouteController } from './meRoute.controller';
 
 @Module({
@@ -7,6 +7,6 @@ import { MeRouteController } from './meRoute.controller';
   controllers: [MeRouteController],
 
   // 依存モジュール
-  imports: [UserModule]
+  imports: [AccountModule]
 })
 export class MeRouteModule {}

@@ -2,36 +2,56 @@ import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'src/database/schema';
-import { UsersTable } from 'src/database/schema';
-import { Profile, ProfileService } from '../profile/profile.service';
+import { UserTable } from 'src/database/schema';
 
 export type User = {
   userId: string;
-  profiles: Profile[];
+  name: string;
 };
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly profileService: ProfileService,
-  ) {}
+  async create(opts: { accountId: string, name?: string }, db: NodePgDatabase<typeof schema>): Promise<User> {
+    const rows = await db.insert(
+      UserTable
+    ).values({
+      accountId: opts.accountId,
+      name: opts.name,
+    }).returning({
+      userId: UserTable.id,
+      name: UserTable.name,
+    });
+
+    return rows[0];
+  }
 
   async get(userId: string, db: NodePgDatabase<typeof schema>): Promise<User | undefined> {
     const rows = await db.select({
-      userId: UsersTable.id,
+      userId: UserTable.id,
+      name: UserTable.name,
     }).from(
-      UsersTable
+      UserTable
     ).where(
-      eq(UsersTable.id, userId)
+      eq(UserTable.id, userId)
     );
 
     if (rows.length == 0) {
       return undefined;
     }
 
-    return {
-      ...rows[0],
-      profiles: await this.profileService.listByUserId(userId, db),
-    };
+    return rows[0];
+  }
+
+  async listByAccountId(accountId: string, db: NodePgDatabase<typeof schema>): Promise<User[]> {
+    const rows = await db.select({
+      userId: UserTable.id,
+      name: UserTable.name,
+    }).from(
+      UserTable
+    ).where(
+      eq(UserTable.accountId, accountId)
+    );
+
+    return rows;
   }
 }
