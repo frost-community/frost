@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ProfileModule } from '../profile/profile.module';
 import { UserService } from './user.service';
 
 @Module({
@@ -10,6 +9,6 @@ import { UserService } from './user.service';
   exports: [UserService],
 
   // 依存モジュール
-  imports: [ProfileModule]
+  imports: []
 })
 export class UserModule {}
