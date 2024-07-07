@@ -7,19 +7,22 @@ import { UserTable } from 'src/database/schema';
 export type User = {
   userId: string;
   name: string;
+  displayName: string;
 };
 
 @Injectable()
 export class UserService {
-  async create(opts: { accountId: string, name?: string }, db: NodePgDatabase<typeof schema>): Promise<User> {
+  async create(opts: { accountId: string, name: string, displayName?: string }, db: NodePgDatabase<typeof schema>): Promise<User> {
     const rows = await db.insert(
       UserTable
     ).values({
       accountId: opts.accountId,
       name: opts.name,
+      displayName: opts.displayName,
     }).returning({
       userId: UserTable.id,
       name: UserTable.name,
+      displayName: UserTable.displayName,
     });
 
     return rows[0];
@@ -29,6 +32,7 @@ export class UserService {
     const rows = await db.select({
       userId: UserTable.id,
       name: UserTable.name,
+      displayName: UserTable.displayName,
     }).from(
       UserTable
     ).where(
@@ -46,6 +50,7 @@ export class UserService {
     const rows = await db.select({
       userId: UserTable.id,
       name: UserTable.name,
+      displayName: UserTable.displayName,
     }).from(
       UserTable
     ).where(

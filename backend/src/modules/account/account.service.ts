@@ -7,6 +7,8 @@ import { User, UserService } from '../user/user.service';
 
 export type Account = {
   accountId: string;
+  accountName?: string;
+  passwordAuthEnabled?: boolean;
   users: User[];
 };
 
@@ -21,9 +23,7 @@ export class AccountService {
     const rows = await db.insert(
       AccountTable
     ).values({
-    }).returning({
-      accountId: AccountTable.id,
-    });
+    }).returning();
 
     return {
       ...rows[0],
