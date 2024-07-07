@@ -12,3 +12,17 @@ Docker composeは最初に読み込まれた設定ファイルのディレクト
 ベースパスを分かりやすくするため、このプロジェクトではリポジトリの直下にDocker composeの設定ファイルを配置することに決めます。
 
 https://github.com/docker/compose/issues/3874
+
+## pgAdminの使い方
+pgAdminへの接続
+- URL: localhost:5678
+- email: postgres@example.com
+- password: postgres
+
+以下の内容でサーバー情報を追加
+- Name: frost-db
+- host: db
+- port: 5432
+- Maintenance database: frost
+- Username: postgres
+- password: postgres

@@ -35,8 +35,8 @@ services:
     volumes:
       - frost-db-data:/var/lib/postgresql/data
     # working_dir: /workspaces
-    # ports:
-    #   - "5432:5432"
+    ports:
+      - "5432:5432"
     # command: sleep infinity
     environment:
       POSTGRES_DB: frost
@@ -45,8 +45,25 @@ services:
     networks:
       - frost-development-local
 
+  pgadmin:
+    image: dpage/pgadmin4:6.11
+    container_name: pgadmin
+    ports:
+      - 5678:80
+    volumes:
+      - frost-pgadmin:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@example.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - frost-development-local
+
 volumes:
   frost-db-data:
+  frost-pgadmin:
 
 networks:
   frost-development-local:
