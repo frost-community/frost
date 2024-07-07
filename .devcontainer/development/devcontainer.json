@@ -6,8 +6,6 @@
   "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
   "remoteUser": "node",
   "shutdownAction": "none",
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [3000, 3001, 3002],
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
   ],
