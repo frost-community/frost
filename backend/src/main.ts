@@ -1,6 +1,7 @@
-import { listen } from './services/HttpServerService';
+import { App } from './app';
 
-function bootstrap() {
-  listen();
+async function bootstrap() {
+  const app = await App.create();
+  await app.listen(3000);
 }
 bootstrap();
