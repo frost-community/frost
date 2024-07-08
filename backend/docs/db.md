@@ -10,6 +10,7 @@ erDiagram
     string id
     string accountId
     string name
+    string displayName
   }
 
   UserFollowing {
@@ -51,6 +52,27 @@ erDiagram
 
 # ER図
 
+## パスワード認証
+
+```mermaid
+erDiagram
+  Account {
+    string id
+    string name
+    boolean passwordAuthEnabled
+  }
+
+  Account ||--o{ PasswordAuth : ""
+
+  PasswordAuth {
+    string id
+    string accountId
+    string algorithm
+    integer salt
+    string hash
+  }
+```
+
 ## ユーザープロファイル
 アカウントは複数のユーザープロファイルを作成できる。
 ```mermaid
@@ -65,6 +87,7 @@ erDiagram
     string id
     string accountId
     string name
+    string displayName
   }
 ```
 

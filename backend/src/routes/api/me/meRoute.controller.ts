@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, HttpStatus, Inject } from '@nestjs/comm
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE } from 'src/constants';
 import * as schema from 'src/database/schema';
-import { Account, AccountService } from 'src/modules/account/account.service';
+import { AccountEntity, AccountService } from 'src/modules/account/account.service';
 
 @Controller('api/me')
 export class MeRouteController {
@@ -12,7 +12,7 @@ export class MeRouteController {
   ) {}
 
   @Get()
-  async getUser(): Promise<Account> {
+  async getUser(): Promise<AccountEntity> {
     // TODO: get accountId of session user
     const accountId = '00000000-0000-0000-0000-000000000001';
 
