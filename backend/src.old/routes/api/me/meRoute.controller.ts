@@ -1,8 +1,8 @@
 import { Controller, Get, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE } from 'src/constants';
-import * as schema from 'src/database/schema';
-import { AccountEntity, AccountService } from 'src/modules/account/account.service';
+import * as schema from 'src/services/database/schema';
+import { AccountEntity, AccountService } from 'src/.temp/modules/account/account.service';
 
 @Controller('api/me')
 export class MeRouteController {

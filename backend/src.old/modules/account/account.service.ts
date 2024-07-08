@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from 'src/database/schema';
-import { Account } from 'src/database/schema';
-import { PasswordAuth } from 'src/database/schema';
+import * as schema from 'src/services/database/schema';
+import { Account } from 'src/services/database/schema';
+import { PasswordAuth } from 'src/services/database/schema';
 import { UserEntity, UserService } from '../user/user.service';
 import { PasswordHash } from '../passwordHash/passwordHash';
 

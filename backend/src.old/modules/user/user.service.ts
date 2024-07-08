@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from 'src/database/schema';
-import { User } from 'src/database/schema';
+import * as schema from 'src/services/database/schema';
+import { User } from 'src/services/database/schema';
 
 export type UserEntity = {
   userId: string;

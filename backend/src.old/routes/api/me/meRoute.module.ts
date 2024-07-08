@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AccountModule } from 'src/modules/account/account.module';
+import { AccountModule } from 'src/.temp/modules/account/account.module';
 import { MeRouteController } from './meRoute.controller';
 
 @Module({
