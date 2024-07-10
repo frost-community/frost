@@ -3,6 +3,8 @@ import { App, AppConfig } from './app';
 import { DatabaseService } from './services/DatabaseService';
 import { HttpServerService } from './services/HttpServerService';
 import { TYPES } from './types';
+import { UserService } from './services/UserService';
+import { AccountService } from './services/AccountService';
 
 export function setupContainer(container: Container) {
   // app
@@ -17,4 +19,6 @@ export function setupContainer(container: Container) {
   // services
   container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
+  container.bind<UserService>(TYPES.UserService).to(UserService);
+  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
 }

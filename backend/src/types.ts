@@ -4,6 +4,8 @@ const TYPES = {
   AppConfig: Symbol.for('AppConfig'),
   DatabaseService: Symbol.for('DatabaseService'),
   HttpServerService: Symbol.for('HttpServerService'),
+  UserService: Symbol.for('UserService'),
+  AccountService: Symbol.for('AccountService'),
 };
 
 export { TYPES };
