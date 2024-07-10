@@ -3,8 +3,17 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { DeleteParrot } from "./-components/DeleteParrot";
 
+import { BACKEND_EJS_VARIABLE_KEYS } from "@/staticDataRouteOption";
+
 export const Route = createFileRoute("/")({
   component: Home,
+  staticData: {
+    openGraph: {
+      title: `<%= ${BACKEND_EJS_VARIABLE_KEYS.siteName} %>`,
+      type: "website",
+      description: "Top",
+    },
+  },
 });
 
 function Home() {
