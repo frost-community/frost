@@ -2,7 +2,10 @@ import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
 import { HttpServerService } from './services/HttpServerService';
 import { TYPES } from './types';
-import { createContainer } from './inversify.config';
+
+export type AppConfig = {
+  port: number,
+};
 
 @injectable()
 export class App {
@@ -10,13 +13,7 @@ export class App {
     @inject(TYPES.HttpServerService) private readonly http: HttpServerService,
   ) {}
 
-  static create() {
-    const container = createContainer();
-    const app = container.get<App>(TYPES.App);
-    return app;
-  }
-
-  async listen(port: number): Promise<void> {
-    this.http.listen(port);
+  async run(): Promise<void> {
+    return this.http.listen();
   }
 }

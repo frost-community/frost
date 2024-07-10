@@ -5,6 +5,8 @@ import { injectable } from 'inversify';
 
 @injectable()
 export class DatabaseService {
+  constructor() {}
+
   async connect() {
     const client = new Pool({
       connectionString: 'postgresql://postgres:postgres@db:5432/frost',

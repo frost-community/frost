@@ -1,20 +1,23 @@
 import { Container } from 'inversify';
-import { HttpServerService } from './services/HttpServerService';
+import { App, AppConfig } from './app';
 import { TYPES } from './types';
-import { App } from './app';
 import { DatabaseService } from './services/DatabaseService';
+import { HttpServerService } from './services/HttpServerService';
 
-export function createContainer() {
-  const container = new Container();
+// controllers
+import './controllers/RootController';
 
-  // root
+export function setupContainer(container: Container) {
+  // app
   container.bind<App>(TYPES.App).to(App);
 
-  // controllers
+  // app config
+  const appConfig: AppConfig = {
+    port: 3000,
+  };
+  container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
   // services
-  container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService());
+  container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
-
-  return container;
 }
