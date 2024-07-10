@@ -1,11 +1,8 @@
 import { Container } from 'inversify';
 import { App, AppConfig } from './app';
-import { TYPES } from './types';
 import { DatabaseService } from './services/DatabaseService';
 import { HttpServerService } from './services/HttpServerService';
-
-// controllers
-import './controllers/RootController';
+import { TYPES } from './types';
 
 export function setupContainer(container: Container) {
   // app
