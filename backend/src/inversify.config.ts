@@ -18,9 +18,9 @@ export function setupContainer(container: Container) {
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
   // services
+  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
   container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
-  container.bind<UserService>(TYPES.UserService).to(UserService);
-  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
   container.bind<PasswordAuthService>(TYPES.PasswordAuthService).to(PasswordAuthService);
+  container.bind<UserService>(TYPES.UserService).to(UserService);
 }
