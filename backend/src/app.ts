@@ -17,6 +17,6 @@ export class App {
 
   async run(): Promise<void> {
     await this.db.connect();
-    return this.http.listen();
+    await this.http.listen();
   }
 }
