@@ -56,8 +56,7 @@ export class DatabaseService {
   }
 
   /**
-   * トランザクション内で指定されたアクションを実行します。\
-   * また、トランザクションはgetConnectionメソッドから取得できます。
+   * トランザクション内で指定されたアクションを実行します。
   */
   async transaction(action: () => Promise<void>) {
     this.getConnection().transaction(async (tx) => {
