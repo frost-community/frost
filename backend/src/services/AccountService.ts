@@ -6,7 +6,7 @@ import { DatabaseService } from './DatabaseService';
 export class AccountService {
   constructor() {}
 
-  async get(accountId: string, db: DatabaseService) {
+  async get(accountId: string) {
     throw new Error('not implement');
   }
 }

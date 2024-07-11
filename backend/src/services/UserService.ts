@@ -6,7 +6,7 @@ import { DatabaseService } from './DatabaseService';
 export class UserService {
   constructor() {}
 
-  async get(userId: string, db: DatabaseService) {
+  async get(userId: string) {
     throw new Error('not implement');
   }
 }

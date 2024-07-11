@@ -17,7 +17,7 @@ export class MeController {
     // TODO: get accountId of session user
     const accountId = '00000001-0000-0000-0000-000000000000';
 
-    const user = await this.accountService.get(accountId, this.db);
+    const user = await this.accountService.get(accountId);
 
     if (user == null) {
       res.status(404).json({ status: 404, message: 'not found' });
