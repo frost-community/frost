@@ -1,11 +1,11 @@
 import { Container } from 'inversify';
-import { App, AppConfig } from './app';
-import { DatabaseService } from './services/DatabaseService';
-import { HttpServerService } from './services/HttpServerService';
+import { App, AppConfig } from '../app';
+import { DatabaseService } from '../services/DatabaseService';
+import { HttpServerService } from '../services/HttpServerService';
 import { TYPES } from './types';
-import { UserService } from './services/UserService';
-import { AccountService } from './services/AccountService';
-import { PasswordAuthService } from './services/PasswordAuthService';
+import { UserService } from '../services/UserService';
+import { AccountService } from '../services/AccountService';
+import { PasswordAuthService } from '../services/PasswordAuthService';
 
 export function setupContainer(container: Container) {
   // app

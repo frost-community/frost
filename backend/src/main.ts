@@ -1,7 +1,7 @@
 import { Container } from 'inversify';
 import { App } from './app';
-import { TYPES } from './types';
-import { setupContainer } from './inversify.config';
+import { TYPES } from './container/types';
+import { setupContainer } from './container/inversify.config';
 
 function bootstrap(): Promise<void> {
   const container = new Container();

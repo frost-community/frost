@@ -1,12 +1,12 @@
 import { Container, inject, injectable } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import { AppConfig } from '../../app';
-import { TYPES } from '../../types';
+import { AppConfig } from '../app';
+import { TYPES } from '../container/types';
 
 // controllers
-import '../../controllers/RootController';
-import '../../controllers/api/MeController';
-import '../../controllers/api/UsersController';
+import '../controllers/RootController';
+import '../controllers/api/MeController';
+import '../controllers/api/UsersController';
 
 @injectable()
 export class HttpServerService {

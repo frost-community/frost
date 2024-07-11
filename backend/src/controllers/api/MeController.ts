@@ -3,7 +3,7 @@ import { inject } from 'inversify';
 import { controller, httpGet, requestParam, response } from 'inversify-express-utils';
 import { AccountService } from '../../services/AccountService';
 import { DatabaseService } from '../../services/DatabaseService';
-import { TYPES } from '../../types';
+import { TYPES } from '../../container/types';
 
 @controller('/api/me')
 export class MeController {

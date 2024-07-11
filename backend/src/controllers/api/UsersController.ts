@@ -3,7 +3,7 @@ import { inject } from 'inversify';
 import { controller, httpGet, requestParam, response } from 'inversify-express-utils';
 import { DatabaseService } from '../../services/DatabaseService';
 import { UserService } from '../../services/UserService';
-import { TYPES } from '../../types';
+import { TYPES } from '../../container/types';
 
 @controller('/api/users')
 export class UsersController {

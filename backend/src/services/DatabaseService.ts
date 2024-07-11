@@ -1,7 +1,8 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
+import { Container, inject, injectable } from 'inversify';
 import { Pool } from 'pg';
-import * as schema from './schema';
-import { injectable } from 'inversify';
+import * as schema from '../database/schema';
+import { TYPES } from '../container/types';
 
 @injectable()
 export class DatabaseService {
