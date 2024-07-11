@@ -5,7 +5,6 @@ import { HttpServerService } from '../services/HttpServerService';
 import { TYPES } from './types';
 import { UserService } from '../services/UserService';
 import { AccountService } from '../services/AccountService';
-import { PasswordAuthService } from '../services/PasswordAuthService';
 
 export function setupContainer(container: Container) {
   // app
@@ -19,8 +18,7 @@ export function setupContainer(container: Container) {
 
   // services
   container.bind<AccountService>(TYPES.AccountService).to(AccountService);
-  container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
+  container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService());
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
-  container.bind<PasswordAuthService>(TYPES.PasswordAuthService).to(PasswordAuthService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
 }

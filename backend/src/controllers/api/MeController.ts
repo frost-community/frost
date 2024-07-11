@@ -2,13 +2,11 @@ import { Response } from 'express';
 import { inject } from 'inversify';
 import { controller, httpGet, requestParam, response } from 'inversify-express-utils';
 import { AccountService } from '../../services/AccountService';
-import { DatabaseService } from '../../services/DatabaseService';
 import { TYPES } from '../../container/types';
 
 @controller('/api/me')
 export class MeController {
   constructor(
-    @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
     @inject(TYPES.AccountService) private readonly accountService: AccountService,
   ) {}
 

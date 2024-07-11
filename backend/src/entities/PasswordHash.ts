@@ -4,14 +4,18 @@ import crypto from 'node:crypto';
  * パスワードハッシュ
 */
 export class PasswordHash {
-  constructor(public algorithm: string, public salt: string, public hash: string) {}
+  constructor(
+    public algorithm: string,
+    public salt: string,
+    public hash: string
+  ) {}
 
-  private static generateSalt(): string {
+  static generateSalt(): string {
     // max length: 32
     return crypto.randomBytes(16).toString('hex');
   }
 
-  private static generateHash(algorithm: string, salt: string, password: string): string {
+  static generateHash(algorithm: string, salt: string, password: string): string {
     const cryptoHash = crypto.createHash(algorithm);
     cryptoHash.update(password + salt);
     return cryptoHash.digest('hex');
