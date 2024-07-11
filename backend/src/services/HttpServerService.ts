@@ -12,7 +12,7 @@ import '../controllers/api/UsersController';
 export class HttpServerService {
   constructor(
     @inject(TYPES.Container) private readonly container: Container,
-    @inject(TYPES.AppConfig) private readonly appConfig: AppConfig,
+    @inject(TYPES.AppConfig) private readonly config: AppConfig,
   ) {}
 
   listen(): Promise<void> {
@@ -34,7 +34,7 @@ export class HttpServerService {
     return new Promise(resolve => {
       server
         .build()
-        .listen(this.appConfig.port, () => resolve());
+        .listen(this.config.port, () => resolve());
     });
   }
 }
