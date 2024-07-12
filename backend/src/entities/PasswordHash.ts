@@ -4,7 +4,11 @@ import crypto from 'node:crypto';
  * パスワードハッシュ
 */
 export class PasswordHash {
-  constructor(public algorithm: string, public salt: string, public hash: string) {}
+  constructor(
+    public algorithm: string,
+    public salt: string,
+    public hash: string
+  ) {}
 
   private static generateSalt(): string {
     // max length: 32

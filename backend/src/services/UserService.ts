@@ -1,18 +1,19 @@
-import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import * as schema from 'src/database/schema';
-import { User } from 'src/database/schema';
+import { Container, inject, injectable } from 'inversify';
+import { UserEntity } from 'src/entities/UserEntity';
+import { TYPES } from '../container/types';
+import { User } from '../database/schema';
+import { DatabaseService } from './DatabaseService';
 
-export type UserEntity = {
-  userId: string;
-  name: string;
-  displayName: string;
-};
-
-@Injectable()
+@injectable()
 export class UserService {
-  async create(opts: { accountId: string, name: string, displayName: string }, db: NodePgDatabase<typeof schema>): Promise<UserEntity> {
+  constructor(
+    @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
+  ) {}
+
+  async create(opts: { accountId: string, name: string, displayName: string }): Promise<UserEntity> {
+    const db = this.db.getConnection();
+
     const rows = await db.insert(
       User
     ).values({
@@ -28,7 +29,9 @@ export class UserService {
     return rows[0];
   }
 
-  async get(userId: string, db: NodePgDatabase<typeof schema>): Promise<UserEntity | undefined> {
+  async get(userId: string): Promise<UserEntity | undefined> {
+    const db = this.db.getConnection();
+
     const rows = await db.select({
       userId: User.id,
       name: User.name,
@@ -46,7 +49,9 @@ export class UserService {
     return rows[0];
   }
 
-  async listByAccountId(accountId: string, db: NodePgDatabase<typeof schema>): Promise<UserEntity[]> {
+  async listByAccountId(accountId: string): Promise<UserEntity[]> {
+    const db = this.db.getConnection();
+
     const rows = await db.select({
       userId: User.id,
       name: User.name,

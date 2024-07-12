@@ -1,8 +1,18 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { Container } from 'inversify';
+import { App } from './app';
+import { TYPES } from './container/types';
+import { setupContainer } from './container/inversify.config';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+function bootstrap(): Promise<void> {
+  const container = new Container();
+  container.bind<Container>(TYPES.Container).toConstantValue(container);
+
+  setupContainer(container);
+
+  const app = container.get<App>(TYPES.App);
+  return app.run()
+    .catch(err => {
+      console.log('Error:', err);
+    });
 }
 bootstrap();
