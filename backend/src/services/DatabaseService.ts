@@ -58,11 +58,12 @@ export class DatabaseService {
   /**
    * トランザクション内で指定されたアクションを実行します。
   */
-  async transaction(action: () => Promise<void>) {
-    this.getConnection().transaction(async (tx) => {
+  async transaction<T>(action: () => Promise<T>): Promise<T> {
+    return this.getConnection().transaction(async (tx) => {
       this.#connectionLayers.unshift(tx);
-      await action();
+      const returnValue = await action();
       this.#connectionLayers.shift();
+      return returnValue;
     });
   }
 }

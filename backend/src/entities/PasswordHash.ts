@@ -10,12 +10,12 @@ export class PasswordHash {
     public hash: string
   ) {}
 
-  static generateSalt(): string {
+  private static generateSalt(): string {
     // max length: 32
     return crypto.randomBytes(16).toString('hex');
   }
 
-  static generateHash(algorithm: string, salt: string, password: string): string {
+  private static generateHash(algorithm: string, salt: string, password: string): string {
     const cryptoHash = crypto.createHash(algorithm);
     cryptoHash.update(password + salt);
     return cryptoHash.digest('hex');
