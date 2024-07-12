@@ -6,6 +6,7 @@ const TYPES = {
   HttpServerService: Symbol.for('HttpServerService'),
   UserService: Symbol.for('UserService'),
   AccountService: Symbol.for('AccountService'),
+  PasswordAuthService: Symbol.for('PasswordAuthService'),
 };
 
 export { TYPES };

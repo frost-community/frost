@@ -1,32 +1,19 @@
 import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
 import { TYPES } from '../container/types';
-import { Account, PasswordAuth } from '../database/schema';
+import { Account } from '../database/schema';
 import { AccountEntity } from '../entities/AccountEntity';
-import { PasswordHash } from '../entities/PasswordHash';
 import { DatabaseService } from './DatabaseService';
 import { UserService } from './UserService';
+import { PasswordAuthService } from './PasswordAuthService';
 
 @injectable()
 export class AccountService {
   constructor(
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
     @inject(TYPES.UserService) private readonly userService: UserService,
+    @inject(TYPES.PasswordAuthService) private readonly passwordAuthService: PasswordAuthService,
   ) {}
-
-  async createPasswordAuth(opts: { accountId: string, password: string }) {
-    const db = this.db.getConnection();
-    const passwordHash = PasswordHash.generate(opts.password);
-
-    await db.insert(
-      PasswordAuth
-    ).values({
-      accountId: opts.accountId,
-      algorithm: passwordHash.algorithm,
-      salt: passwordHash.salt,
-      hash: passwordHash.hash,
-    }).returning();
-  }
 
   async create(opts: { name: string, password: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
@@ -41,8 +28,11 @@ export class AccountService {
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     });
+    const accountId = rows[0].accountId;
 
-    await this.createPasswordAuth({ accountId: rows[0].accountId, password: opts.password });
+    // password
+    const verificationInfo = this.passwordAuthService.generateVerificationInfo(opts.password);
+    await this.passwordAuthService.create(accountId, verificationInfo);
 
     return {
       ...rows[0],
