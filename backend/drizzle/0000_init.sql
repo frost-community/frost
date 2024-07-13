@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS "passwordAuth" (
 	"accountId" uuid NOT NULL,
 	"algorithm" varchar(16) NOT NULL,
 	"salt" varchar(32) NOT NULL,
+	"iteration" integer NOT NULL,
 	"hash" varchar(256) NOT NULL
 );
 --> statement-breakpoint

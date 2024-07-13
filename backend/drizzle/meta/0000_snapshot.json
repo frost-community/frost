@@ -1,5 +1,5 @@
 {
-  "id": "2dffd412-3f55-4bcc-b71d-750b5910e588",
+  "id": "ac17f55b-cd31-44e2-a104-69791ad67663",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -59,6 +59,12 @@
         "salt": {
           "name": "salt",
           "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iteration": {
+          "name": "iteration",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
