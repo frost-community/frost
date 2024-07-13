@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { lazy, Suspense } from "react";
 
 import type { OpenGraphProtocolType } from "@/staticDataRouteOption";
 
@@ -10,7 +10,9 @@ export const Route = createRootRoute({
     <>
       <Header />
       <Outlet />
-      <TanStackRouterDevtools />
+      <Suspense>
+        <TanStackRouterDevtools />
+      </Suspense>
     </>
   ),
   staticData: {
@@ -22,3 +24,13 @@ export const Route = createRootRoute({
     },
   },
 });
+
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === "production"
+    ? () => null // Render nothing in production
+    : lazy(() =>
+        // Lazy load in development
+        import("@tanstack/router-devtools").then((res) => ({
+          default: res.TanStackRouterDevtools,
+        })),
+      );

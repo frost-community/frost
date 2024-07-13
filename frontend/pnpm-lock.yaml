@@ -35,7 +35,10 @@ importers:
         version: 1.43.1
       '@tanstack/router-plugin':
         specifier: ^1.43.1
-        version: 1.43.1(vite@5.3.1)
+        version: 1.43.1(vite@5.3.1(@types/node@20.14.10))
+      '@types/node':
+        specifier: ^20.14.10
+        version: 20.14.10
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.3
@@ -50,7 +53,7 @@ importers:
         version: 7.13.1(eslint@8.57.0)(typescript@5.5.2)
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.7.0(vite@5.3.1)
+        version: 3.7.0(vite@5.3.1(@types/node@20.14.10))
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -83,10 +86,10 @@ importers:
         version: 5.5.2
       vite:
         specifier: ^5.3.1
-        version: 5.3.1
+        version: 5.3.1(@types/node@20.14.10)
       vite-tsconfig-paths:
         specifier: ^4.3.2
-        version: 4.3.2(typescript@5.5.2)(vite@5.3.1)
+        version: 4.3.2(typescript@5.5.2)(vite@5.3.1(@types/node@20.14.10))
 
 packages:
 
@@ -661,6 +664,9 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/node@20.14.10':
+    resolution: {integrity: sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ==}
 
   '@types/prop-types@15.7.12':
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
@@ -1884,6 +1890,9 @@ packages:
   unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
 
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   unplugin@1.10.2:
     resolution: {integrity: sha512-KuPqnjU4HBcrSwmQatfdc5hU4xzaQrhoKqCKylwmLnbBvqj5udXL8cHrkOuYDoI4ESCwJIiAIKMujroIUKLgow==}
     engines: {node: '>=14.0.0'}
@@ -2518,7 +2527,7 @@ snapshots:
       prettier: 3.3.2
       zod: 3.23.8
 
-  '@tanstack/router-plugin@1.43.1(vite@5.3.1)':
+  '@tanstack/router-plugin@1.43.1(vite@5.3.1(@types/node@20.14.10))':
     dependencies:
       '@babel/core': 7.24.7
       '@babel/generator': 7.24.7
@@ -2537,7 +2546,7 @@ snapshots:
       unplugin: 1.10.2
       zod: 3.23.8
     optionalDependencies:
-      vite: 5.3.1
+      vite: 5.3.1(@types/node@20.14.10)
     transitivePeerDependencies:
       - supports-color
 
@@ -2567,6 +2576,10 @@ snapshots:
   '@types/estree@1.0.5': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/node@20.14.10':
+    dependencies:
+      undici-types: 5.26.5
 
   '@types/prop-types@15.7.12': {}
 
@@ -2662,10 +2675,10 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vitejs/plugin-react-swc@3.7.0(vite@5.3.1)':
+  '@vitejs/plugin-react-swc@3.7.0(vite@5.3.1(@types/node@20.14.10))':
     dependencies:
       '@swc/core': 1.6.5
-      vite: 5.3.1
+      vite: 5.3.1(@types/node@20.14.10)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -4018,6 +4031,8 @@ snapshots:
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
 
+  undici-types@5.26.5: {}
+
   unplugin@1.10.2:
     dependencies:
       acorn: 8.12.0
@@ -4071,23 +4086,24 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  vite-tsconfig-paths@4.3.2(typescript@5.5.2)(vite@5.3.1):
+  vite-tsconfig-paths@4.3.2(typescript@5.5.2)(vite@5.3.1(@types/node@20.14.10)):
     dependencies:
       debug: 4.3.5
       globrex: 0.1.2
       tsconfck: 3.1.0(typescript@5.5.2)
     optionalDependencies:
-      vite: 5.3.1
+      vite: 5.3.1(@types/node@20.14.10)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.3.1:
+  vite@5.3.1(@types/node@20.14.10):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.38
       rollup: 4.18.0
     optionalDependencies:
+      '@types/node': 20.14.10
       fsevents: 2.3.3
 
   webpack-sources@3.2.3: {}
