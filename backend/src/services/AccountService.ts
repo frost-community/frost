@@ -1,32 +1,19 @@
 import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
 import { TYPES } from '../container/types';
-import { Account, PasswordAuth } from '../database/schema';
+import { Account } from '../database/schema';
 import { AccountEntity } from '../entities/AccountEntity';
-import { PasswordHash } from '../entities/PasswordHash';
 import { DatabaseService } from './DatabaseService';
 import { UserService } from './UserService';
+import { PasswordVerificationService } from './PasswordVerificationService';
 
 @injectable()
 export class AccountService {
   constructor(
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
     @inject(TYPES.UserService) private readonly userService: UserService,
+    @inject(TYPES.PasswordVerificationService) private readonly passwordVerificationService: PasswordVerificationService,
   ) {}
-
-  async createPasswordAuth(opts: { accountId: string, password: string }) {
-    const db = this.db.getConnection();
-    const passwordHash = PasswordHash.generate(opts.password);
-
-    await db.insert(
-      PasswordAuth
-    ).values({
-      accountId: opts.accountId,
-      algorithm: passwordHash.algorithm,
-      salt: passwordHash.salt,
-      hash: passwordHash.hash,
-    }).returning();
-  }
 
   async create(opts: { name: string, password: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
@@ -37,12 +24,13 @@ export class AccountService {
       name: opts.name,
       passwordAuthEnabled: true,
     }).returning({
-      accountId: Account.id,
+      accountId: Account.accountId,
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     });
+    const accountId = rows[0].accountId;
 
-    await this.createPasswordAuth({ accountId: rows[0].accountId, password: opts.password });
+    await this.passwordVerificationService.register(accountId, opts.password);
 
     return {
       ...rows[0],
@@ -50,21 +38,21 @@ export class AccountService {
     };
   }
 
-  async get(accountId: string): Promise<AccountEntity | undefined> {
+  async get(accountId: string): Promise<AccountEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
-      accountId: Account.id,
+      accountId: Account.accountId,
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     }).from(
       Account
     ).where(
-      eq(Account.id, accountId)
+      eq(Account.accountId, accountId)
     );
 
     if (rows.length == 0) {
-      return undefined;
+      throw new Error('not found');
     }
 
     return {

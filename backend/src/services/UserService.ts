@@ -21,7 +21,7 @@ export class UserService {
       name: opts.name,
       displayName: opts.displayName,
     }).returning({
-      userId: User.id,
+      userId: User.userId,
       name: User.name,
       displayName: User.displayName,
     });
@@ -29,21 +29,21 @@ export class UserService {
     return rows[0];
   }
 
-  async get(userId: string): Promise<UserEntity | undefined> {
+  async get(userId: string): Promise<UserEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
-      userId: User.id,
+      userId: User.userId,
       name: User.name,
       displayName: User.displayName,
     }).from(
       User
     ).where(
-      eq(User.id, userId)
+      eq(User.userId, userId)
     );
 
     if (rows.length == 0) {
-      return undefined;
+      throw new Error('not found');
     }
 
     return rows[0];
@@ -53,7 +53,7 @@ export class UserService {
     const db = this.db.getConnection();
 
     const rows = await db.select({
-      userId: User.id,
+      userId: User.userId,
       name: User.name,
       displayName: User.displayName,
     }).from(

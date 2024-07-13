@@ -14,10 +14,7 @@ export class UsersController {
   async get(@requestParam('id') id: string, @response() res: Response) {
     const user = await this.userService.get(id);
 
-    if (user == null) {
-      res.status(404).json({ status: 404, message: 'not found' });
-      return;
-    }
+    // TODO: catch user not found
 
     return user;
   }

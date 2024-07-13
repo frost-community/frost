@@ -1,7 +1,8 @@
-export class UserEntity {
-  constructor(
-    public userId: string,
-    public name: string,
-    public displayName: string
-  ) {}
-}
+/**
+ * ユーザープロファイル
+*/
+export type UserEntity = {
+  userId: string,
+  name: string,
+  displayName: string,
+};
