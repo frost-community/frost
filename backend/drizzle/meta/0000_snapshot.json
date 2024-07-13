@@ -70,7 +70,7 @@
         },
         "hash": {
           "name": "hash",
-          "type": "varchar(256)",
+          "type": "varchar(128)",
           "primaryKey": false,
           "notNull": true
         }
