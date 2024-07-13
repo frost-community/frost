@@ -4,7 +4,7 @@
   "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a",
   "type": "module",
   "scripts": {
-    "generate-apis": "rm -rf api/ && pnpx openapi2aspida -i ../openapi/api.yaml && pnpm eslint api/** --fix --ext ts",
+    "generate-apis": "rm -rf generated/ && pnpx openapi2aspida -i ../openapi/api.yaml -o ./generated/ && pnpm eslint generated/** --fix --ext ts",
     "generate-routes": "tsr generate",
     "generate-html-template": "pnpm exec tsx --tsconfig tsconfig.app.json --import=./scripts/ignore-assets-loader/register.js scripts/generate-template-html.js",
     "watch-routes": "tsr watch",

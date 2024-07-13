@@ -10,46 +10,46 @@
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as LoginRouteImport } from "./routes/login/route";
-import { Route as RouteImport } from "./routes/route";
+import { Route as rootRoute } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login/route'
+import { Route as RouteImport } from './routes/route'
 
 // Create/Update Routes
 
 const LoginRouteRoute = LoginRouteImport.update({
-  path: "/login",
+  path: '/login',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/login/route.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/login/route.lazy').then((d) => d.Route))
 
 const RouteRoute = RouteImport.update({
-  path: "/",
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof RouteImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/login": {
-      id: "/login";
-      path: "/login";
-      fullPath: "/login";
-      preLoaderRoute: typeof LoginRouteImport;
-      parentRoute: typeof rootRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof RouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ RouteRoute, LoginRouteRoute });
+export const routeTree = rootRoute.addChildren({ RouteRoute, LoginRouteRoute })
 
 /* prettier-ignore-end */
 
