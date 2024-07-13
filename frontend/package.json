@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "pnpm run generate-routes && pnpm run generate-html-template && tsc -b && vite build && node ./scripts/generate-ejs.js",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx --max-warnings 0",
     "lint:fix": "pnpm lint --fix",
     "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,scss}"
   },
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@tanstack/router-cli": "^1.43.1",
     "@tanstack/router-plugin": "^1.43.1",
+    "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
