@@ -5,14 +5,14 @@ import { Account } from '../database/schema';
 import { AccountEntity } from '../entities/AccountEntity';
 import { DatabaseService } from './DatabaseService';
 import { UserService } from './UserService';
-import { PasswordAuthService } from './PasswordAuthService';
+import { PasswordVerificationService } from './PasswordVerificationService';
 
 @injectable()
 export class AccountService {
   constructor(
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
     @inject(TYPES.UserService) private readonly userService: UserService,
-    @inject(TYPES.PasswordAuthService) private readonly passwordAuthService: PasswordAuthService,
+    @inject(TYPES.PasswordAuthService) private readonly passwordVerificationService: PasswordVerificationService,
   ) {}
 
   async create(opts: { name: string, password: string }): Promise<AccountEntity> {
@@ -30,9 +30,8 @@ export class AccountService {
     });
     const accountId = rows[0].accountId;
 
-    // password
-    const verificationInfo = this.passwordAuthService.generateVerificationInfo(opts.password);
-    await this.passwordAuthService.create(accountId, verificationInfo);
+    // password verification
+    await this.passwordVerificationService.create(accountId, opts.password);
 
     return {
       ...rows[0],
