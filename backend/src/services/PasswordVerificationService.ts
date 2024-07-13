@@ -8,7 +8,7 @@ import { DatabaseService } from './DatabaseService';
 type VerificationInfo = {
   algorithm: string,
   salt: string,
-  stretching: number,
+  iteration: number,
   hash: string,
 };
 
@@ -22,7 +22,7 @@ export class PasswordVerificationService {
    * 検証情報を作成します。
   */
   async create(accountId: string, password: string): Promise<VerificationInfo> {
-    const info = this.generateInfo(password);
+    const info = this.generateVerificationInfo(password);
 
     const db = this.db.getConnection();
     const rows = await db.insert(
@@ -31,7 +31,7 @@ export class PasswordVerificationService {
       accountId: accountId,
       algorithm: info.algorithm,
       salt: info.salt,
-      stretching: info.stretching,
+      iteration: info.iteration,
       hash: info.hash,
     }).returning();
 
@@ -43,11 +43,8 @@ export class PasswordVerificationService {
   */
   async verifyPassword(accountId: string, password: string): Promise<boolean> {
     const info = await this.get(accountId);
-    if (['sha256'].includes(info.algorithm)) {
-      const hash = this.generateHash(password, info.algorithm, info.salt, info.stretching);
-      return (hash === info.hash);
-    }
-    throw new Error('unsupported algorithm'); 
+    const hash = this.generateHash(password, info.algorithm, info.salt, info.iteration);
+    return (hash === info.hash);
   }
 
   /**
@@ -55,11 +52,10 @@ export class PasswordVerificationService {
   */
   async get(accountId: string): Promise<VerificationInfo> {
     const db = this.db.getConnection();
-
     const rows = await db.select({
       algorithm: PasswordAuth.algorithm,
       salt: PasswordAuth.salt,
-      stretching: PasswordAuth.stretching,
+      iteration: PasswordAuth.iteration,
       hash: PasswordAuth.hash,
     }).from(
       PasswordAuth
@@ -77,34 +73,34 @@ export class PasswordVerificationService {
   /**
    * パスワード認証情報を生成します。
   */
-  generateInfo(password: string): VerificationInfo {
+  generateVerificationInfo(password: string): VerificationInfo {
     const algorithm = 'sha256';
     const salt = this.generateSalt();
-    const stretching = 10000;
-    const hash = this.generateHash(password, algorithm, salt, stretching);
-    return { algorithm, salt, stretching, hash };
+    const iteration = 100000;
+    const hash = this.generateHash(password, algorithm, salt, iteration);
+    return { algorithm, salt, iteration, hash };
   }
 
   /**
    * 塩を生成します。
   */
   private generateSalt(): string {
-    // max length: 32
+    // 128bit random (length = 32)
     return crypto.randomBytes(16).toString('hex');
   }
 
   /**
    * ハッシュを生成します。
   */
-  private generateHash(token: string, algorithm: string, salt: string, stretching: number): string {
-    if (stretching < 0) {
-      throw new Error('validation error: stretching');
+  private generateHash(token: string, algorithm: string, salt: string, iteration: number): string {
+    if (iteration < 1) {
+      throw new Error('validation error: iteration');
     }
-    const cryptoHash = crypto.createHash(algorithm);
-    for (let i = 0; i < stretching + 1; i++) {
-      cryptoHash.update(token + salt);
-      token = cryptoHash.digest('hex');
+
+    for (let i = 0; i < iteration; i++) {
+      token = crypto.hash(algorithm, token + salt, 'hex');
     }
+
     return token;
   }
 }

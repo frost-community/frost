@@ -19,7 +19,7 @@ export const PasswordAuth = D.pgTable('passwordAuth', {
   accountId: D.uuid('accountId').notNull(),
   algorithm: D.varchar('algorithm', { length: 16 }).notNull(),
   salt: D.varchar('salt', { length: 32 }).notNull(),
-  stretching: D.integer('stretching').notNull(),
+  iteration: D.integer('iteration').notNull(),
   hash: D.varchar('hash', { length: 256 }).notNull(),
 });
 
