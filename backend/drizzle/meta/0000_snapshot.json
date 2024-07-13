@@ -1,5 +1,5 @@
 {
-  "id": "ac17f55b-cd31-44e2-a104-69791ad67663",
+  "id": "6b940a04-25e0-4dd8-b9e5-45c6bb8bc19b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,8 +8,8 @@
       "name": "account",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "accountId": {
+          "name": "accountId",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
@@ -33,12 +33,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.passwordAuth": {
-      "name": "passwordAuth",
+    "public.passwordVerification": {
+      "name": "passwordVerification",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "passwordVerificationId": {
+          "name": "passwordVerificationId",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
@@ -84,8 +84,8 @@
       "name": "user",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
+        "userId": {
+          "name": "userId",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,

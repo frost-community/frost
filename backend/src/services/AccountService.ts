@@ -12,7 +12,7 @@ export class AccountService {
   constructor(
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
     @inject(TYPES.UserService) private readonly userService: UserService,
-    @inject(TYPES.PasswordAuthService) private readonly passwordVerificationService: PasswordVerificationService,
+    @inject(TYPES.PasswordVerificationService) private readonly passwordVerificationService: PasswordVerificationService,
   ) {}
 
   async create(opts: { name: string, password: string }): Promise<AccountEntity> {
@@ -24,14 +24,13 @@ export class AccountService {
       name: opts.name,
       passwordAuthEnabled: true,
     }).returning({
-      accountId: Account.id,
+      accountId: Account.accountId,
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     });
     const accountId = rows[0].accountId;
 
-    // password verification
-    await this.passwordVerificationService.create(accountId, opts.password);
+    await this.passwordVerificationService.register(accountId, opts.password);
 
     return {
       ...rows[0],
@@ -39,21 +38,21 @@ export class AccountService {
     };
   }
 
-  async get(accountId: string): Promise<AccountEntity | undefined> {
+  async get(accountId: string): Promise<AccountEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
-      accountId: Account.id,
+      accountId: Account.accountId,
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     }).from(
       Account
     ).where(
-      eq(Account.id, accountId)
+      eq(Account.accountId, accountId)
     );
 
     if (rows.length == 0) {
-      return undefined;
+      throw new Error('not found');
     }
 
     return {

@@ -22,5 +22,5 @@ export function setupContainer(container: Container) {
   container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService());
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
-  container.bind<PasswordVerificationService>(TYPES.PasswordAuthService).to(PasswordVerificationService);
+  container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
 }

@@ -17,10 +17,7 @@ export class MeController {
 
     const user = await this.accountService.get(accountId);
 
-    if (user == null) {
-      res.status(404).json({ status: 404, message: 'not found' });
-      return;
-    }
+    // TODO: catch account not found
 
     return user;
   }

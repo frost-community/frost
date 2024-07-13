@@ -2,10 +2,13 @@ import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
 import crypto from 'node:crypto';
 import { TYPES } from '../container/types';
-import { PasswordAuth } from '../database/schema';
+import { PasswordVerification, PasswordVerificationRow } from '../database/schema';
 import { DatabaseService } from './DatabaseService';
 
-type VerificationInfo = {
+/**
+ * パスワード検証情報
+*/
+type PasswordVerificationInfo = {
   algorithm: string,
   salt: string,
   iteration: number,
@@ -19,27 +22,25 @@ export class PasswordVerificationService {
   ) {}
 
   /**
-   * 検証情報を作成します。
+   * パスワードの検証情報を登録します。
   */
-  async create(accountId: string, password: string): Promise<VerificationInfo> {
+  async register(accountId: string, password: string): Promise<void> {
     const info = this.generateVerificationInfo(password);
 
     const db = this.db.getConnection();
-    const rows = await db.insert(
-      PasswordAuth
+    await db.insert(
+      PasswordVerification
     ).values({
       accountId: accountId,
       algorithm: info.algorithm,
       salt: info.salt,
       iteration: info.iteration,
       hash: info.hash,
-    }).returning();
-
-    return rows[0];
+    });
   }
 
   /**
-   * パスワードを検証します。
+   * 検証情報からパスワードを検証します。
   */
   async verifyPassword(accountId: string, password: string): Promise<boolean> {
     const info = await this.get(accountId);
@@ -50,17 +51,12 @@ export class PasswordVerificationService {
   /**
    * 検証情報を取得します。
   */
-  async get(accountId: string): Promise<VerificationInfo> {
+  private async get(accountId: string): Promise<PasswordVerificationRow> {
     const db = this.db.getConnection();
-    const rows = await db.select({
-      algorithm: PasswordAuth.algorithm,
-      salt: PasswordAuth.salt,
-      iteration: PasswordAuth.iteration,
-      hash: PasswordAuth.hash,
-    }).from(
-      PasswordAuth
+    const rows = await db.select().from(
+      PasswordVerification
     ).where(
-      eq(PasswordAuth.accountId, accountId)
+      eq(PasswordVerification.accountId, accountId)
     );
 
     if (rows.length == 0) {
@@ -73,12 +69,17 @@ export class PasswordVerificationService {
   /**
    * パスワード認証情報を生成します。
   */
-  generateVerificationInfo(password: string): VerificationInfo {
+  private generateVerificationInfo(password: string): PasswordVerificationInfo {
     const algorithm = 'sha256';
     const salt = this.generateSalt();
     const iteration = 100000;
     const hash = this.generateHash(password, algorithm, salt, iteration);
-    return { algorithm, salt, iteration, hash };
+    return {
+      algorithm,
+      salt,
+      iteration,
+      hash,
+    };
   }
 
   /**
