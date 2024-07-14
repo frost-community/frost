@@ -2,6 +2,7 @@ export enum TokenKind {
   EOF,
   Identifier,
   NumberLiteral,
+  StringLiteral,
 
   /** "{" */
   OpenBrace,

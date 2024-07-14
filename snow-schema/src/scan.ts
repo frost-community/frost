@@ -8,6 +8,11 @@ const spaceChars = [' ', '\t'];
 const lineBreakChars = ['\r', '\n'];
 const digit = /^[0-9]$/;
 const wordChar = /^[A-Za-z0-9_]$/;
+const spCharTable = new Map([
+  //['r', '\r'],
+  //['n', '\n'],
+  //['t', '\t'],
+]);
 
 /**
  * 入力文字列からトークンを読み取るクラス
@@ -19,7 +24,7 @@ export class Scanner implements ITokenStream {
   constructor(source: string)
   constructor(stream: CharStream)
   constructor(x: string | CharStream) {
-    if (typeof x === 'string') {
+    if (typeof x === "string") {
       this.stream = new CharStream(x);
     } else {
       this.stream = x;
@@ -29,21 +34,21 @@ export class Scanner implements ITokenStream {
 
   /**
    * カーソル位置にあるトークンを取得します。
-  */
+   */
   public getToken(): Token {
     return this._tokens[0]!;
   }
 
   /**
    * カーソル位置にあるトークンの種類を取得します。
-  */
+   */
   public getKind(): TokenKind {
     return this.getToken().kind;
   }
 
   /**
    * カーソル位置を次のトークンへ進めます。
-  */
+   */
   public next(): void {
     // 現在のトークンがEOFだったら次のトークンに進まない
     if (this._tokens[0]!.kind === TokenKind.EOF) {
@@ -59,7 +64,7 @@ export class Scanner implements ITokenStream {
 
   /**
    * トークンの先読みを行います。カーソル位置は移動されません。
-  */
+   */
   public lookahead(offset: number): Token {
     while (this._tokens.length <= offset) {
       this._tokens.push(this.readToken());
@@ -69,13 +74,16 @@ export class Scanner implements ITokenStream {
   }
 
   public unexpectedToken(): Error {
-    return error(`unexpected token: ${TokenKind[this.getKind()]}`, this.getToken().loc);
+    return error(
+      `unexpected token: ${TokenKind[this.getKind()]}`,
+      this.getToken().loc
+    );
   }
 
   /**
    * カーソル位置にあるトークンが指定したトークンの種類と一致するかを確認します。
    * 一致しなかった場合には文法エラーを発生させます。
-  */
+   */
   public expect(kind: TokenKind): void {
     if (this.getKind() !== kind) {
       throw this.unexpectedToken();
@@ -85,7 +93,7 @@ export class Scanner implements ITokenStream {
   /**
    * カーソル位置にあるトークンが指定したトークンの種類と一致することを確認し、
    * カーソル位置を次のトークンへ進めます。
-  */
+   */
   public nextWith(kind: TokenKind): void {
     this.expect(kind);
     this.next();
@@ -96,7 +104,7 @@ export class Scanner implements ITokenStream {
 
     while (true) {
       if (this.stream.eof) {
-        token = TOKEN(TokenKind.EOF, this.stream.getPos(), { });
+        token = TOKEN(TokenKind.EOF, this.stream.getPos(), {});
         break;
       }
 
@@ -114,14 +122,18 @@ export class Scanner implements ITokenStream {
       const loc = this.stream.getPos();
 
       switch (this.stream.char) {
-        case '{': {
+        case "{": {
           this.stream.next();
-          token = TOKEN(TokenKind.OpenBrace, loc, { });
+          token = TOKEN(TokenKind.OpenBrace, loc, {});
           break;
         }
-        case '}': {
+        case "}": {
           this.stream.next();
-          token = TOKEN(TokenKind.CloseBrace, loc, { });
+          token = TOKEN(TokenKind.CloseBrace, loc, {});
+          break;
+        }
+        case '"': {
+          token = this.readString();
           break;
         }
         // case '(': {
@@ -175,7 +187,7 @@ export class Scanner implements ITokenStream {
 
   private tryReadWord(): Token | undefined {
     // read a word
-    let value = '';
+    let value = "";
 
     const loc = this.stream.getPos();
 
@@ -188,8 +200,8 @@ export class Scanner implements ITokenStream {
     }
     // check word kind
     switch (value) {
-      case 'route': {
-        return TOKEN(TokenKind.Route, loc, { });
+      case "route": {
+        return TOKEN(TokenKind.Route, loc, {});
       }
       default: {
         return TOKEN(TokenKind.Identifier, loc, { value });
@@ -197,9 +209,46 @@ export class Scanner implements ITokenStream {
     }
   }
 
+  private readString(): Token | undefined {
+    let buf = "";
+
+    const loc = this.stream.getPos();
+
+    // consume the open
+    this.stream.next();
+
+    while (true) {
+      if (this.stream.eof) {
+        throw new Error("unexpected EOF");
+      }
+      if (this.stream.char == '"') {
+        this.stream.next();
+        break;
+      }
+      if (this.stream.char == "\\") {
+        this.stream.next();
+        // special character
+        if (this.stream.eof) {
+          throw new Error("unexpected EOF");
+        }
+        const sc = spCharTable.get(this.stream.char);
+        if (sc == null) {
+          throw new Error("invalid special character");
+        }
+        buf += sc;
+        this.stream.next();
+        continue;
+      }
+      buf += this.stream.char;
+      this.stream.next();
+    }
+
+    return TOKEN(TokenKind.StringLiteral, loc, { value: buf });
+  }
+
   private tryReadDigits(): Token | undefined {
-    let wholeNumber = '';
-    let fractional = '';
+    let wholeNumber = "";
+    let fractional = "";
 
     const loc = this.stream.getPos();
 
@@ -210,19 +259,19 @@ export class Scanner implements ITokenStream {
     if (wholeNumber.length === 0) {
       return;
     }
-    if (!this.stream.eof && this.stream.char === '.') {
+    if (!this.stream.eof && this.stream.char === ".") {
       this.stream.next();
-      while (!this.stream.eof as boolean && digit.test(this.stream.char as string)) {
+      while ((!this.stream.eof as boolean) && digit.test(this.stream.char as string)) {
         fractional += this.stream.char;
         this.stream.next();
       }
       if (fractional.length === 0) {
-        throw error('digit expected', loc);
+        throw error("digit expected", loc);
       }
     }
     let value;
     if (fractional.length > 0) {
-      value = wholeNumber + '.' + fractional;
+      value = wholeNumber + "." + fractional;
     } else {
       value = wholeNumber;
     }

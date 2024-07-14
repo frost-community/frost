@@ -30,5 +30,13 @@ function parseRoute(s: ITokenStream): RouteNode {
 
   s.nextWith(TokenKind.Route);
 
-  return new RouteNode('aaa', loc);
+  s.expect(TokenKind.StringLiteral);
+  const path = s.getToken().value!;
+  s.next();
+
+  s.nextWith(TokenKind.OpenBrace);
+
+  s.nextWith(TokenKind.CloseBrace);
+
+  return new RouteNode(path, loc);
 }
