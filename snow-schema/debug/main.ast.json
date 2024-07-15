@@ -1,0 +1,176 @@
+{
+  "decls": [
+    {
+      "name": "Name",
+      "type": {
+        "name": "string",
+        "loc": {
+          "line": 3,
+          "column": 13
+        },
+        "kind": "TypeNode"
+      },
+      "loc": {
+        "line": 3,
+        "column": 1
+      },
+      "kind": "TypeDecl"
+    },
+    {
+      "method": "POST",
+      "path": "/",
+      "members": [
+        {
+          "name": "id",
+          "type": {
+            "name": "string",
+            "loc": {
+              "line": 6,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 6,
+            "column": 3
+          },
+          "kind": "ParameterDecl"
+        },
+        {
+          "statusCode": 201,
+          "type": {
+            "name": "object",
+            "loc": {
+              "line": 7,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 7,
+            "column": 3
+          },
+          "kind": "ResponseDecl"
+        }
+      ],
+      "loc": {
+        "line": 5,
+        "column": 1
+      },
+      "kind": "EndpointDecl"
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "members": [
+        {
+          "statusCode": 200,
+          "type": {
+            "name": "object",
+            "loc": {
+              "line": 11,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 11,
+            "column": 3
+          },
+          "kind": "ResponseDecl"
+        }
+      ],
+      "loc": {
+        "line": 10,
+        "column": 1
+      },
+      "kind": "EndpointDecl"
+    },
+    {
+      "method": "PATCH",
+      "path": "/",
+      "members": [
+        {
+          "statusCode": 204,
+          "type": {
+            "name": "void",
+            "loc": {
+              "line": 15,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 15,
+            "column": 3
+          },
+          "kind": "ResponseDecl"
+        }
+      ],
+      "loc": {
+        "line": 14,
+        "column": 1
+      },
+      "kind": "EndpointDecl"
+    },
+    {
+      "method": "PUT",
+      "path": "/",
+      "members": [
+        {
+          "statusCode": 204,
+          "type": {
+            "name": "void",
+            "loc": {
+              "line": 19,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 19,
+            "column": 3
+          },
+          "kind": "ResponseDecl"
+        }
+      ],
+      "loc": {
+        "line": 18,
+        "column": 1
+      },
+      "kind": "EndpointDecl"
+    },
+    {
+      "method": "DELETE",
+      "path": "/",
+      "members": [
+        {
+          "statusCode": 204,
+          "type": {
+            "name": "void",
+            "loc": {
+              "line": 23,
+              "column": 17
+            },
+            "kind": "TypeNode"
+          },
+          "loc": {
+            "line": 23,
+            "column": 3
+          },
+          "kind": "ResponseDecl"
+        }
+      ],
+      "loc": {
+        "line": 22,
+        "column": 1
+      },
+      "kind": "EndpointDecl"
+    }
+  ],
+  "loc": {
+    "line": 1,
+    "column": 1
+  },
+  "kind": "Unit"
+}
