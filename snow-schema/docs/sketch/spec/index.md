@@ -1,13 +1,15 @@
 # snow-schema 1.0 Specification
 
 ## 語彙
-```
+```abnf
 identifier
   = ALPHA *(ALPHA / DIGIT)
 
 number
   = +DIGIT
 ```
+
+<br />
 
 ## 構文指定子 (Syntax specifier)
 ```abnf
@@ -18,6 +20,11 @@ syntax-id
   = "\"snow-schema-1.0\""
 ```
 ファイルの最初に記載することで、そのファイルがsnow-schema 1.0のファイルであることを示す。
+
+例:
+```
+syntax = "snow-schema-1.0";
+```
 
 <br />
 
