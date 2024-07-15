@@ -1,4 +1,8 @@
 # snow-schema 1.0 Specification
+この文書では、文法をできるだけ厳密に記述するためABNF(RFC 5234)を用います。\
+https://datatracker.ietf.org/doc/html/rfc5234 
+
+<br />
 
 ## 語彙
 ```abnf
