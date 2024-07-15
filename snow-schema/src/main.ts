@@ -1,4 +1,4 @@
-import { parse } from './parse';
+import { parse } from './syntax/parse';
 import fs from 'node:fs';
 import process from 'node:process';
 
