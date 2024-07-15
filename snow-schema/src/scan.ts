@@ -1,8 +1,8 @@
 import { CharStream } from './stream/char-stream.js';
 import { error } from './util/error.js';
-import type { ITokenStream } from './stream/token-stream.js';
 import type { Token } from './token.js';
 import { TOKEN, TokenKind } from './token.js';
+import { SyntaxNode } from './syntax-node.js';
 
 const spaceChars = [' ', '\t'];
 const lineBreakChars = ['\r', '\n'];
@@ -17,7 +17,7 @@ const spCharTable = new Map([
 /**
  * 入力文字列からトークンを読み取るクラス
 */
-export class Scanner implements ITokenStream {
+export class Scanner {
   private stream: CharStream;
   private _tokens: Token[] = [];
 
@@ -44,6 +44,10 @@ export class Scanner implements ITokenStream {
    */
   public getKind(): TokenKind {
     return this.getToken().kind;
+  }
+
+  public then(kind: TokenKind): boolean {
+    return (this.getToken().kind == kind);
   }
 
   public thenKeyword(keyword: string): boolean {
@@ -103,6 +107,28 @@ export class Scanner implements ITokenStream {
     }
   }
 
+  public repeat<T extends SyntaxNode>(parseItem: (s: Scanner) => T, terminator: (x: Token) => boolean, separator?: (x: Token) => boolean): T[] {
+    const items: T[] = [];
+
+    // 終端のトークンかを確認する
+    while (!terminator(this.getToken())) {
+      // 2個目の項目以降は、前に区切りトークンがあることを期待する
+      if (separator != null && items.length > 0) {
+        // 区切りトークンかを確認する
+        if (!separator(this.getToken())) {
+          throw this.unexpectedToken();
+        }
+
+        this.next();
+      }
+
+      const item = parseItem(this);
+      items.push(item);
+    }
+
+    return items;
+  }
+
   /**
    * カーソル位置にあるトークンが指定したトークンの種類と一致することを確認し、
    * カーソル位置を次のトークンへ進めます。
@@ -147,12 +173,12 @@ export class Scanner implements ITokenStream {
         }
         case ':': {
           this.stream.next();
-          token = TOKEN(TokenKind.Colon, loc, { });
+          token = TOKEN(TokenKind.Colon, loc, {});
           break;
         }
         case ';': {
           this.stream.next();
-          token = TOKEN(TokenKind.SemiColon, loc, { });
+          token = TOKEN(TokenKind.SemiColon, loc, {});
           break;
         }
         case "{": {
@@ -166,7 +192,7 @@ export class Scanner implements ITokenStream {
           break;
         }
         case '/': {
-          // token = this.readEndpointPath();
+          token = this.readEndpointPath();
           break;
         }
         case '"': {
@@ -217,7 +243,16 @@ export class Scanner implements ITokenStream {
   }
 
   private readEndpointPath(): Token {
-    throw new Error('not implement');
+    let buf = '';
+
+    const loc = this.stream.getPos();
+
+    buf += this.stream.char;
+    this.stream.next();
+
+    // TODO
+
+    return TOKEN(TokenKind.EndpointPath, loc, { value: buf });
   }
 
   private readString(): Token {

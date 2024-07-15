@@ -1,4 +1,4 @@
-export type SyntaxNode = UnitNode | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | PrimitiveType | TypeRef;
+export type SyntaxNode = UnitNode | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode;
 
 export type Loc = {
   line: number;
@@ -56,18 +56,8 @@ export class ResponseDecl {
   ) {}
 }
 
-export type TypeNode = PrimitiveType | TypeRef;
-
-export class PrimitiveType {
-  kind = 'PrimitiveType' as const;
-  constructor(
-    public name: 'string' | 'object' | 'boolean' | 'void',
-    public loc: Loc,
-  ) {}
-}
-
-export class TypeRef {
-  kind = 'TypeRef' as const;
+export class TypeNode {
+  kind = 'TypeNode' as const;
   constructor(
     public name: string,
     public loc: Loc,

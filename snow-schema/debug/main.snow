@@ -1,0 +1,18 @@
+syntax = "snow-schema-1.0";
+
+type Name = string;
+
+POST / {
+}
+
+GET / {
+}
+
+PATCH / {
+}
+
+PUT / {
+}
+
+DELETE / {
+}
