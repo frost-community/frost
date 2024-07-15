@@ -1,7 +1,7 @@
 // library
 
 export interface IRequestDriver {
-  request(method: string, url: string, body?: Record<string, any>): Promise<any>;
+  request(opts: { method: string, url: string, body?: any }): Promise<any>;
 }
 
 export class FetchRequestDriver implements IRequestDriver {
@@ -10,8 +10,13 @@ export class FetchRequestDriver implements IRequestDriver {
     init?: RequestInit,
   ) => Promise<Response>) {}
 
-  async request(method: string, url: string): Promise<any> {
-    const res = await this.fetch(url, { method });
+  async request(opts: { method: string, url: string, body?: any }): Promise<any> {
+    let res;
+    if (opts.body !== undefined) {
+      res = await this.fetch(opts.url, { method: opts.method, body: JSON.stringify(opts.body) });
+    } else {
+      res = await this.fetch(opts.url, { method: opts.method });
+    }
     return res.json();
   }
 }
@@ -27,53 +32,11 @@ export class RequestDriver {
 
 // generated definitions
 
-function makeApiUsers(requestDriver: IRequestDriver): (parameters: {}) => { post: (body: {}) => Promise<User> } {
-  return (parameters: {}) => {
-    const path = `/api/users`;
-    return {
-      post: (body: {}) => {
-        return requestDriver.request('post', path, body);
-      },
-    };
-  };
-}
-
-function makeApiUsersId(requestDriver: IRequestDriver): (parameters: { id: string }) => { get: () => Promise<User>, delete: () => Promise<void> } {
-  return (parameters: { id: string }) => {
-    const path = `/api/users/${parameters.id}`;
-    return {
-      get: () => {
-        return requestDriver.request('get', path);
-      },
-      delete: () => {
-        return requestDriver.request('delete', path);
-      },
-    };
-  };
-}
-
-function makeApiMe(requestDriver: IRequestDriver): (parameters: {}) => { get: () => Promise<Account> } {
-  return (parameters: {}) => {
-    const path = `/api/me`;
-    return {
-      get: () => {
-        return requestDriver.request('get', path);
-      },
-    };
-  };
-}
-
-export class Routes {
-  '/api/users': { params: ReturnType<typeof makeApiUsers> };
-  '/api/users/:id': { params: ReturnType<typeof makeApiUsersId> };
-  '/api/me': { params: ReturnType<typeof makeApiMe> };
-
-  constructor(requestDriver: IRequestDriver) {
-    this['/api/users'] = { params: makeApiUsers(requestDriver) };
-    this['/api/users/:id'] = { params: makeApiUsersId(requestDriver) };
-    this['/api/me'] = { params: makeApiMe(requestDriver) };
-  }
-}
+export type Account = {
+  accountId: string,
+  users: User[],
+  name: string,
+};
 
 export type User = {
   userId: string,
@@ -81,26 +44,44 @@ export type User = {
   displayName: string,
 };
 
-export type Account = {
-  accountId: string,
-  users: User[],
-  name: string,
-};
+export function Client(baseUrl: string, requestDriver: IRequestDriver) {
+  function url(path: string): string {
+    return new URL(path, baseUrl).toString();
+  }
+  return {
+    '/api/users': {
+      post: (body: {}): Promise<User> =>
+        requestDriver.request({ method: 'post', url: url(`/api/users`), body }),
+    },
+    '/api/users/:id': {
+      get: (param: { id: string }): Promise<User> =>
+        requestDriver.request({ method: 'get', url: url(`/api/users/${param.id}`) }),
+      delete: (param: { id: string }): Promise<void> =>
+        requestDriver.request({ method: 'delete', url: url(`/api/users/${param.id}`) }),
+    },
+    '/api/me': {
+      get: (): Promise<Account> =>
+        requestDriver.request({ method: 'get', url: url(`/api/me`) }),
+    },
+  };
+}
 
 
 
 // application
 
 async function entry() {
-  const routes = new Routes(RequestDriver.fetch);
+  const client = Client('http://localhost:3000', RequestDriver.fetch);
 
-  const user = await routes["/api/users"].params({}).post({});
+  const user = await client["/api/users"].post({});
   console.log(user.userId);
 
-  const user2 = await routes["/api/users/:id"].params({ id: 'abcd' }).get();
+  const user2 = await client["/api/users/:id"].get({ id: user.userId });
   console.log(user2.userId);
 
-  const account = await routes["/api/me"].params({}).get();
+  await client["/api/users/:id"].delete({ id: user.userId });
+
+  const account = await client["/api/me"].get();
   console.log(account.accountId);
 }
 entry().catch(err => console.error(err));
