@@ -10,6 +10,8 @@
 ```
 ファイルの最初に記載することで、そのファイルがsnow-schema 1.0のファイルであることを示す。
 
+<br />
+
 ## Import宣言 (Import declaration)
 ```abnf
 <import declaration>
@@ -24,6 +26,8 @@
 import "./types.snow";
 ```
 
+<br />
+
 ## 型宣言 (Type declaration)
 ```abnf
 <type declaration>
@@ -36,6 +40,8 @@ import "./types.snow";
 ```
 type A = string;
 ```
+
+<br />
 
 ## エンドポイント宣言 (Endpoint declaration)
 ```abnf
@@ -63,6 +69,8 @@ DELETE / {
 }
 ```
 
+<br />
+
 ## 型 (Type)
 ```abnf
 <type>
@@ -70,3 +78,5 @@ DELETE / {
   / "object"
 ```
 フィールドやレスポンスの型情報。
+
+<br />
