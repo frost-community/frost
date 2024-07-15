@@ -49,6 +49,10 @@ export function Client(baseUrl: string, requestDriver: IRequestDriver) {
     return new URL(path, baseUrl).toString();
   }
   return {
+    '/api/me': {
+      get: (): Promise<Account> =>
+        requestDriver.request({ method: 'get', url: url(`/api/me`) }),
+    },
     '/api/users': {
       post: (body: {}): Promise<User> =>
         requestDriver.request({ method: 'post', url: url(`/api/users`), body }),
@@ -58,10 +62,6 @@ export function Client(baseUrl: string, requestDriver: IRequestDriver) {
         requestDriver.request({ method: 'get', url: url(`/api/users/${param.id}`) }),
       delete: (param: { id: string }): Promise<void> =>
         requestDriver.request({ method: 'delete', url: url(`/api/users/${param.id}`) }),
-    },
-    '/api/me': {
-      get: (): Promise<Account> =>
-        requestDriver.request({ method: 'get', url: url(`/api/me`) }),
     },
   };
 }
