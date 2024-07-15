@@ -1,0 +1,14 @@
+snow = "1.0";
+
+import type "./common.snow";
+import type "./users.snow";
+
+type Account = object {
+  field accountId: UUID;
+  field name: Name;
+  field users: User[];
+};
+
+GET /api/me {
+  response: Account;
+};

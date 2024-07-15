@@ -1,6 +1,6 @@
 ## 構文
-```
-syntax "snow1";
+```snow-schema
+snow = "1.0";
 
 type UUID = string {
   pattern "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})";
@@ -25,11 +25,11 @@ type User = object {
   field userId: UUID;
   field name: Name;
   field displayName: DisplayName;
-}
+};
 
 GET /api/me {
   response: Account;
-}
+};
 
 POST /api/users {
   body: object {
@@ -37,14 +37,14 @@ POST /api/users {
     field displayName: DisplayName;
   };
   response: User;
-}
+};
 
 GET /api/users/:id {
   parameter id: UUID;
   response: User;
-}
+};
 
 DELETE /api/users/:id {
   parameter id: UUID;
-}
+};
 ```

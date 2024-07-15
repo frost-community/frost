@@ -1,0 +1,26 @@
+snow = "1.0";
+
+import type "./common.snow";
+
+type User = object {
+  field userId: UUID;
+  field name: Name;
+  field displayName: DisplayName;
+};
+
+POST /api/users {
+  body: object {
+    field name: Name;
+    field displayName: DisplayName;
+  };
+  response: User;
+};
+
+GET /api/users/:id {
+  parameter id: UUID;
+  response: User;
+};
+
+DELETE /api/users/:id {
+  parameter id: UUID;
+};
