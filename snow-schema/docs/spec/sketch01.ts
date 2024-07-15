@@ -34,8 +34,8 @@ export class RequestDriver {
 
 export type Account = {
   accountId: string,
-  users: User[],
   name: string,
+  users: User[],
 };
 
 export type User = {
