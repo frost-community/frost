@@ -1,4 +1,4 @@
-snow = "1.0";
+syntax = "snow-schema1";
 
-import route "./users.snow";
-import route "./account.snow";
+import "./users.snow";
+import "./account.snow";

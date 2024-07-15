@@ -1,6 +1,6 @@
-snow = "1.0";
+syntax = "snow-schema1";
 
-import type "./common.snow";
+import "./common.snow";
 
 type User = object {
   field userId: UUID;
