@@ -33,8 +33,8 @@ GET /api/me {
 
 POST /api/users {
   body: object {
-    name: Name;
-    displayName: DisplayName;
+    field name: Name;
+    field displayName: DisplayName;
   };
   response: User;
 }
