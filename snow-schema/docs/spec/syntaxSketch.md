@@ -28,7 +28,7 @@ type User = object {
 }
 
 GET /api/me {
-  response Account;
+  response: Account;
 }
 
 POST /api/users {
@@ -36,12 +36,12 @@ POST /api/users {
     name: Name;
     displayName: DisplayName;
   }
-  response User;
+  response: User;
 }
 
 GET /api/users/:id {
   parameter id: UUID;
-  response User;
+  response: User;
 }
 
 DELETE /api/users/:id {
