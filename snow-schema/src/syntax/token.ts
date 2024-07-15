@@ -6,6 +6,7 @@ export enum TokenKind {
   StringLiteral,
   EndpointPath,
 
+  /** "syntax" */
   SyntaxKeyword,
 
   /** "=" */
