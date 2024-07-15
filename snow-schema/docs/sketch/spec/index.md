@@ -4,12 +4,13 @@
 ```abnf
 <syntax specifier>
   = "syntax" "=" <syntax identifier> ";"
+
 <syntax identifier>
   = "\"snow-schema1\""
 ```
 ファイルの最初に記載することで、そのファイルがsnow-schema 1.0のファイルであることを示す。
 
-## import宣言 (Import declaration)
+## Import宣言 (Import declaration)
 ```abnf
 <import declaration>
   = "import" <path string> ";"
@@ -23,7 +24,7 @@
 import "./types.snow";
 ```
 
-## type宣言 (Type declaration)
+## 型宣言 (Type declaration)
 ```abnf
 <type declaration>
   = "type" <name> "=" <type>
@@ -63,7 +64,7 @@ DELETE / {
 ```
 
 ## 型 (Type)
-```
+```abnf
 <type>
   = "string"
   / "object"
