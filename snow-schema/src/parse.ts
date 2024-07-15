@@ -1,5 +1,5 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, TopLevelDecl, TypeDecl, TypeNode, UnitNode } from './syntax-node.js';
+import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, TopLevelDecl, TypeDecl, TypeNode, UnitNode } from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
@@ -94,6 +94,38 @@ function parseType(s: Scanner): TypeNode {
 function parseEndpointMember(s: Scanner): EndpointMember {
   const loc = s.getToken().loc;
 
-  // TODO
-  throw new Error('not implement');
+  if (s.thenKeyword('parameter')) {
+    s.next();
+
+    s.expect(TokenKind.Identifier);
+    const name = s.getToken().value!;
+    s.next();
+
+    let type = undefined;
+    if (s.then(TokenKind.Colon)) {
+      s.next();
+      type = parseType(s);
+    }
+
+    s.nextWith(TokenKind.SemiColon);
+
+    return new ParameterDecl(name, type, loc);
+  }
+
+  if (s.thenKeyword('response')) {
+    s.next();
+
+    s.expect(TokenKind.NumberLiteral);
+    const status = Number(s.getToken().value!);
+    s.next();
+
+    s.nextWith(TokenKind.Colon);
+    const type = parseType(s);
+
+    s.nextWith(TokenKind.SemiColon);
+
+    return new ResponseDecl(status, type, loc);
+  }
+
+  throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }

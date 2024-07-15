@@ -3,16 +3,22 @@ syntax = "snow-schema-1.0";
 type Name = string;
 
 POST / {
+  parameter id: string;
+  response 201: object;
 }
 
 GET / {
+  response 200: object;
 }
 
 PATCH / {
+  response 204: void;
 }
 
 PUT / {
+  response 204: void;
 }
 
 DELETE / {
+  response 204: void;
 }
