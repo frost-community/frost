@@ -16,15 +16,15 @@ type DisplayName = string {
 };
 
 type Account = object {
-  accountId: UUID;
-  name: Name;
-  users: User[];
+  field accountId: UUID;
+  field name: Name;
+  field users: User[];
 };
 
 type User = object {
-  userId: UUID;
-  name: Name;
-  displayName: DisplayName;
+  field userId: UUID;
+  field name: Name;
+  field displayName: DisplayName;
 }
 
 GET /api/me {
@@ -32,10 +32,10 @@ GET /api/me {
 }
 
 POST /api/users {
-  body {
+  body: object {
     name: Name;
     displayName: DisplayName;
-  }
+  };
   response: User;
 }
 
