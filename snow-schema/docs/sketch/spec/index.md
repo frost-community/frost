@@ -7,6 +7,9 @@ identifier
 
 number
   = +DIGIT
+
+string
+  = %x22 *(ALPHA / DIGIT) %x22
 ```
 
 <br />
@@ -14,10 +17,10 @@ number
 ## 構文指定子 (Syntax specifier)
 ```abnf
 syntax-specifier
-  = "syntax" "=" syntax-id ";"
+  = "syntax" "=" %x22 syntax-id %x22 ";"
 
 syntax-id
-  = "\"snow-schema-1.0\""
+  = "snow-schema-1.0"
 ```
 ファイルの最初に記載することで、そのファイルがsnow-schema 1.0のファイルであることを示す。
 
@@ -32,6 +35,9 @@ syntax = "snow-schema-1.0";
 ```abnf
 import-declaration
   = "import" filepath ";"
+
+filepath
+  = string
 ```
 他のファイルの内容を参照する。\
 この操作によって、snow-schemaのコンパイラはファイル同士の関係を認識する。\
