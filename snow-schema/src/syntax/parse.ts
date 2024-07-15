@@ -1,9 +1,9 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, TopLevelDecl, TypeDecl, TypeNode, UnitNode } from './syntax-node.js';
+import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, TopLevelDecl, TypeDecl, TypeNode, Unit } from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
-export function parse(input: string): UnitNode {
+export function parse(input: string): Unit {
   const s = new Scanner(input);
 
   const loc = s.getToken().loc;
@@ -35,7 +35,7 @@ export function parse(input: string): UnitNode {
     throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
   }
 
-  return new UnitNode(decls, loc);
+  return new Unit(decls, loc);
 }
 
 function parseTypeDecl(s: Scanner): TypeDecl {

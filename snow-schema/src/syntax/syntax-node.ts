@@ -1,4 +1,4 @@
-export type SyntaxNode = UnitNode | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode;
+export type SyntaxNode = Unit | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode;
 
 export type Loc = {
   line: number;
@@ -7,8 +7,8 @@ export type Loc = {
 
 // SyntaxNode
 
-export class UnitNode {
-  kind = 'UnitNode' as const;
+export class Unit {
+  kind = 'Unit' as const;
   constructor(
     public decls: TopLevelDecl[],
     public loc: Loc,
@@ -48,7 +48,7 @@ export class ParameterDecl {
 }
 
 export class ResponseDecl {
-  kind = 'ResponseDeclNode' as const;
+  kind = 'ResponseDecl' as const;
   constructor(
     public statusCode: number,
     public type: TypeNode,
