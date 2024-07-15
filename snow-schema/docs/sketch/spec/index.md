@@ -53,19 +53,28 @@ type A = string;
 
 例:
 ```
-POST / {
+POST /cats {
+  response: Cat;
 }
 
-GET / {
+GET /cats/:id {
+  parameter id: string;
+  response: Cat;
 }
 
-PUT / {
+PUT /cats/:id {
+  parameter id: string;
+  response: void;
 }
 
-PATCH / {
+PATCH /cats/:id {
+  parameter id: string;
+  response: Cat;
 }
 
-DELETE / {
+DELETE /cats/:id {
+  parameter id: string;
+  response: void;
 }
 ```
 
