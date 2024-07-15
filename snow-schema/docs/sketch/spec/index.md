@@ -11,11 +11,11 @@ number
 
 ## 構文指定子 (Syntax specifier)
 ```abnf
-<syntax specifier>
-  = "syntax" "=" <syntax identifier> ";"
+syntax-specifier
+  = "syntax" "=" syntax-id ";"
 
-<syntax identifier>
-  = "\"snow-schema1\""
+syntax-id
+  = "\"snow-schema-1.0\""
 ```
 ファイルの最初に記載することで、そのファイルがsnow-schema 1.0のファイルであることを示す。
 
