@@ -14,13 +14,13 @@ POST /api/users {
     field displayName: DisplayName;
   };
   response: User;
-};
+}
 
 GET /api/users/:id {
   parameter id: UUID;
   response: User;
-};
+}
 
 DELETE /api/users/:id {
   parameter id: UUID;
-};
+}
