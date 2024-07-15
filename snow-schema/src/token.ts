@@ -1,15 +1,23 @@
 export enum TokenKind {
   EOF,
+
   Identifier,
   NumberLiteral,
   StringLiteral,
+  EndpointPath,
 
+  SyntaxKeyword,
+
+  /** "=" */
+  Eq,
+  /** ":" */
+  Colon,
+  /** ";" */
+  SemiColon,
   /** "{" */
   OpenBrace,
   /** "}" */
   CloseBrace,
-
-  Route,
 }
 
 export type TokenLocation = { column: number, line: number };

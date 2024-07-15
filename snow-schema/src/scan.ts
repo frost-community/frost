@@ -46,6 +46,10 @@ export class Scanner implements ITokenStream {
     return this.getToken().kind;
   }
 
+  public thenKeyword(keyword: string): boolean {
+    return (this.getToken().kind == TokenKind.Identifier && this.getToken().value! == keyword);
+  }
+
   /**
    * カーソル位置を次のトークンへ進めます。
    */
@@ -90,12 +94,26 @@ export class Scanner implements ITokenStream {
     }
   }
 
+  public expectKeyword(keyword: string): void {
+    if (this.getKind() !== TokenKind.Identifier) {
+      throw this.unexpectedToken();
+    }
+    if (this.getToken().value !== keyword) {
+      throw this.unexpectedToken();
+    }
+  }
+
   /**
    * カーソル位置にあるトークンが指定したトークンの種類と一致することを確認し、
    * カーソル位置を次のトークンへ進めます。
    */
   public nextWith(kind: TokenKind): void {
     this.expect(kind);
+    this.next();
+  }
+
+  public nextWithKeyword(keyword: string): void {
+    this.expectKeyword(keyword);
     this.next();
   }
 
@@ -122,6 +140,21 @@ export class Scanner implements ITokenStream {
       const loc = this.stream.getPos();
 
       switch (this.stream.char) {
+        case "=": {
+          this.stream.next();
+          token = TOKEN(TokenKind.Eq, loc, {});
+          break;
+        }
+        case ':': {
+          this.stream.next();
+          token = TOKEN(TokenKind.Colon, loc, { });
+          break;
+        }
+        case ';': {
+          this.stream.next();
+          token = TOKEN(TokenKind.SemiColon, loc, { });
+          break;
+        }
         case "{": {
           this.stream.next();
           token = TOKEN(TokenKind.OpenBrace, loc, {});
@@ -132,40 +165,14 @@ export class Scanner implements ITokenStream {
           token = TOKEN(TokenKind.CloseBrace, loc, {});
           break;
         }
+        case '/': {
+          // token = this.readEndpointPath();
+          break;
+        }
         case '"': {
           token = this.readString();
           break;
         }
-        // case '(': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.OpenParen, loc, { });
-        //   break;
-        // }
-        // case ')': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.CloseParen, loc, { });
-        //   break;
-        // }
-        // case ',': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.Comma, loc, { });
-        //   break;
-        // }
-        // case ';': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.SemiColon, loc, { });
-        //   break;
-        // }
-        // case '[': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.OpenBracket, loc, { });
-        //   break;
-        // }
-        // case ']': {
-        //   this.stream.next();
-        //   token = TOKEN(TokenKind.CloseBracket, loc, { });
-        //   break;
-        // }
       }
       if (token == null) {
         const digitToken = this.tryReadDigits();
@@ -200,8 +207,8 @@ export class Scanner implements ITokenStream {
     }
     // check word kind
     switch (value) {
-      case "route": {
-        return TOKEN(TokenKind.Route, loc, {});
+      case "syntax": {
+        return TOKEN(TokenKind.SyntaxKeyword, loc, {});
       }
       default: {
         return TOKEN(TokenKind.Identifier, loc, { value });
@@ -209,7 +216,11 @@ export class Scanner implements ITokenStream {
     }
   }
 
-  private readString(): Token | undefined {
+  private readEndpointPath(): Token {
+    throw new Error('not implement');
+  }
+
+  private readString(): Token {
     let buf = "";
 
     const loc = this.stream.getPos();
