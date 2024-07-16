@@ -1,4 +1,4 @@
-syntax = "snow-schema1";
+syntax = "snow-schema-1.0";
 
 import "./common.snow";
 
