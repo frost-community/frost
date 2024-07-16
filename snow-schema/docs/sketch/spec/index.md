@@ -59,7 +59,7 @@ import "./types.snow";
 ## 型宣言 (Type declaration)
 ```abnf
 type-declaration
-  = "type" identifier "=" type
+  = "type" identifier "=" type ";"
 ```
 型に名前をつけるための構文。\
 あらかじめ複雑な型を作成しておき、後で使用することができる。
@@ -146,8 +146,7 @@ type
 ## パラメータ宣言 (Parameter declaration)
 ```abnf
 parameter-declaration
-  = "parameter" identifier ":" type ";"
-  / "parameter" identifier ";"
+  = "parameter" identifier [":" type] ";"
 ```
 エンドポイントパスに指定されるパラメータに関する情報を記述します。\
 パラメータの型は省略することができます。その場合はデフォルトのstringとなります。\
