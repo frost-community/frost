@@ -46,6 +46,21 @@ export class Scanner {
     return this.getToken().kind;
   }
 
+  /**
+   * トークンの値を取得します。\
+   * 現在のトークンが値を持っていなかった場合はエラーが発生します。
+  */
+  public getValue(): string {
+    const value = this.getToken().value;
+    if (value == null) {
+      throw new Error('');
+    }
+    return value;
+  }
+
+  /**
+   * 現在のトークンが指定したトークンの種類、またはキーワードに一致するかどうかを取得します。
+  */
   public when(value: TokenKind | string | string[]): boolean {
     if (typeof value == 'string') {
       return (this.getToken().kind == TokenKind.Identifier && this.getToken().value! == value);
@@ -91,7 +106,7 @@ export class Scanner {
   }
 
   /**
-   * カーソル位置にあるトークンが指定したトークンの種類またはキーワードと一致するかを確認します。
+   * カーソル位置にあるトークンが指定したトークンの種類またはキーワードと一致するかを確認します。\
    * 一致しなかった場合には文法エラーを発生させます。
    */
   public expect(value: TokenKind | string): void {
@@ -109,6 +124,9 @@ export class Scanner {
     }
   }
 
+  /**
+   * 
+  */
   public repeat<T extends SyntaxNode>(parseItem: (s: Scanner) => T, terminator: (x: Token) => boolean, separator?: (x: Token) => boolean): T[] {
     const items: T[] = [];
 
@@ -129,15 +147,6 @@ export class Scanner {
     }
 
     return items;
-  }
-
-  /**
-   * カーソル位置にあるトークンが指定したトークンの種類と一致することを確認し、
-   * カーソル位置を次のトークンへ進めます。
-   */
-  public nextWith(value: TokenKind | string): void {
-    this.expect(value);
-    this.next();
   }
 
   private readToken(): Token {

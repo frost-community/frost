@@ -5,21 +5,21 @@ import { error } from './util/error.js';
 
 export function parse(input: string): Unit {
   const s = new Scanner(input);
-
   const loc = s.getToken().loc;
-
   const decls: UnitMember[] = [];
   while (!s.when(TokenKind.EOF)) {
     if (s.when(TokenKind.SyntaxKeyword)) {
       s.next();
-      s.nextWith(TokenKind.Eq);
+      s.expect(TokenKind.Eq);
+      s.next();
       s.expect(TokenKind.StringLiteral);
-      const format = s.getToken().value!;
+      const format = s.getValue();
       if (!['snow-schema-1.0'].includes(format)) {
         throw new Error('unsupported syntax specifier: ' + format);
       }
       s.next();
-      s.nextWith(TokenKind.SemiColon);
+      s.expect(TokenKind.SemiColon);
+      s.next();
       continue;
     }
     if (s.when('type')) {
@@ -40,52 +40,47 @@ export function parse(input: string): Unit {
 
 function parseTypeDecl(s: Scanner): TypeDecl {
   const loc = s.getToken().loc;
-
   s.next();
-
   s.expect(TokenKind.Identifier);
-  const name = s.getToken().value!;
+  const name = s.getValue();
   s.next();
-
-  s.nextWith(TokenKind.Eq);
-
+  s.expect(TokenKind.Eq);
+  s.next();
   const type = parseType(s);
-
-  s.nextWith(TokenKind.SemiColon);
+  s.expect(TokenKind.SemiColon);
+  s.next();
 
   return new TypeDecl(name, type, loc);
 }
 
 function parseEndpointDecl(s: Scanner): EndpointDecl {
   const loc = s.getToken().loc;
-
-  const method = s.getToken().value!;
+  const method = s.getValue();
   s.next();
-
   s.expect(TokenKind.EndpointPath);
-  const path = s.getToken().value!;
+  const path = s.getValue();
   s.next();
-
-  s.nextWith(TokenKind.OpenBrace);
+  s.expect(TokenKind.OpenBrace);
+  s.next();
   const members = s.repeat(parseEndpointMember, x => (x.kind == TokenKind.CloseBrace));
-  s.nextWith(TokenKind.CloseBrace);
+  s.expect(TokenKind.CloseBrace);
+  s.next();
 
   return new EndpointDecl(method, path, members, loc);
 }
 
 function parseType(s: Scanner): TypeNode {
   const loc = s.getToken().loc;
-
   s.expect(TokenKind.Identifier);
-  const typeName = s.getToken().value!;
+  const typeName = s.getValue();
   s.next();
-
   if (s.when(TokenKind.OpenBrace)) {
     s.next();
 
     // TODO
 
-    s.nextWith(TokenKind.CloseBrace);
+    s.expect(TokenKind.CloseBrace);
+    s.next();
   }
 
   return new TypeNode(typeName, loc);
@@ -96,33 +91,30 @@ function parseEndpointMember(s: Scanner): EndpointMember {
 
   if (s.when('parameter')) {
     s.next();
-
     s.expect(TokenKind.Identifier);
-    const name = s.getToken().value!;
+    const name = s.getValue();
     s.next();
-
     let type = undefined;
     if (s.when(TokenKind.Colon)) {
       s.next();
       type = parseType(s);
     }
-
-    s.nextWith(TokenKind.SemiColon);
+    s.expect(TokenKind.SemiColon);
+    s.next();
 
     return new ParameterDecl(name, type, loc);
   }
 
   if (s.when('response')) {
     s.next();
-
     s.expect(TokenKind.NumberLiteral);
-    const status = Number(s.getToken().value!);
+    const status = Number(s.getValue());
     s.next();
-
-    s.nextWith(TokenKind.Colon);
+    s.expect(TokenKind.Colon);
+    s.next();
     const type = parseType(s);
-
-    s.nextWith(TokenKind.SemiColon);
+    s.expect(TokenKind.SemiColon);
+    s.next();
 
     return new ResponseDecl(status, type, loc);
   }
