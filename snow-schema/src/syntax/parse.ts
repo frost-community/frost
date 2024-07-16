@@ -1,5 +1,5 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, UnitMember, TypeDecl, TypeNode, Unit } from './syntax-node.js';
+import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, UnitMember, TypeDecl, TypeNode, Unit, SyntaxSpecifier, TypeAttribute } from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
@@ -7,37 +7,41 @@ export function parse(input: string): Unit {
   const s = new Scanner(input);
   const loc = s.getToken().loc;
   const decls: UnitMember[] = [];
+  const syntaxSpecifier = parseSyntaxSpecifier(s);
+  if (!['snow-schema-1.0'].includes(syntaxSpecifier.format)) {
+    throw new Error('unsupported syntax specifier: ' + syntaxSpecifier.format);
+  }
   while (!s.when(TokenKind.EOF)) {
-    if (s.when(TokenKind.SyntaxKeyword)) {
-      s.next();
-      s.expect(TokenKind.Eq);
-      s.next();
-      s.expect(TokenKind.StringLiteral);
-      const format = s.getValue();
-      if (!['snow-schema-1.0'].includes(format)) {
-        throw new Error('unsupported syntax specifier: ' + format);
-      }
-      s.next();
-      s.expect(TokenKind.SemiColon);
-      s.next();
-      continue;
-    }
     if (s.when('type')) {
-      const decl = parseTypeDecl(s);
+      const decl = parseTypeDeclaration(s);
       decls.push(decl);
       continue;
     }
     if (s.when(['POST', 'GET', 'PATCH', 'PUT', 'DELETE'])) {
-      const decl = parseEndpointDecl(s);
+      const decl = parseEndpointDeclaration(s);
       decls.push(decl);
       continue;
     }
     throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
   }
-  return new Unit(decls, loc);
+  return new Unit(syntaxSpecifier, decls, loc);
 }
 
-function parseTypeDecl(s: Scanner): TypeDecl {
+function parseSyntaxSpecifier(s: Scanner): SyntaxSpecifier {
+  const loc = s.getToken().loc;
+  s.expect(TokenKind.SyntaxKeyword);
+  s.next();
+  s.expect(TokenKind.Eq);
+  s.next();
+  s.expect(TokenKind.StringLiteral);
+  const format = s.getValue();
+  s.next();
+  s.expect(TokenKind.SemiColon);
+  s.next();
+  return new SyntaxSpecifier(format, loc);
+}
+
+function parseTypeDeclaration(s: Scanner): TypeDecl {
   const loc = s.getToken().loc;
   s.expect('type');
   s.next();
@@ -52,8 +56,9 @@ function parseTypeDecl(s: Scanner): TypeDecl {
   return new TypeDecl(name, type, loc);
 }
 
-function parseEndpointDecl(s: Scanner): EndpointDecl {
+function parseEndpointDeclaration(s: Scanner): EndpointDecl {
   const loc = s.getToken().loc;
+  s.expect(TokenKind.Identifier);
   const method = s.getValue();
   s.next();
   s.expect(TokenKind.EndpointPath);
@@ -70,32 +75,44 @@ function parseEndpointDecl(s: Scanner): EndpointDecl {
 function parseEndpointMember(s: Scanner): EndpointMember {
   const loc = s.getToken().loc;
   if (s.when('parameter')) {
-    s.next();
-    s.expect(TokenKind.Identifier);
-    const name = s.getValue();
-    s.next();
-    let type = undefined;
-    if (s.when(TokenKind.Colon)) {
-      s.next();
-      type = parseType(s);
-    }
-    s.expect(TokenKind.SemiColon);
-    s.next();
-    return new ParameterDecl(name, type, loc);
+    return parseParameterDeclaration(s);
   }
   if (s.when('response')) {
-    s.next();
-    s.expect(TokenKind.NumberLiteral);
-    const status = Number(s.getValue());
-    s.next();
-    s.expect(TokenKind.Colon);
-    s.next();
-    const type = parseType(s);
-    s.expect(TokenKind.SemiColon);
-    s.next();
-    return new ResponseDecl(status, type, loc);
+    return parseResponseDeclaration(s);
   }
   throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
+}
+
+function parseParameterDeclaration(s: Scanner): ParameterDecl {
+  const loc = s.getToken().loc;
+  s.expect('parameter');
+  s.next();
+  s.expect(TokenKind.Identifier);
+  const name = s.getValue();
+  s.next();
+  let type = undefined;
+  if (s.when(TokenKind.Colon)) {
+    s.next();
+    type = parseType(s);
+  }
+  s.expect(TokenKind.SemiColon);
+  s.next();
+  return new ParameterDecl(name, type, loc);
+}
+
+function parseResponseDeclaration(s: Scanner): ResponseDecl {
+  const loc = s.getToken().loc;
+  s.expect('response');
+  s.next();
+  s.expect(TokenKind.NumberLiteral);
+  const status = Number(s.getValue());
+  s.next();
+  s.expect(TokenKind.Colon);
+  s.next();
+  const type = parseType(s);
+  s.expect(TokenKind.SemiColon);
+  s.next();
+  return new ResponseDecl(status, type, loc);
 }
 
 function parseType(s: Scanner): TypeNode {
@@ -103,13 +120,45 @@ function parseType(s: Scanner): TypeNode {
   s.expect(TokenKind.Identifier);
   const typeName = s.getValue();
   s.next();
+  let attributes: TypeAttribute[] | undefined = undefined;
   if (s.when(TokenKind.OpenBrace)) {
     s.next();
-
-    // TODO
-
+    attributes = s.repeat(parseTypeAttribute, x => (x.kind == TokenKind.CloseBrace));
     s.expect(TokenKind.CloseBrace);
     s.next();
   }
-  return new TypeNode(typeName, loc);
+  return new TypeNode(typeName, attributes, loc);
+}
+
+function parseTypeAttribute(s: Scanner): TypeAttribute {
+  const loc = s.getToken().loc;
+  if (s.when("pattern")) {
+    s.next();
+    // TODO
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new TypeAttribute(loc);
+  }
+  if (s.when("caseSensitive")) {
+    s.next();
+    // TODO
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new TypeAttribute(loc);
+  }
+  if (s.when(["minValue", "maxValue", "minLength", "maxLength"])) {
+    s.next();
+    // TODO
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new TypeAttribute(loc);
+  }
+  if (s.when("field")) {
+    s.next();
+    // TODO
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new TypeAttribute(loc);
+  }
+  throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }

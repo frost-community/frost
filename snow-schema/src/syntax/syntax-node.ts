@@ -1,4 +1,4 @@
-export type SyntaxNode = Unit | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode;
+export type SyntaxNode = Unit | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode | TypeAttribute;
 
 export type Loc = {
   line: number;
@@ -7,9 +7,18 @@ export type Loc = {
 
 // SyntaxNode
 
+export class SyntaxSpecifier {
+  kind = 'SyntaxSpecifier' as const;
+  constructor(
+    public format: string,
+    public loc: Loc,
+  ) {}
+}
+
 export class Unit {
   kind = 'Unit' as const;
   constructor(
+    public syntaxSpecifier: SyntaxSpecifier,
     public decls: UnitMember[],
     public loc: Loc,
   ) {}
@@ -60,6 +69,15 @@ export class TypeNode {
   kind = 'TypeNode' as const;
   constructor(
     public name: string,
+    public attributes: TypeAttribute[] | undefined,
+    public loc: Loc,
+  ) {}
+}
+
+export class TypeAttribute {
+  kind = 'TypeAttribute' as const;
+  constructor(
+    // TODO
     public loc: Loc,
   ) {}
 }
