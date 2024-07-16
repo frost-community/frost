@@ -1,4 +1,4 @@
-export type SyntaxNode = Unit | TypeDecl | EndpointDecl | ParameterDecl | ResponseDecl | TypeNode | TypeAttribute;
+export type SyntaxNode = Unit | SyntaxSpecifier | UnitMember | EndpointMember | TypeNode | TypeAttribute;
 
 export type Loc = {
   line: number;
@@ -7,19 +7,19 @@ export type Loc = {
 
 // SyntaxNode
 
-export class SyntaxSpecifier {
-  kind = 'SyntaxSpecifier' as const;
-  constructor(
-    public format: string,
-    public loc: Loc,
-  ) {}
-}
-
 export class Unit {
   kind = 'Unit' as const;
   constructor(
     public syntaxSpecifier: SyntaxSpecifier,
     public decls: UnitMember[],
+    public loc: Loc,
+  ) {}
+}
+
+export class SyntaxSpecifier {
+  kind = 'SyntaxSpecifier' as const;
+  constructor(
+    public format: string,
     public loc: Loc,
   ) {}
 }
@@ -74,10 +74,23 @@ export class TypeNode {
   ) {}
 }
 
-export class TypeAttribute {
-  kind = 'TypeAttribute' as const;
+export type TypeAttribute = PrimitiveTypeAttribute | FieldTypeAttribute;
+
+export class PrimitiveTypeAttribute {
+  kind = 'PrimitiveTypeAttribute' as const;
   constructor(
-    // TODO
+    public attrName: string,
+    public primitiveKind: 'string' | 'number' | 'boolean',
+    public value: string,
+    public loc: Loc,
+  ) {}
+}
+
+export class FieldTypeAttribute {
+  kind = 'FieldTypeAttribute' as const;
+  constructor(
+    public name: string,
+    public type: TypeNode,
     public loc: Loc,
   ) {}
 }

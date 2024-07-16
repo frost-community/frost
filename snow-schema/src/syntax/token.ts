@@ -4,6 +4,7 @@ export enum TokenKind {
   Identifier,
   NumberLiteral,
   StringLiteral,
+  BooleanLiteral,
   EndpointPath,
 
   /** "syntax" */

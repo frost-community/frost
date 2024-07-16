@@ -1,5 +1,5 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, UnitMember, TypeDecl, TypeNode, Unit, SyntaxSpecifier, TypeAttribute } from './syntax-node.js';
+import { EndpointDecl, EndpointMember, FieldTypeAttribute, ParameterDecl, PrimitiveTypeAttribute, ResponseDecl, SyntaxSpecifier, TypeAttribute, TypeDecl, TypeNode, Unit, UnitMember } from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
@@ -133,32 +133,46 @@ function parseType(s: Scanner): TypeNode {
 function parseTypeAttribute(s: Scanner): TypeAttribute {
   const loc = s.getToken().loc;
   if (s.when("pattern")) {
+    const attrName = s.getValue();
     s.next();
-    // TODO
+    s.expect(TokenKind.StringLiteral);
+    const value = s.getValue();
+    s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new TypeAttribute(loc);
+    return new PrimitiveTypeAttribute(attrName, 'string', value, loc);
   }
   if (s.when("caseSensitive")) {
+    const attrName = s.getValue();
     s.next();
-    // TODO
+    s.expect(TokenKind.BooleanLiteral);
+    const value = s.getValue();
+    s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new TypeAttribute(loc);
+    return new PrimitiveTypeAttribute(attrName, 'boolean', value, loc);
   }
   if (s.when(["minValue", "maxValue", "minLength", "maxLength"])) {
+    const attrName = s.getValue();
     s.next();
-    // TODO
+    s.expect(TokenKind.NumberLiteral);
+    const value = s.getValue();
+    s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new TypeAttribute(loc);
+    return new PrimitiveTypeAttribute(attrName, 'number', value, loc);
   }
   if (s.when("field")) {
     s.next();
-    // TODO
+    s.expect(TokenKind.StringLiteral);
+    const name = s.getValue();
+    s.next();
+    s.expect(TokenKind.Colon);
+    s.next();
+    const type = parseType(s);
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new TypeAttribute(loc);
+    return new FieldTypeAttribute(name, type, loc);
   }
   throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }

@@ -242,6 +242,12 @@ export class Scanner {
       case "syntax": {
         return TOKEN(TokenKind.SyntaxKeyword, loc, {});
       }
+      case "true": {
+        return TOKEN(TokenKind.BooleanLiteral, loc, { value });
+      }
+      case "false": {
+        return TOKEN(TokenKind.BooleanLiteral, loc, { value });
+      }
       default: {
         return TOKEN(TokenKind.Identifier, loc, { value });
       }
