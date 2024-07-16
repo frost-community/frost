@@ -201,14 +201,8 @@ number {
 void
 ```
 
-<br />
-
-## 配列型 (Array types)
-TODO
-
-<br />
-
-## Body型属性(Body type attribute)
-TODO
+### TODO
+- Body型属性 (Body type attribute)
+- 配列型 (Array types)
 
 <br />
