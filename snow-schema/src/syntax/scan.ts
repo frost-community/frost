@@ -46,12 +46,14 @@ export class Scanner {
     return this.getToken().kind;
   }
 
-  public then(kind: TokenKind): boolean {
-    return (this.getToken().kind == kind);
-  }
-
-  public thenKeyword(keyword: string): boolean {
-    return (this.getToken().kind == TokenKind.Identifier && this.getToken().value! == keyword);
+  public when(value: TokenKind | string | string[]): boolean {
+    if (typeof value == 'string') {
+      return (this.getToken().kind == TokenKind.Identifier && this.getToken().value! == value);
+    } else if (Array.isArray(value)) {
+      return (this.getToken().kind == TokenKind.Identifier && value.includes(this.getToken().value!));
+    } else {
+      return (this.getToken().kind == value);
+    }
   }
 
   /**
@@ -89,21 +91,21 @@ export class Scanner {
   }
 
   /**
-   * カーソル位置にあるトークンが指定したトークンの種類と一致するかを確認します。
+   * カーソル位置にあるトークンが指定したトークンの種類またはキーワードと一致するかを確認します。
    * 一致しなかった場合には文法エラーを発生させます。
    */
-  public expect(kind: TokenKind): void {
-    if (this.getKind() !== kind) {
-      throw this.unexpectedToken();
-    }
-  }
-
-  public expectKeyword(keyword: string): void {
-    if (this.getKind() !== TokenKind.Identifier) {
-      throw this.unexpectedToken();
-    }
-    if (this.getToken().value !== keyword) {
-      throw this.unexpectedToken();
+  public expect(value: TokenKind | string): void {
+    if (typeof value == 'string') {
+      if (this.getKind() !== TokenKind.Identifier) {
+        throw this.unexpectedToken();
+      }
+      if (this.getToken().value !== value) {
+        throw this.unexpectedToken();
+      }
+    } else {
+      if (this.getKind() !== value) {
+        throw this.unexpectedToken();
+      }
     }
   }
 
@@ -133,13 +135,8 @@ export class Scanner {
    * カーソル位置にあるトークンが指定したトークンの種類と一致することを確認し、
    * カーソル位置を次のトークンへ進めます。
    */
-  public nextWith(kind: TokenKind): void {
-    this.expect(kind);
-    this.next();
-  }
-
-  public nextWithKeyword(keyword: string): void {
-    this.expectKeyword(keyword);
+  public nextWith(value: TokenKind | string): void {
+    this.expect(value);
     this.next();
   }
 

@@ -22,12 +22,12 @@ export function parse(input: string): Unit {
       }
       continue;
     }
-    if (s.thenKeyword('type')) {
+    if (s.when('type')) {
       const decl = parseTypeDecl(s);
       decls.push(decl);
       continue;
     }
-    if (s.thenKeyword('POST') || s.thenKeyword('GET') || s.thenKeyword('PATCH') || s.thenKeyword('PUT') || s.thenKeyword('DELETE')) {
+    if (s.when(['POST', 'GET', 'PATCH', 'PUT', 'DELETE'])) {
       const decl = parseEndpointDecl(s);
       decls.push(decl);
       continue;
@@ -80,7 +80,7 @@ function parseType(s: Scanner): TypeNode {
   const typeName = s.getToken().value!;
   s.next();
 
-  if (s.then(TokenKind.OpenBrace)) {
+  if (s.when(TokenKind.OpenBrace)) {
     s.next();
 
     // TODO
@@ -94,7 +94,7 @@ function parseType(s: Scanner): TypeNode {
 function parseEndpointMember(s: Scanner): EndpointMember {
   const loc = s.getToken().loc;
 
-  if (s.thenKeyword('parameter')) {
+  if (s.when('parameter')) {
     s.next();
 
     s.expect(TokenKind.Identifier);
@@ -102,7 +102,7 @@ function parseEndpointMember(s: Scanner): EndpointMember {
     s.next();
 
     let type = undefined;
-    if (s.then(TokenKind.Colon)) {
+    if (s.when(TokenKind.Colon)) {
       s.next();
       type = parseType(s);
     }
@@ -112,7 +112,7 @@ function parseEndpointMember(s: Scanner): EndpointMember {
     return new ParameterDecl(name, type, loc);
   }
 
-  if (s.thenKeyword('response')) {
+  if (s.when('response')) {
     s.next();
 
     s.expect(TokenKind.NumberLiteral);
