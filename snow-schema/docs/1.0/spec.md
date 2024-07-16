@@ -113,9 +113,6 @@ DELETE /cats/:id {
 }
 ```
 
-### TODO
-- Bodyエンドポイント属性 (Body endpoint attribute)
-
 <br />
 
 ## Parameterエンドポイント属性 (Parameter endpoint attribute)
@@ -154,10 +151,28 @@ response 204: void;
 
 <br />
 
+## Bodyエンドポイント属性 (Body endpoint attribute)
+```abnf
+body-endpoint-attribute
+  = "body" ":" type ";"
+```
+リクエストボディに渡されるデータの型を指定します。
+
+例:
+```
+body: object {
+};
+```
+
+<br />
+
 ## 型 (Type)
 ```abnf
 type
-  = type-name ["{" *type-attribute "}"]
+  = type-name [array-type-specifier] ["{" *type-attribute "}"]
+
+array-type-specifier
+  = "[]"
 
 type-name
   = "number"
@@ -176,7 +191,8 @@ type-attribute
   / "maxLength" number ";"
   / "field" identifier ":" type ";"
 ```
-フィールドやレスポンスの型情報。
+フィールドやレスポンスの型情報。\
+`string[]`のようにすると、指定した型の配列を表現することもできます。
 
 例:
 ```
@@ -186,6 +202,9 @@ object {
 ```
 ```
 string
+```
+```
+string[]
 ```
 ```
 string {
@@ -203,8 +222,5 @@ number {
 ```
 void
 ```
-
-### TODO
-- 配列型 (Array types)
 
 <br />
