@@ -9,8 +9,8 @@ export function parse(input: string): Unit {
   const loc = s.getToken().loc;
 
   const decls: TopLevelDecl[] = [];
-  while (s.getKind() != TokenKind.EOF) {
-    if (s.getKind() == TokenKind.SyntaxKeyword) {
+  while (!s.when(TokenKind.EOF)) {
+    if (s.when(TokenKind.SyntaxKeyword)) {
       s.next();
       s.nextWith(TokenKind.Eq);
       s.expect(TokenKind.StringLiteral);
