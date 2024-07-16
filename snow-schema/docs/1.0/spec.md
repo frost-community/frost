@@ -40,25 +40,6 @@ syntax = "snow-schema-1.0";
 
 <br />
 
-## Import宣言 (Import declaration)
-```abnf
-import-declaration
-  = "import" filepath ";"
-
-filepath
-  = string
-```
-他のファイルの内容を参照する。\
-この操作によって、snow-schemaのコンパイラはファイル同士の関係を認識する。\
-ただし、他のファイルの中身がそこに展開されるわけではない。
-
-例:
-```
-import "./types.snow";
-```
-
-<br />
-
 ## 型宣言 (Type declaration)
 ```abnf
 type-declaration
