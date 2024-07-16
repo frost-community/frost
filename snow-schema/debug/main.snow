@@ -1,24 +1,45 @@
 syntax = "snow-schema-1.0";
 
-type Name = string;
+
+
+type UUID = string {
+  pattern "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})";
+  caseSensitive false;
+};
+
+type Name = string {
+  pattern "[A-Za-z0-9-]*";
+  minLength 1;
+};
+
+type DisplayName = string {
+  minLength 1;
+};
+
+type User = object {
+  field userId: UUID;
+  field name: Name;
+  field displayName: DisplayName;
+};
 
 POST / {
-  parameter id: string;
-  response 201: object;
+  response 200: User;
 }
 
 GET / {
-  response 200: object;
-}
-
-PATCH / {
-  response 204: void;
-}
-
-PUT / {
-  response 204: void;
+  parameter id: UUID;
+  response 200: User;
 }
 
 DELETE / {
-  response 204: void;
+  parameter id: UUID;
+}
+
+type Account = object {
+  field accountId: UUID;
+  field name: Name;
+};
+
+GET / {
+  response 200: Account;
 }
