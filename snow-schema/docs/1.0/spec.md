@@ -58,7 +58,7 @@ type A = string;
 ## エンドポイント宣言 (Endpoint declaration)
 ```abnf
 endpoint-declaration
-  = method path "{" *endpoint-member "}"
+  = method path "{" *endpoint-attribute "}"
 
 method
   = "POST"
@@ -75,9 +75,9 @@ path-segment
   = +(ALPHA / DIGIT)
   / ":" identifier
 
-endpoint-member
-  = parameter-declaration
-  / response-declaration
+endpoint-attribute
+  = parameter-endpoint-attribute
+  / response-endpoint-attribute
 ```
 エンドポイントを宣言するための構文。\
 そのエンドポイントに関する情報も一緒に宣言する。
@@ -113,11 +113,14 @@ DELETE /cats/:id {
 }
 ```
 
+### TODO
+- Bodyエンドポイント属性 (Body endpoint attribute)
+
 <br />
 
-## パラメータ宣言 (Parameter declaration)
+## パラメーター・エンドポイント属性 (Parameter endpoint attribute)
 ```abnf
-parameter-declaration
+parameter-endpoint-attribute
   = "parameter" identifier [":" type] ";"
 ```
 エンドポイントパスに指定されるパラメータに関する情報を記述します。\
@@ -131,9 +134,9 @@ parameter id: string;
 
 <br />
 
-## レスポンス宣言 (Response declaration)
+## レスポンス・エンドポイント属性 (Response endpoint attribute)
 ```abnf
-response-declaration
+response-endpoint-attribute
   = "response" status-code ":" type ";"
 
 status-code
@@ -202,7 +205,6 @@ void
 ```
 
 ### TODO
-- Body型属性 (Body type attribute)
 - 配列型 (Array types)
 
 <br />
