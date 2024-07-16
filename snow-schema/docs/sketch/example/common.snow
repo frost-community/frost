@@ -2,13 +2,14 @@ syntax = "snow-schema1";
 
 type UUID = string {
   pattern "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})";
+  caseSensitive false;
 };
 
 type Name = string {
   pattern "[A-Za-z0-9-]*";
-  min 1;
+  minLength 1;
 };
 
 type DisplayName = string {
-  min 1;
+  minLength 1;
 };

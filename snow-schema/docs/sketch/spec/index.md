@@ -16,6 +16,9 @@ number
 
 string
   = %x22 *(ALPHA / DIGIT) %x22
+
+boolean
+  = "true" / "false"
 ```
 
 <br />
@@ -182,6 +185,7 @@ type-name
 
 type-attribute
   = "pattern" string ";"
+  / "caseSensitive" boolean ";"
   / "minValue" number ";"
   / "maxValue" number ";"
   / "minLength" number ";"
