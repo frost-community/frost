@@ -202,3 +202,13 @@ void
 ```
 
 <br />
+
+## 配列型 (Array types)
+TODO
+
+<br />
+
+## Body型属性(Body type attribute)
+TODO
+
+<br />
