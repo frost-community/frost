@@ -170,16 +170,23 @@ response 204: void;
 ## 型 (Type)
 ```abnf
 type
-  = type-name ["{" *type-member "}"]
+  = type-name ["{" *type-attribute "}"]
 
 type-name
-  = "string"
+  = "number"
+  / "string"
   / "object"
+  / "boolean"
   / "void"
   / identifier
 
-type-member
-  = ";"
+type-attribute
+  = "pattern" string ";"
+  / "minValue" number ";"
+  / "maxValue" number ";"
+  / "minLength" number ";"
+  / "maxLength" number ";"
+  / "field" identifier ":" type ";"
 ```
 フィールドやレスポンスの型情報。
 
@@ -194,6 +201,12 @@ string {
   pattern "[A-Za-z0-9-]*";
   minLength 1;
   maxLength 2;
+}
+```
+```
+number {
+  minValue 0;
+  maxValue 10;
 }
 ```
 
