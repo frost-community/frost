@@ -164,7 +164,7 @@ function parseTypeAttribute(s: Scanner): TypeAttribute {
   }
   if (s.when("field")) {
     s.next();
-    s.expect(TokenKind.StringLiteral);
+    s.expect(TokenKind.Identifier);
     const name = s.getValue();
     s.next();
     s.expect(TokenKind.Colon);
