@@ -118,7 +118,7 @@ DELETE /cats/:id {
 
 <br />
 
-## パラメーター・エンドポイント属性 (Parameter endpoint attribute)
+## Parameterエンドポイント属性 (Parameter endpoint attribute)
 ```abnf
 parameter-endpoint-attribute
   = "parameter" identifier [":" type] ";"
@@ -134,7 +134,7 @@ parameter id: string;
 
 <br />
 
-## レスポンス・エンドポイント属性 (Response endpoint attribute)
+## Responseエンドポイント属性 (Response endpoint attribute)
 ```abnf
 response-endpoint-attribute
   = "response" status-code ":" type ";"
