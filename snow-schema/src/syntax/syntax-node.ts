@@ -10,12 +10,12 @@ export type Loc = {
 export class Unit {
   kind = 'Unit' as const;
   constructor(
-    public decls: TopLevelDecl[],
+    public decls: UnitMember[],
     public loc: Loc,
   ) {}
 }
 
-export type TopLevelDecl = TypeDecl | EndpointDecl;
+export type UnitMember = TypeDecl | EndpointDecl;
 
 export class TypeDecl {
   kind = 'TypeDecl' as const;

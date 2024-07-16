@@ -1,5 +1,5 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, TopLevelDecl, TypeDecl, TypeNode, Unit } from './syntax-node.js';
+import { EndpointDecl, EndpointMember, ParameterDecl, ResponseDecl, UnitMember, TypeDecl, TypeNode, Unit } from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
@@ -8,18 +8,18 @@ export function parse(input: string): Unit {
 
   const loc = s.getToken().loc;
 
-  const decls: TopLevelDecl[] = [];
+  const decls: UnitMember[] = [];
   while (!s.when(TokenKind.EOF)) {
     if (s.when(TokenKind.SyntaxKeyword)) {
       s.next();
       s.nextWith(TokenKind.Eq);
       s.expect(TokenKind.StringLiteral);
       const format = s.getToken().value!;
+      if (!['snow-schema-1.0'].includes(format)) {
+        throw new Error('unsupported syntax specifier: ' + format);
+      }
       s.next();
       s.nextWith(TokenKind.SemiColon);
-      if (!['snow-schema-1.0'].includes(format)) {
-        throw new Error('unsupported format');
-      }
       continue;
     }
     if (s.when('type')) {
