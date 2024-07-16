@@ -131,18 +131,6 @@ DELETE /cats/:id {
 
 <br />
 
-## 型 (Type)
-```abnf
-type
-  = "string"
-  / "object"
-  / "void"
-  / identifier
-```
-フィールドやレスポンスの型情報。
-
-<br />
-
 ## パラメータ宣言 (Parameter declaration)
 ```abnf
 parameter-declaration
@@ -176,5 +164,23 @@ response 200: Cat;
 ```
 response 204: void;
 ```
+
+<br />
+
+## 型 (Type)
+```abnf
+type
+  = type-name ["{" *type-member "}"]
+
+type-name
+  = "string"
+  / "object"
+  / "void"
+  / identifier
+
+type-member
+  = ";"
+```
+フィールドやレスポンスの型情報。
 
 <br />
