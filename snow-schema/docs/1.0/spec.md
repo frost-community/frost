@@ -182,6 +182,9 @@ object {
 }
 ```
 ```
+string
+```
+```
 string {
   pattern "[A-Za-z0-9-]*";
   minLength 1;
@@ -193,6 +196,9 @@ number {
   minValue 0;
   maxValue 10;
 }
+```
+```
+void
 ```
 
 <br />
