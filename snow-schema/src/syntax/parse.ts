@@ -34,12 +34,12 @@ export function parse(input: string): Unit {
     }
     throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
   }
-
   return new Unit(decls, loc);
 }
 
 function parseTypeDecl(s: Scanner): TypeDecl {
   const loc = s.getToken().loc;
+  s.expect('type');
   s.next();
   s.expect(TokenKind.Identifier);
   const name = s.getValue();
@@ -49,7 +49,6 @@ function parseTypeDecl(s: Scanner): TypeDecl {
   const type = parseType(s);
   s.expect(TokenKind.SemiColon);
   s.next();
-
   return new TypeDecl(name, type, loc);
 }
 
@@ -65,8 +64,38 @@ function parseEndpointDecl(s: Scanner): EndpointDecl {
   const members = s.repeat(parseEndpointMember, x => (x.kind == TokenKind.CloseBrace));
   s.expect(TokenKind.CloseBrace);
   s.next();
-
   return new EndpointDecl(method, path, members, loc);
+}
+
+function parseEndpointMember(s: Scanner): EndpointMember {
+  const loc = s.getToken().loc;
+  if (s.when('parameter')) {
+    s.next();
+    s.expect(TokenKind.Identifier);
+    const name = s.getValue();
+    s.next();
+    let type = undefined;
+    if (s.when(TokenKind.Colon)) {
+      s.next();
+      type = parseType(s);
+    }
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new ParameterDecl(name, type, loc);
+  }
+  if (s.when('response')) {
+    s.next();
+    s.expect(TokenKind.NumberLiteral);
+    const status = Number(s.getValue());
+    s.next();
+    s.expect(TokenKind.Colon);
+    s.next();
+    const type = parseType(s);
+    s.expect(TokenKind.SemiColon);
+    s.next();
+    return new ResponseDecl(status, type, loc);
+  }
+  throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }
 
 function parseType(s: Scanner): TypeNode {
@@ -82,42 +111,5 @@ function parseType(s: Scanner): TypeNode {
     s.expect(TokenKind.CloseBrace);
     s.next();
   }
-
   return new TypeNode(typeName, loc);
-}
-
-function parseEndpointMember(s: Scanner): EndpointMember {
-  const loc = s.getToken().loc;
-
-  if (s.when('parameter')) {
-    s.next();
-    s.expect(TokenKind.Identifier);
-    const name = s.getValue();
-    s.next();
-    let type = undefined;
-    if (s.when(TokenKind.Colon)) {
-      s.next();
-      type = parseType(s);
-    }
-    s.expect(TokenKind.SemiColon);
-    s.next();
-
-    return new ParameterDecl(name, type, loc);
-  }
-
-  if (s.when('response')) {
-    s.next();
-    s.expect(TokenKind.NumberLiteral);
-    const status = Number(s.getValue());
-    s.next();
-    s.expect(TokenKind.Colon);
-    s.next();
-    const type = parseType(s);
-    s.expect(TokenKind.SemiColon);
-    s.next();
-
-    return new ResponseDecl(status, type, loc);
-  }
-
-  throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }

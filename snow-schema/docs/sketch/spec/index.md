@@ -183,4 +183,18 @@ type-member
 ```
 フィールドやレスポンスの型情報。
 
+例:
+```
+object {
+  field id: string;
+}
+```
+```
+string {
+  pattern "[A-Za-z0-9-]*";
+  minLength 1;
+  maxLength 2;
+}
+```
+
 <br />
