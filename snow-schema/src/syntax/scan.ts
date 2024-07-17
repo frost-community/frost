@@ -261,10 +261,14 @@ export class Scanner {
     buf += this.stream.getChar();
     this.stream.next();
     // finish if not a segment
-    if (!wordChar.test(this.stream.getChar())) {
+    if (!this.stream.when(':') && !wordChar.test(this.stream.getChar())) {
       return TOKEN(TokenKind.EndpointPath, loc, { value: buf });
     }
     // segment
+    if (this.stream.when(':')) {
+      buf += this.stream.getChar();
+      this.stream.next();
+    }
     while (wordChar.test(this.stream.getChar())) {
       buf += this.stream.getChar();
       this.stream.next();
@@ -274,8 +278,12 @@ export class Scanner {
       buf += this.stream.getChar();
       this.stream.next();
       // expect a segment
-      if (!wordChar.test(this.stream.getChar())) {
+      if (!this.stream.when(':') && !wordChar.test(this.stream.getChar())) {
         throw this.stream.unexpectedError();
+      }
+      if (this.stream.when(':')) {
+        buf += this.stream.getChar();
+        this.stream.next();
       }
       while (wordChar.test(this.stream.getChar())) {
         buf += this.stream.getChar();
