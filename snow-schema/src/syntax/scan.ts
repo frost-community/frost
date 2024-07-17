@@ -256,14 +256,32 @@ export class Scanner {
 
   private readEndpointPath(): Token {
     let buf = '';
-
     const loc = this.stream.getPos();
-
+    // slash
     buf += this.stream.getChar();
     this.stream.next();
-
-    // TODO
-
+    // finish if not a segment
+    if (!wordChar.test(this.stream.getChar())) {
+      return TOKEN(TokenKind.EndpointPath, loc, { value: buf });
+    }
+    // segment
+    while (wordChar.test(this.stream.getChar())) {
+      buf += this.stream.getChar();
+      this.stream.next();
+    }
+    // continue if a slash follows
+    while (this.stream.when('/')) {
+      buf += this.stream.getChar();
+      this.stream.next();
+      // expect a segment
+      if (!wordChar.test(this.stream.getChar())) {
+        throw this.stream.unexpectedError();
+      }
+      while (wordChar.test(this.stream.getChar())) {
+        buf += this.stream.getChar();
+        this.stream.next();
+      }
+    }
     return TOKEN(TokenKind.EndpointPath, loc, { value: buf });
   }
 

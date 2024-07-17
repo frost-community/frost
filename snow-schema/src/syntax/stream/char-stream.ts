@@ -1,3 +1,5 @@
+import { error } from '../util/error';
+
 /**
  * 入力文字列から文字を読み取るクラス
 */
@@ -32,12 +34,29 @@ export class CharStream {
     return this.endOfPage && this.isLastPage;
   }
 
+  public unexpectedError(): Error {
+    if (this.eof()) {
+      return error(`unexpected input: EOF`, this.getPos());
+    } else {
+      return error(`unexpected input: "${this.getChar()}".`, this.getPos());
+    }
+  }
+
+  public expect(char: string): void {
+    if (this.eof()) {
+      throw this.unexpectedError();
+    }
+    if (this._char !== char) {
+      throw this.unexpectedError();
+    }
+  }
+
   /**
    * カーソル位置にある文字を取得します。
   */
   public getChar(): string {
     if (this.eof()) {
-      throw new Error('end of stream');
+      throw this.unexpectedError();
     }
     return this._char!;
   }
