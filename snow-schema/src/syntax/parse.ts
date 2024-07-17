@@ -1,5 +1,8 @@
 import { Scanner } from './scan.js';
-import { EndpointDecl, EndpointMember, FieldTypeAttribute, ParameterDecl, PrimitiveTypeAttribute, ResponseDecl, SyntaxSpecifier, TypeAttribute, TypeDecl, TypeNode, Unit, UnitMember } from './syntax-node.js';
+import {
+  BodyEndpointAttribute, EndpointAttribute, EndpointDecl, FieldTypeAttribute, ParameterEndpointAttribute, PrimitiveTypeAttribute,
+  ResponseEndpointAttribute, SyntaxSpecifier, TypeAttribute, TypeDecl, TypeNode, Unit, UnitMember
+} from './syntax-node.js';
 import { TokenKind } from './token.js';
 import { error } from './util/error.js';
 
@@ -66,24 +69,27 @@ function parseEndpointDeclaration(s: Scanner): EndpointDecl {
   s.next();
   s.expect(TokenKind.OpenBrace);
   s.next();
-  const members = s.repeat(parseEndpointMember, x => (x.kind == TokenKind.CloseBrace));
+  const members = s.repeat(parseEndpointAttribute, x => (x.kind == TokenKind.CloseBrace));
   s.expect(TokenKind.CloseBrace);
   s.next();
   return new EndpointDecl(method, path, members, loc);
 }
 
-function parseEndpointMember(s: Scanner): EndpointMember {
+function parseEndpointAttribute(s: Scanner): EndpointAttribute {
   const loc = s.getToken().loc;
   if (s.when('parameter')) {
-    return parseParameterDeclaration(s);
+    return parseParameterEndpointAttribute(s);
   }
   if (s.when('response')) {
-    return parseResponseDeclaration(s);
+    return parseResponseEndpointAttribute(s);
+  }
+  if (s.when('body')) {
+    return parseBodyEndpointAttribute(s);
   }
   throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
 }
 
-function parseParameterDeclaration(s: Scanner): ParameterDecl {
+function parseParameterEndpointAttribute(s: Scanner): ParameterEndpointAttribute {
   const loc = s.getToken().loc;
   s.expect('parameter');
   s.next();
@@ -97,10 +103,10 @@ function parseParameterDeclaration(s: Scanner): ParameterDecl {
   }
   s.expect(TokenKind.SemiColon);
   s.next();
-  return new ParameterDecl(name, type, loc);
+  return new ParameterEndpointAttribute(name, type, loc);
 }
 
-function parseResponseDeclaration(s: Scanner): ResponseDecl {
+function parseResponseEndpointAttribute(s: Scanner): ResponseEndpointAttribute {
   const loc = s.getToken().loc;
   s.expect('response');
   s.next();
@@ -112,7 +118,19 @@ function parseResponseDeclaration(s: Scanner): ResponseDecl {
   const type = parseType(s);
   s.expect(TokenKind.SemiColon);
   s.next();
-  return new ResponseDecl(status, type, loc);
+  return new ResponseEndpointAttribute(status, type, loc);
+}
+
+function parseBodyEndpointAttribute(s: Scanner): BodyEndpointAttribute {
+  const loc = s.getToken().loc;
+  s.expect('body');
+  s.next();
+  s.expect(TokenKind.Colon);
+  s.next();
+  const type = parseType(s);
+  s.expect(TokenKind.SemiColon);
+  s.next();
+  return new BodyEndpointAttribute(type, loc);
 }
 
 function parseType(s: Scanner): TypeNode {

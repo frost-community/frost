@@ -1,4 +1,4 @@
-export type SyntaxNode = Unit | SyntaxSpecifier | UnitMember | EndpointMember | TypeNode | TypeAttribute;
+export type SyntaxNode = Unit | SyntaxSpecifier | UnitMember | EndpointAttribute | TypeNode | TypeAttribute;
 
 export type Loc = {
   line: number;
@@ -40,15 +40,15 @@ export class EndpointDecl {
   constructor(
     public method: string,
     public path: string,
-    public members: EndpointMember[],
+    public attributes: EndpointAttribute[],
     public loc: Loc,
   ) {}
 }
 
-export type EndpointMember = ParameterDecl | ResponseDecl;
+export type EndpointAttribute = ParameterEndpointAttribute | ResponseEndpointAttribute | BodyEndpointAttribute;
 
-export class ParameterDecl {
-  kind = 'ParameterDecl' as const;
+export class ParameterEndpointAttribute {
+  kind = 'ParameterEndpointAttribute' as const;
   constructor(
     public name: string,
     public type: TypeNode | undefined,
@@ -56,10 +56,18 @@ export class ParameterDecl {
   ) {}
 }
 
-export class ResponseDecl {
-  kind = 'ResponseDecl' as const;
+export class ResponseEndpointAttribute {
+  kind = 'ResponseEndpointAttribute' as const;
   constructor(
     public statusCode: number,
+    public type: TypeNode,
+    public loc: Loc,
+  ) {}
+}
+
+export class BodyEndpointAttribute {
+  kind = 'BodyEndpointAttribute' as const;
+  constructor(
     public type: TypeNode,
     public loc: Loc,
   ) {}
