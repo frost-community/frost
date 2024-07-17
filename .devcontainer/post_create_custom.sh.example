@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Bash Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
+set -euo pipefail
+IFS=$'\n\t'
+
+# Install Vim
+sudo apt-get install vim --yes
+
+# [README]
+# Dev Containerのコンテナー作成後にお好きな処理 (お気に入りのエディターのインストールなど)をコンテナーで実行させたい場合は
+# このファイルと同じディレクトリーに post_create_custom.sh という名前のファイルを作り
+# このファイルのようにシェルスクリプトを記述してください。
+#
+# 実行権を付与 (chmod +x)する必要があることに注意してください。(このファイルをコピーするとよいでしょう)
