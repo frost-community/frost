@@ -16,6 +16,10 @@ export enum TokenKind {
   Colon,
   /** ";" */
   SemiColon,
+  /** "[" */
+  OpenParen,
+  /** "]" */
+  CloseParen,
   /** "{" */
   OpenBrace,
   /** "}" */

@@ -135,9 +135,16 @@ function parseBodyEndpointAttribute(s: Scanner): BodyEndpointAttribute {
 
 function parseType(s: Scanner): TypeNode {
   const loc = s.getToken().loc;
+  let isArrayType: boolean = false;
   s.expect(TokenKind.Identifier);
-  const typeName = s.getValue();
+  const primaryTypeName = s.getValue();
   s.next();
+  if (s.when(TokenKind.OpenParen)) {
+    s.next();
+    s.expect(TokenKind.CloseParen);
+    s.next();
+    isArrayType = true;
+  }
   let attributes: TypeAttribute[] | undefined = undefined;
   if (s.when(TokenKind.OpenBrace)) {
     s.next();
@@ -145,7 +152,11 @@ function parseType(s: Scanner): TypeNode {
     s.expect(TokenKind.CloseBrace);
     s.next();
   }
-  return new TypeNode(typeName, attributes, loc);
+  if (isArrayType) {
+    const primaryType = new TypeNode(primaryTypeName, undefined, undefined, loc);
+    return new TypeNode('array', primaryType, attributes, loc);
+  }
+  return new TypeNode(primaryTypeName, undefined, attributes, loc);
 }
 
 function parseTypeAttribute(s: Scanner): TypeAttribute {

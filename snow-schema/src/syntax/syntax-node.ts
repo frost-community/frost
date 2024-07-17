@@ -77,6 +77,7 @@ export class TypeNode {
   kind = 'TypeNode' as const;
   constructor(
     public name: string,
+    public innerType: TypeNode | undefined,
     public attributes: TypeAttribute[] | undefined,
     public loc: Loc,
   ) {}

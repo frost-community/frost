@@ -187,6 +187,16 @@ export class Scanner {
           token = TOKEN(TokenKind.SemiColon, loc, {});
           break;
         }
+        case "[": {
+          this.stream.next();
+          token = TOKEN(TokenKind.OpenParen, loc, {});
+          break;
+        }
+        case "]": {
+          this.stream.next();
+          token = TOKEN(TokenKind.CloseParen, loc, {});
+          break;
+        }
         case "{": {
           this.stream.next();
           token = TOKEN(TokenKind.OpenBrace, loc, {});
