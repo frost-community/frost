@@ -153,17 +153,17 @@ export class Scanner {
     let token;
 
     while (true) {
-      if (this.stream.eof) {
+      if (this.stream.eof()) {
         token = TOKEN(TokenKind.EOF, this.stream.getPos(), {});
         break;
       }
 
       // skip spasing
-      if (spaceChars.includes(this.stream.char)) {
+      if (this.stream.when(spaceChars)) {
         this.stream.next();
         continue;
       }
-      if (lineBreakChars.includes(this.stream.char)) {
+      if (this.stream.when(lineBreakChars)) {
         this.stream.next();
         continue;
       }
@@ -171,7 +171,7 @@ export class Scanner {
       // store the token position
       const loc = this.stream.getPos();
 
-      switch (this.stream.char) {
+      switch (this.stream.getChar()) {
         case "=": {
           this.stream.next();
           token = TOKEN(TokenKind.Eq, loc, {});
@@ -217,7 +217,7 @@ export class Scanner {
           token = wordToken;
           break;
         }
-        throw error(`invalid character: "${this.stream.char}"`, loc);
+        throw error(`invalid character: "${this.stream.getChar()}"`, loc);
       }
       break;
     }
@@ -230,8 +230,8 @@ export class Scanner {
 
     const loc = this.stream.getPos();
 
-    while (!this.stream.eof && wordChar.test(this.stream.char)) {
-      value += this.stream.char;
+    while (!this.stream.eof() && wordChar.test(this.stream.getChar())) {
+      value += this.stream.getChar();
       this.stream.next();
     }
     if (value.length === 0) {
@@ -259,7 +259,7 @@ export class Scanner {
 
     const loc = this.stream.getPos();
 
-    buf += this.stream.char;
+    buf += this.stream.getChar();
     this.stream.next();
 
     // TODO
@@ -276,20 +276,20 @@ export class Scanner {
     this.stream.next();
 
     while (true) {
-      if (this.stream.eof) {
+      if (this.stream.eof()) {
         throw new Error("unexpected EOF");
       }
-      if (this.stream.char == '"') {
+      if (this.stream.when('"')) {
         this.stream.next();
         break;
       }
-      if (this.stream.char == "\\") {
+      if (this.stream.when('\\')) {
         this.stream.next();
         // special character
-        if (this.stream.eof) {
+        if (this.stream.eof()) {
           throw new Error("unexpected EOF");
         }
-        const sc = spCharTable.get(this.stream.char);
+        const sc = spCharTable.get(this.stream.getChar());
         if (sc == null) {
           throw new Error("invalid special character");
         }
@@ -297,7 +297,7 @@ export class Scanner {
         this.stream.next();
         continue;
       }
-      buf += this.stream.char;
+      buf += this.stream.getChar();
       this.stream.next();
     }
 
@@ -310,17 +310,17 @@ export class Scanner {
 
     const loc = this.stream.getPos();
 
-    while (!this.stream.eof && digit.test(this.stream.char)) {
-      wholeNumber += this.stream.char;
+    while (!this.stream.eof() && digit.test(this.stream.getChar())) {
+      wholeNumber += this.stream.getChar();
       this.stream.next();
     }
     if (wholeNumber.length === 0) {
       return;
     }
-    if (!this.stream.eof && this.stream.char === ".") {
+    if (!this.stream.eof() && this.stream.when('.')) {
       this.stream.next();
-      while ((!this.stream.eof as boolean) && digit.test(this.stream.char as string)) {
-        fractional += this.stream.char;
+      while ((!this.stream.eof()) && digit.test(this.stream.getChar())) {
+        fractional += this.stream.getChar();
         this.stream.next();
       }
       if (fractional.length === 0) {
