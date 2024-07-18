@@ -6,7 +6,7 @@ export type Loc = {
 };
 
 export class Unit {
-  kind = 'Unit' as const;
+  kind = "Unit" as const;
   constructor(
     public loc: Loc,
   ) {}

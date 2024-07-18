@@ -8,7 +8,7 @@ export type Loc = {
 // SyntaxNode
 
 export class Unit {
-  kind = 'Unit' as const;
+  kind = "Unit" as const;
   constructor(
     public syntaxSpecifier: SyntaxSpecifier,
     public decls: UnitMember[],
@@ -17,7 +17,7 @@ export class Unit {
 }
 
 export class SyntaxSpecifier {
-  kind = 'SyntaxSpecifier' as const;
+  kind = "SyntaxSpecifier" as const;
   constructor(
     public format: string,
     public loc: Loc,
@@ -27,7 +27,7 @@ export class SyntaxSpecifier {
 export type UnitMember = TypeDecl | EndpointDecl;
 
 export class TypeDecl {
-  kind = 'TypeDecl' as const;
+  kind = "TypeDecl" as const;
   constructor(
     public name: string,
     public type: TypeNode,
@@ -36,7 +36,7 @@ export class TypeDecl {
 }
 
 export class EndpointDecl {
-  kind = 'EndpointDecl' as const;
+  kind = "EndpointDecl" as const;
   constructor(
     public method: string,
     public path: string,
@@ -48,7 +48,7 @@ export class EndpointDecl {
 export type EndpointAttribute = ParameterEndpointAttribute | ResponseEndpointAttribute | BodyEndpointAttribute;
 
 export class ParameterEndpointAttribute {
-  kind = 'ParameterEndpointAttribute' as const;
+  kind = "ParameterEndpointAttribute" as const;
   constructor(
     public name: string,
     public type: TypeNode | undefined,
@@ -57,7 +57,7 @@ export class ParameterEndpointAttribute {
 }
 
 export class ResponseEndpointAttribute {
-  kind = 'ResponseEndpointAttribute' as const;
+  kind = "ResponseEndpointAttribute" as const;
   constructor(
     public statusCode: number,
     public type: TypeNode,
@@ -66,7 +66,7 @@ export class ResponseEndpointAttribute {
 }
 
 export class BodyEndpointAttribute {
-  kind = 'BodyEndpointAttribute' as const;
+  kind = "BodyEndpointAttribute" as const;
   constructor(
     public type: TypeNode,
     public loc: Loc,
@@ -74,7 +74,7 @@ export class BodyEndpointAttribute {
 }
 
 export class TypeNode {
-  kind = 'TypeNode' as const;
+  kind = "TypeNode" as const;
   constructor(
     public name: string,
     public innerType: TypeNode | undefined,
@@ -86,17 +86,17 @@ export class TypeNode {
 export type TypeAttribute = PrimitiveTypeAttribute | FieldTypeAttribute;
 
 export class PrimitiveTypeAttribute {
-  kind = 'PrimitiveTypeAttribute' as const;
+  kind = "PrimitiveTypeAttribute" as const;
   constructor(
     public attrName: string,
-    public primitiveKind: 'string' | 'number' | 'boolean',
+    public primitiveKind: "string" | "number" | "boolean",
     public value: string,
     public loc: Loc,
   ) {}
 }
 
 export class FieldTypeAttribute {
-  kind = 'FieldTypeAttribute' as const;
+  kind = "FieldTypeAttribute" as const;
   constructor(
     public name: string,
     public type: TypeNode,

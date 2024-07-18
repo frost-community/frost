@@ -1,26 +1,26 @@
-import { Scanner } from './scan.js';
+import { Scanner } from "./scan";
 import {
   BodyEndpointAttribute, EndpointAttribute, EndpointDecl, FieldTypeAttribute, ParameterEndpointAttribute, PrimitiveTypeAttribute,
   ResponseEndpointAttribute, SyntaxSpecifier, TypeAttribute, TypeDecl, TypeNode, Unit, UnitMember
-} from './syntax-node.js';
-import { TokenKind } from './token.js';
-import { error } from './util/error.js';
+} from "./syntax-node";
+import { TokenKind } from "./token";
+import { error } from "./util/error";
 
 export function parse(input: string): Unit {
   const s = new Scanner(input);
   const loc = s.getToken().loc;
   const decls: UnitMember[] = [];
   const syntaxSpecifier = parseSyntaxSpecifier(s);
-  if (!['snow-schema-1.0'].includes(syntaxSpecifier.format)) {
-    throw new Error('unsupported syntax specifier: ' + syntaxSpecifier.format);
+  if (!["snow-schema-1.0"].includes(syntaxSpecifier.format)) {
+    throw new Error("unsupported syntax specifier: " + syntaxSpecifier.format);
   }
   while (!s.when(TokenKind.EOF)) {
-    if (s.when('type')) {
+    if (s.when("type")) {
       const decl = parseTypeDeclaration(s);
       decls.push(decl);
       continue;
     }
-    if (s.when(['POST', 'GET', 'PATCH', 'PUT', 'DELETE'])) {
+    if (s.when(["POST", "GET", "PATCH", "PUT", "DELETE"])) {
       const decl = parseEndpointDeclaration(s);
       decls.push(decl);
       continue;
@@ -46,7 +46,7 @@ function parseSyntaxSpecifier(s: Scanner): SyntaxSpecifier {
 
 function parseTypeDeclaration(s: Scanner): TypeDecl {
   const loc = s.getToken().loc;
-  s.expect('type');
+  s.expect("type");
   s.next();
   s.expect(TokenKind.Identifier);
   const name = s.getValue();
@@ -77,13 +77,13 @@ function parseEndpointDeclaration(s: Scanner): EndpointDecl {
 
 function parseEndpointAttribute(s: Scanner): EndpointAttribute {
   const loc = s.getToken().loc;
-  if (s.when('parameter')) {
+  if (s.when("parameter")) {
     return parseParameterEndpointAttribute(s);
   }
-  if (s.when('response')) {
+  if (s.when("response")) {
     return parseResponseEndpointAttribute(s);
   }
-  if (s.when('body')) {
+  if (s.when("body")) {
     return parseBodyEndpointAttribute(s);
   }
   throw error(`unexpected token: ${TokenKind[s.getKind()]}`, loc);
@@ -91,7 +91,7 @@ function parseEndpointAttribute(s: Scanner): EndpointAttribute {
 
 function parseParameterEndpointAttribute(s: Scanner): ParameterEndpointAttribute {
   const loc = s.getToken().loc;
-  s.expect('parameter');
+  s.expect("parameter");
   s.next();
   s.expect(TokenKind.Identifier);
   const name = s.getValue();
@@ -108,7 +108,7 @@ function parseParameterEndpointAttribute(s: Scanner): ParameterEndpointAttribute
 
 function parseResponseEndpointAttribute(s: Scanner): ResponseEndpointAttribute {
   const loc = s.getToken().loc;
-  s.expect('response');
+  s.expect("response");
   s.next();
   s.expect(TokenKind.NumberLiteral);
   const status = Number(s.getValue());
@@ -123,7 +123,7 @@ function parseResponseEndpointAttribute(s: Scanner): ResponseEndpointAttribute {
 
 function parseBodyEndpointAttribute(s: Scanner): BodyEndpointAttribute {
   const loc = s.getToken().loc;
-  s.expect('body');
+  s.expect("body");
   s.next();
   s.expect(TokenKind.Colon);
   s.next();
@@ -154,7 +154,7 @@ function parseType(s: Scanner): TypeNode {
   }
   if (isArrayType) {
     const primaryType = new TypeNode(primaryTypeName, undefined, undefined, loc);
-    return new TypeNode('array', primaryType, attributes, loc);
+    return new TypeNode("array", primaryType, attributes, loc);
   }
   return new TypeNode(primaryTypeName, undefined, attributes, loc);
 }
@@ -169,7 +169,7 @@ function parseTypeAttribute(s: Scanner): TypeAttribute {
     s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new PrimitiveTypeAttribute(attrName, 'string', value, loc);
+    return new PrimitiveTypeAttribute(attrName, "string", value, loc);
   }
   if (s.when("caseSensitive")) {
     const attrName = s.getValue();
@@ -179,7 +179,7 @@ function parseTypeAttribute(s: Scanner): TypeAttribute {
     s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new PrimitiveTypeAttribute(attrName, 'boolean', value, loc);
+    return new PrimitiveTypeAttribute(attrName, "boolean", value, loc);
   }
   if (s.when(["minValue", "maxValue", "minLength", "maxLength"])) {
     const attrName = s.getValue();
@@ -189,7 +189,7 @@ function parseTypeAttribute(s: Scanner): TypeAttribute {
     s.next();
     s.expect(TokenKind.SemiColon);
     s.next();
-    return new PrimitiveTypeAttribute(attrName, 'number', value, loc);
+    return new PrimitiveTypeAttribute(attrName, "number", value, loc);
   }
   if (s.when("field")) {
     s.next();

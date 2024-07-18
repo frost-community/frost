@@ -1,17 +1,17 @@
-import { CharStream } from './stream/char-stream.js';
-import { error } from './util/error.js';
-import type { Token } from './token.js';
-import { TOKEN, TokenKind } from './token.js';
-import { SyntaxNode } from './syntax-node.js';
+import { CharStream } from "./stream/char-stream";
+import { error } from "./util/error";
+import type { Token } from "./token";
+import { TOKEN, TokenKind } from "./token";
+import { SyntaxNode } from "./syntax-node";
 
-const spaceChars = [' ', '\t'];
-const lineBreakChars = ['\r', '\n'];
+const spaceChars = [" ", "\t"];
+const lineBreakChars = ["\r", "\n"];
 const digit = /^[0-9]$/;
 const wordChar = /^[A-Za-z0-9_]$/;
 const spCharTable = new Map([
-  //['r', '\r'],
-  //['n', '\n'],
-  //['t', '\t'],
+  //["r", "\r"],
+  //["n", "\n"],
+  //["t", "\t"],
 ]);
 
 /**
@@ -53,7 +53,7 @@ export class Scanner {
   public getValue(): string {
     const value = this.getToken().value;
     if (value == null) {
-      throw new Error('');
+      throw new Error("");
     }
     return value;
   }
@@ -62,7 +62,7 @@ export class Scanner {
    * 現在のトークンが指定したトークンの種類、またはキーワードに一致するかどうかを取得します。
   */
   public when(value: TokenKind | string | string[]): boolean {
-    if (typeof value == 'string') {
+    if (typeof value == "string") {
       return (this.getToken().kind == TokenKind.Identifier && this.getToken().value! == value);
     } else if (Array.isArray(value)) {
       return (this.getToken().kind == TokenKind.Identifier && value.includes(this.getToken().value!));
@@ -110,7 +110,7 @@ export class Scanner {
    * 一致しなかった場合には文法エラーを発生させます。
    */
   public expect(value: TokenKind | string): void {
-    if (typeof value == 'string') {
+    if (typeof value == "string") {
       if (this.getKind() !== TokenKind.Identifier) {
         throw this.unexpectedToken();
       }
@@ -177,12 +177,12 @@ export class Scanner {
           token = TOKEN(TokenKind.Eq, loc, {});
           break;
         }
-        case ':': {
+        case ":": {
           this.stream.next();
           token = TOKEN(TokenKind.Colon, loc, {});
           break;
         }
-        case ';': {
+        case ";": {
           this.stream.next();
           token = TOKEN(TokenKind.SemiColon, loc, {});
           break;
@@ -207,11 +207,11 @@ export class Scanner {
           token = TOKEN(TokenKind.CloseBrace, loc, {});
           break;
         }
-        case '/': {
+        case "/": {
           token = this.readEndpointPath();
           break;
         }
-        case '"': {
+        case "\"": {
           token = this.readString();
           break;
         }
@@ -265,17 +265,17 @@ export class Scanner {
   }
 
   private readEndpointPath(): Token {
-    let buf = '';
+    let buf = "";
     const loc = this.stream.getPos();
     // slash
     buf += this.stream.getChar();
     this.stream.next();
     // finish if not a segment
-    if (!this.stream.when(':') && !wordChar.test(this.stream.getChar())) {
+    if (!this.stream.when(":") && !wordChar.test(this.stream.getChar())) {
       return TOKEN(TokenKind.EndpointPath, loc, { value: buf });
     }
     // segment
-    if (this.stream.when(':')) {
+    if (this.stream.when(":")) {
       buf += this.stream.getChar();
       this.stream.next();
     }
@@ -284,14 +284,14 @@ export class Scanner {
       this.stream.next();
     }
     // continue if a slash follows
-    while (this.stream.when('/')) {
+    while (this.stream.when("/")) {
       buf += this.stream.getChar();
       this.stream.next();
       // expect a segment
-      if (!this.stream.when(':') && !wordChar.test(this.stream.getChar())) {
+      if (!this.stream.when(":") && !wordChar.test(this.stream.getChar())) {
         throw this.stream.unexpectedError();
       }
-      if (this.stream.when(':')) {
+      if (this.stream.when(":")) {
         buf += this.stream.getChar();
         this.stream.next();
       }
@@ -315,11 +315,11 @@ export class Scanner {
       if (this.stream.eof()) {
         throw new Error("unexpected EOF");
       }
-      if (this.stream.when('"')) {
+      if (this.stream.when("\"")) {
         this.stream.next();
         break;
       }
-      if (this.stream.when('\\')) {
+      if (this.stream.when("\\")) {
         this.stream.next();
         // special character
         if (this.stream.eof()) {
@@ -353,7 +353,7 @@ export class Scanner {
     if (wholeNumber.length === 0) {
       return;
     }
-    if (!this.stream.eof() && this.stream.when('.')) {
+    if (!this.stream.eof() && this.stream.when(".")) {
       this.stream.next();
       while ((!this.stream.eof()) && digit.test(this.stream.getChar())) {
         fractional += this.stream.getChar();

@@ -1,4 +1,4 @@
-import { error } from '../util/error';
+import { error } from "../util/error";
 
 /**
  * 入力文字列から文字を読み取るクラス
@@ -72,7 +72,7 @@ export class CharStream {
   }
 
   public when(value: string | string[]): boolean {
-    if (typeof value == 'string') {
+    if (typeof value == "string") {
       return (!this.eof() && this._char === value);
     } else {
       return (!this.eof() && value.includes(this._char!));
@@ -83,7 +83,7 @@ export class CharStream {
    * カーソル位置を次の文字へ進めます。
   */
   public next(): void {
-    if (!this.eof() && this._char === '\n') {
+    if (!this.eof() && this._char === "\n") {
       this.line++;
       this.column = 0;
     } else {
@@ -117,7 +117,7 @@ export class CharStream {
   private moveNext(): void {
     this.loadChar();
     while (true) {
-      if (!this.eof() && this._char === '\r') {
+      if (!this.eof() && this._char === "\r") {
         this.incAddr();
         this.loadChar();
         continue;
@@ -138,7 +138,7 @@ export class CharStream {
   private movePrev(): void {
     this.loadChar();
     while (true) {
-      if (!this.eof() && this._char === '\r') {
+      if (!this.eof() && this._char === "\r") {
         this.decAddr();
         this.loadChar();
         continue;

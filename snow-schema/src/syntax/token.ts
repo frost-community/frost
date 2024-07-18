@@ -36,6 +36,6 @@ export class Token {
   ) { }
 }
 
-export function TOKEN(kind: TokenKind, loc: TokenLocation, opts?: { value?: Token['value'] }): Token {
+export function TOKEN(kind: TokenKind, loc: TokenLocation, opts?: { value?: Token["value"] }): Token {
   return new Token(kind, loc, opts?.value);
 }
