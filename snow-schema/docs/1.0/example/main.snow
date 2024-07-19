@@ -1,0 +1,60 @@
+syntax = "snow-schema-1.0";
+
+//
+// common
+//
+
+type UUID = string {
+  pattern "([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})";
+  caseSensitive false;
+};
+
+type Name = string {
+  pattern "[A-Za-z0-9-]*";
+  minLength 1;
+};
+
+//
+// users
+//
+
+type DisplayName = string {
+  minLength 1;
+};
+
+type User = object {
+  field userId: UUID;
+  field name: Name;
+  field displayName: DisplayName;
+};
+
+POST /api/users {
+  body: object {
+    field name: Name;
+    field displayName: DisplayName;
+  };
+  response: User;
+}
+
+GET /api/users/:id {
+  parameter id: UUID;
+  response: User;
+}
+
+DELETE /api/users/:id {
+  parameter id: UUID;
+}
+
+//
+// account
+//
+
+type Account = object {
+  field accountId: UUID;
+  field name: Name;
+  field users: User[];
+};
+
+GET /api/me {
+  response: Account;
+}

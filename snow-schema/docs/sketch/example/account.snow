@@ -1,0 +1,14 @@
+syntax = "snow-schema-1.0";
+
+import "./common.snow";
+import "./users.snow";
+
+type Account = object {
+  field accountId: UUID;
+  field name: Name;
+  field users: User[];
+};
+
+GET /api/me {
+  response: Account;
+}
