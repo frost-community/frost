@@ -24,7 +24,8 @@
         "ms-vscode-remote.remote-containers",
         "ckolkman.vscode-postgres",
         "editorconfig.editorconfig",
-        "bierner.markdown-mermaid"
+        "bierner.markdown-mermaid",
+        "typespec.typespec-vscode"
       ]
     }
   }
