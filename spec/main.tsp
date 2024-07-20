@@ -10,6 +10,7 @@ using TypeSpec.Rest;
 })
 namespace frost;
 
+// Account, User
 
 model Account {
   accountId: string;
@@ -40,6 +41,8 @@ interface Users {
   @delete
   delete(@path id: string): void;
 }
+
+// Post, Timeline, ChatRoom
 
 model Post {
   postId: string;
