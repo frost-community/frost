@@ -1,0 +1,278 @@
+openapi: 3.0.0
+info:
+  title: Frost
+  version: 0.0.0
+tags: []
+paths:
+  /api/chatrooms:
+    post:
+      operationId: ChatRooms_create
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatRoom'
+  /api/chatrooms/{chatRoomId}/members:
+    get:
+      operationId: ChatRoomMembers_list
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatRoomMember'
+  /api/chatrooms/{chatRoomId}/members/{userId}:
+    post:
+      operationId: ChatRoomMembers_create
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatRoomMember'
+    delete:
+      operationId: ChatRoomMembers_delete
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/chatrooms/{chatRoomId}/posts:
+    post:
+      operationId: ChatRoomPosts_create
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /api/chatrooms/{chatRoomId}/posts/{postId}:
+    get:
+      operationId: ChatRoomPosts_get
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      operationId: ChatRoomPosts_delete
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/chatrooms/{id}:
+    delete:
+      operationId: ChatRooms_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/me:
+    get:
+      operationId: Me_get
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+  /api/timelines/posts:
+    post:
+      operationId: TimelinePosts_create
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /api/timelines/posts/{id}:
+    get:
+      operationId: TimelinePosts_get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      operationId: TimelinePosts_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/users:
+    post:
+      operationId: Users_create
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /api/users/{id}:
+    get:
+      operationId: Users_get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      operationId: Users_delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+components:
+  schemas:
+    Account:
+      type: object
+      required:
+        - accountId
+        - name
+        - users
+      properties:
+        accountId:
+          type: string
+        name:
+          type: string
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    ChatRoom:
+      type: object
+      required:
+        - chatRoomId
+      properties:
+        chatRoomId:
+          type: string
+    ChatRoomMember:
+      type: object
+      required:
+        - userId
+        - chatRoomId
+      properties:
+        userId:
+          type: string
+        chatRoomId:
+          type: string
+    Post:
+      type: object
+      required:
+        - postId
+      properties:
+        postId:
+          type: string
+    User:
+      type: object
+      required:
+        - userId
+        - name
+        - displayName
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        displayName:
+          type: string
