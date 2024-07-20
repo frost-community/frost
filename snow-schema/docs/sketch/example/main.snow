@@ -1,4 +1,0 @@
-syntax = "snow-schema-1.0";
-
-import "./users.snow";
-import "./account.snow";
