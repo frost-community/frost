@@ -14,18 +14,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Account'
+                $ref: '#/components/schemas/Api.Version1.Account'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  $ref: '#/components/schemas/ApiVersion1.NewAccount'
-              required:
-                - body
+              $ref: '#/components/schemas/Api.Version1.NewAccount'
   /api/v1/chatrooms:
     post:
       operationId: ChatRooms_create
@@ -36,18 +31,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.ChatRoom'
+                $ref: '#/components/schemas/Api.Version1.ChatRoom'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  $ref: '#/components/schemas/ApiVersion1.NewChatRoom'
-              required:
-                - body
+              $ref: '#/components/schemas/Api.Version1.NewChatRoom'
   /api/v1/chatrooms/{chatRoomId}/members:
     get:
       operationId: ChatRoomMembers_list
@@ -65,7 +55,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ApiVersion1.ChatRoomMember'
+                  $ref: '#/components/schemas/Api.Version1.ChatRoomMember'
   /api/v1/chatrooms/{chatRoomId}/members/{userId}:
     post:
       operationId: ChatRoomMembers_create
@@ -86,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.ChatRoomMember'
+                $ref: '#/components/schemas/Api.Version1.ChatRoomMember'
     delete:
       operationId: ChatRoomMembers_delete
       parameters:
@@ -118,18 +108,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.ChatRoomPost'
+                $ref: '#/components/schemas/Api.Version1.ChatRoomPost'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  $ref: '#/components/schemas/ApiVersion1.NewChatRoomPost'
-              required:
-                - body
+              $ref: '#/components/schemas/Api.Version1.NewChatRoomPost'
   /api/v1/chatrooms/{chatRoomId}/posts/{postId}:
     get:
       operationId: ChatRoomPosts_get
@@ -150,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.ChatRoomPost'
+                $ref: '#/components/schemas/Api.Version1.ChatRoomPost'
     delete:
       operationId: ChatRoomPosts_delete
       parameters:
@@ -179,6 +164,30 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/echo:
+    get:
+      operationId: Echo_get
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: object
+      responses:
+        '200':
+          description: The request has succeeded.
+    post:
+      operationId: Echo_post
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
   /api/v1/me:
     get:
       operationId: Me_get
@@ -189,7 +198,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Account'
+                $ref: '#/components/schemas/Api.Version1.Account'
   /api/v1/timelines/posts:
     post:
       operationId: TimelinePosts_create
@@ -200,18 +209,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.TimelinePost'
+                $ref: '#/components/schemas/Api.Version1.TimelinePost'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  $ref: '#/components/schemas/ApiVersion1.NewTimelinePost'
-              required:
-                - body
+              $ref: '#/components/schemas/Api.Version1.NewTimelinePost'
   /api/v1/timelines/posts/{id}:
     get:
       operationId: TimelinePosts_get
@@ -227,7 +231,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.TimelinePost'
+                $ref: '#/components/schemas/Api.Version1.TimelinePost'
     delete:
       operationId: TimelinePosts_delete
       parameters:
@@ -249,18 +253,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.User'
+                $ref: '#/components/schemas/Api.Version1.User'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                body:
-                  $ref: '#/components/schemas/ApiVersion1.NewUser'
-              required:
-                - body
+              $ref: '#/components/schemas/Api.Version1.NewUser'
   /api/v1/users/{id}:
     get:
       operationId: Users_get
@@ -276,7 +275,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.User'
+                $ref: '#/components/schemas/Api.Version1.User'
     delete:
       operationId: Users_delete
       parameters:
@@ -290,7 +289,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
 components:
   schemas:
-    ApiVersion1.Account:
+    Api.Version1.Account:
       type: object
       required:
         - accountId
@@ -307,8 +306,8 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/ApiVersion1.User'
-    ApiVersion1.ChatRoom:
+            $ref: '#/components/schemas/Api.Version1.User'
+    Api.Version1.ChatRoom:
       type: object
       required:
         - chatRoomId
@@ -318,7 +317,7 @@ components:
           type: string
         title:
           type: string
-    ApiVersion1.ChatRoomMember:
+    Api.Version1.ChatRoomMember:
       type: object
       required:
         - userId
@@ -328,7 +327,7 @@ components:
           type: string
         chatRoomId:
           type: string
-    ApiVersion1.ChatRoomPost:
+    Api.Version1.ChatRoomPost:
       type: object
       required:
         - postId
@@ -344,38 +343,38 @@ components:
           type: string
         content:
           type: string
-    ApiVersion1.NewAccount:
+    Api.Version1.NewAccount:
       type: object
       required:
-        - name
+        - name1
         - password
       properties:
-        name:
+        name1:
           type: string
         password:
           type: string
-    ApiVersion1.NewChatRoom:
+    Api.Version1.NewChatRoom:
       type: object
       required:
         - title
       properties:
         title:
           type: string
-    ApiVersion1.NewChatRoomPost:
+    Api.Version1.NewChatRoomPost:
       type: object
       required:
         - content
       properties:
         content:
           type: string
-    ApiVersion1.NewTimelinePost:
+    Api.Version1.NewTimelinePost:
       type: object
       required:
         - content
       properties:
         content:
           type: string
-    ApiVersion1.NewUser:
+    Api.Version1.NewUser:
       type: object
       required:
         - name
@@ -385,7 +384,7 @@ components:
           type: string
         displayName:
           type: string
-    ApiVersion1.TimelinePost:
+    Api.Version1.TimelinePost:
       type: object
       required:
         - postId
@@ -398,7 +397,7 @@ components:
           type: string
         content:
           type: string
-    ApiVersion1.User:
+    Api.Version1.User:
       type: object
       required:
         - userId
