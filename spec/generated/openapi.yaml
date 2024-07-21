@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
   title: Frost
-  version: v1
+  version: 0.1.0
 tags: []
 paths:
-  /api/chatrooms:
+  /api/v1/chatrooms:
     post:
       operationId: ChatRooms_create
       parameters: []
@@ -14,8 +14,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatRoom'
-  /api/chatrooms/{chatRoomId}/members:
+                $ref: '#/components/schemas/ApiVersion1.ChatRoom'
+  /api/v1/chatrooms/{chatRoomId}/members:
     get:
       operationId: ChatRoomMembers_list
       parameters:
@@ -32,8 +32,8 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ChatRoomMember'
-  /api/chatrooms/{chatRoomId}/members/{userId}:
+                  $ref: '#/components/schemas/ApiVersion1.ChatRoomMember'
+  /api/v1/chatrooms/{chatRoomId}/members/{userId}:
     post:
       operationId: ChatRoomMembers_create
       parameters:
@@ -53,7 +53,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatRoomMember'
+                $ref: '#/components/schemas/ApiVersion1.ChatRoomMember'
     delete:
       operationId: ChatRoomMembers_delete
       parameters:
@@ -70,7 +70,7 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/chatrooms/{chatRoomId}/posts:
+  /api/v1/chatrooms/{chatRoomId}/posts:
     post:
       operationId: ChatRoomPosts_create
       parameters:
@@ -85,8 +85,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
-  /api/chatrooms/{chatRoomId}/posts/{postId}:
+                $ref: '#/components/schemas/ApiVersion1.Post'
+  /api/v1/chatrooms/{chatRoomId}/posts/{postId}:
     get:
       operationId: ChatRoomPosts_get
       parameters:
@@ -106,7 +106,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/ApiVersion1.Post'
     delete:
       operationId: ChatRoomPosts_delete
       parameters:
@@ -123,7 +123,7 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/chatrooms/{id}:
+  /api/v1/chatrooms/{id}:
     delete:
       operationId: ChatRooms_delete
       parameters:
@@ -135,7 +135,7 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/me:
+  /api/v1/me:
     get:
       operationId: Me_get
       parameters: []
@@ -145,8 +145,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-  /api/timelines/posts:
+                $ref: '#/components/schemas/ApiVersion1.Account'
+  /api/v1/timelines/posts:
     post:
       operationId: TimelinePosts_create
       parameters: []
@@ -156,8 +156,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
-  /api/timelines/posts/{id}:
+                $ref: '#/components/schemas/ApiVersion1.Post'
+  /api/v1/timelines/posts/{id}:
     get:
       operationId: TimelinePosts_get
       parameters:
@@ -172,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Post'
+                $ref: '#/components/schemas/ApiVersion1.Post'
     delete:
       operationId: TimelinePosts_delete
       parameters:
@@ -184,7 +184,7 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/users:
+  /api/v1/users:
     post:
       operationId: Users_create
       parameters: []
@@ -194,8 +194,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-  /api/users/{id}:
+                $ref: '#/components/schemas/ApiVersion1.User'
+  /api/v1/users/{id}:
     get:
       operationId: Users_get
       parameters:
@@ -210,7 +210,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/ApiVersion1.User'
     delete:
       operationId: Users_delete
       parameters:
@@ -224,7 +224,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
 components:
   schemas:
-    Account:
+    ApiVersion1.Account:
       type: object
       required:
         - accountId
@@ -238,15 +238,15 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/User'
-    ChatRoom:
+            $ref: '#/components/schemas/ApiVersion1.User'
+    ApiVersion1.ChatRoom:
       type: object
       required:
         - chatRoomId
       properties:
         chatRoomId:
           type: string
-    ChatRoomMember:
+    ApiVersion1.ChatRoomMember:
       type: object
       required:
         - userId
@@ -256,14 +256,14 @@ components:
           type: string
         chatRoomId:
           type: string
-    Post:
+    ApiVersion1.Post:
       type: object
       required:
         - postId
       properties:
         postId:
           type: string
-    User:
+    ApiVersion1.User:
       type: object
       required:
         - userId
@@ -276,7 +276,7 @@ components:
           type: string
         displayName:
           type: string
-    Versions:
-      type: string
-      enum:
-        - v1
+servers:
+  - url: http://localhost:3000
+    description: local server
+    variables: {}
