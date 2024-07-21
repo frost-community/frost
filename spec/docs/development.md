@@ -1,22 +1,15 @@
-## tspのバージョン表示
-```
-pnpm exec tsp --version
-```
+## API仕様の変更について
+TypeSpecでAPI仕様を記述し、その内容からopenapi.yamlを生成する。
 
-## リビルド
+## TypeSpecでopenapi.yamlを生成する
 ```
 pnpm run rebuild
 ```
-`tsp-output/@typespec/openapi3`ディレクトリに.yamlファイルが生成される。
+`generated`ディレクトリに.yamlファイルが生成される。
 
-このファイルを元に全体または部分的に`generated`ディレクトリの.yamlファイルを更新する。
-すべて置き換える場合は、以下のコマンドでも`generated`ディレクトリに.yamlファイルをコピーできる。
-```
-pnpm run apply
-```
-
-## 依存関係のインストール
+## TypeSpecのライブラリインストール
+devDependenciesに追加するライブラリを記載。
 ```
 pnpm i
 ```
-`tsp install`は使用しないこと！
+⚠️`tsp install`は使用しないこと！
