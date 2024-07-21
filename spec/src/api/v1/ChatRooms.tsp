@@ -41,7 +41,6 @@ interface ChatRoomMembers {
 }
 
 @tag("ChatRoom")
-@tag("Post")
 @route("/chatrooms/{chatRoomId}/posts")
 interface ChatRoomPosts {
   @operationId("CreateChatRoomPost")

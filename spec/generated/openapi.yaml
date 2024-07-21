@@ -5,7 +5,6 @@ info:
 tags:
   - name: Account
   - name: ChatRoom
-  - name: Post
   - name: Echo
   - name: Timeline
   - name: User
@@ -127,7 +126,6 @@ paths:
     post:
       tags:
         - ChatRoom
-        - Post
       operationId: CreateChatRoomPost
       parameters:
         - name: chatRoomId
@@ -189,42 +187,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Api.v1.Account'
-  /api/v1/posts/{postId}:
-    get:
-      tags:
-        - Post
-        - ChatRoom
-        - Timeline
-      operationId: GetPost
-      parameters:
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Post'
-    delete:
-      tags:
-        - Post
-        - ChatRoom
-        - Timeline
-      operationId: DeletePost
-      parameters:
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/timelines/posts:
+  /api/v1/posts:
     post:
       tags:
         - Timeline
@@ -243,6 +206,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewTimelinePost'
+  /api/v1/posts/{postId}:
+    get:
+      tags:
+        - Timeline
+        - ChatRoom
+      operationId: GetPost
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Post'
+    delete:
+      tags:
+        - Timeline
+        - ChatRoom
+      operationId: DeletePost
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/users:
     post:
       tags:

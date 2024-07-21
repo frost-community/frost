@@ -14,6 +14,7 @@ export function setupContainer(container: Container) {
   // app config
   const appConfig: AppConfig = {
     port: 3000,
+    env: 'development',
   };
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 

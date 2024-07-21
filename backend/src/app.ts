@@ -6,6 +6,7 @@ import { DatabaseService } from './services/DatabaseService';
 
 export type AppConfig = {
   port: number,
+  env: 'development' | 'production',
 };
 
 @injectable()

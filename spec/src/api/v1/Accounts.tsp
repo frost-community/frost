@@ -16,11 +16,3 @@ interface Accounts {
   @post
   registerAccount(@body account: NewAccount): Account;
 }
-
-@tag("Account")
-@route("/me")
-interface Me {
-  @operationId("GetMe")
-  @get
-  getMe(): Account;
-}

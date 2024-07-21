@@ -1,10 +1,10 @@
-import "./account.tsp";
-import "./chat-room.tsp";
-import "./echo.tsp";
 import "./models.tsp";
-import "./post.tsp";
-import "./timeline.tsp";
-import "./user.tsp";
+import "./Accounts.tsp";
+import "./ChatRooms.tsp";
+import "./Echo.tsp";
+import "./Me.tsp";
+import "./Posts.tsp";
+import "./Users.tsp";
 
 using TypeSpec.Http;
 using TypeSpec.Rest;
