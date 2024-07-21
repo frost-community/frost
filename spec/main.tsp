@@ -1,14 +1,21 @@
 import "@typespec/http";
 import "@typespec/rest";
 import "@typespec/openapi3";
+import "@typespec/versioning";
 
 using TypeSpec.Http;
 using TypeSpec.Rest;
+using TypeSpec.Versioning;
 
 @service({
   title: "Frost"
 })
-namespace frost;
+@versioned(Versions)
+namespace Frost;
+
+enum Versions {
+  v1,
+}
 
 // Account, User
 

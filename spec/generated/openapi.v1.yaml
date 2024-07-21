@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Frost
-  version: 0.0.0
+  version: v1
 tags: []
 paths:
   /api/chatrooms:
@@ -276,3 +276,7 @@ components:
           type: string
         displayName:
           type: string
+    Versions:
+      type: string
+      enum:
+        - v1
