@@ -2,8 +2,8 @@
   "name": "Development",
   "dockerComposeFile": "../../compose.development.yaml",
   "service": "devcontainer",
-  "workspaceFolder": "/workspaces",
-  "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
   "remoteUser": "node",
   "shutdownAction": "none",
   "mounts": [
