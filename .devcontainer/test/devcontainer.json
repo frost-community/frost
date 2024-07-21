@@ -2,8 +2,8 @@
   "name": "Production Test",
   "dockerComposeFile": "../../compose.test.yaml",
   "service": "devcontainer",
-  "workspaceFolder": "/workspaces",
-  "postCreateCommand": "/workspaces/.devcontainer/post_create.sh",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
   "remoteUser": "node",
   "shutdownAction": "none",
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

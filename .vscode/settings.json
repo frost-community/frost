@@ -5,5 +5,4 @@
   "[typescript][typescriptreact][javascript][javascriptreact][html][scss][json][jsonc][markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "typespec.tsp-server.path": "/workspaces/.pnpm",
 }

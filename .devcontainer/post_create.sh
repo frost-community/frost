@@ -15,7 +15,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Constants
-WORKSPACE_PATH=/workspaces
+WORKSPACE_PATH=/workspace
 SPEC_PACKAGE_PATH="${WORKSPACE_PATH}/spec"
 BACKEND_PACKAGE_PATH="${WORKSPACE_PATH}/backend"
 FRONTEND_PACKAGE_PATH="${WORKSPACE_PATH}/frontend"
