@@ -14,6 +14,9 @@ importers:
       '@typespec/http':
         specifier: latest
         version: 0.58.0(@typespec/compiler@0.58.1)
+      '@typespec/openapi':
+        specifier: latest
+        version: 0.58.0(@typespec/compiler@0.58.1)(@typespec/http@0.58.0(@typespec/compiler@0.58.1))
       '@typespec/openapi3':
         specifier: latest
         version: 0.58.0(@typespec/compiler@0.58.1)(@typespec/http@0.58.0(@typespec/compiler@0.58.1))(@typespec/openapi@0.58.0(@typespec/compiler@0.58.1)(@typespec/http@0.58.0(@typespec/compiler@0.58.1)))(@typespec/versioning@0.58.0(@typespec/compiler@0.58.1))(openapi-types@12.1.3)

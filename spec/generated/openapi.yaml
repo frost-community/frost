@@ -6,7 +6,7 @@ tags: []
 paths:
   /api/v1/accounts:
     post:
-      operationId: Accounts_registerAccount
+      operationId: registerAccount
       parameters: []
       responses:
         '200':
@@ -23,7 +23,7 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewAccount'
   /api/v1/chatrooms:
     post:
-      operationId: ChatRooms_createChatRoom
+      operationId: createChatRoom
       parameters: []
       responses:
         '200':
@@ -40,7 +40,7 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewChatRoom'
   /api/v1/chatrooms/{chatRoomId}:
     delete:
-      operationId: ChatRooms_deleteChatRoom
+      operationId: deleteChatRoom
       parameters:
         - name: chatRoomId
           in: path
@@ -52,7 +52,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms/{chatRoomId}/members:
     get:
-      operationId: ChatRoomMembers_listChatRoomMember
+      operationId: listChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -70,7 +70,7 @@ paths:
                   $ref: '#/components/schemas/Api.v1.ChatRoomMember'
   /api/v1/chatrooms/{chatRoomId}/members/{userId}:
     post:
-      operationId: ChatRoomMembers_createChatRoomMember
+      operationId: createChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -90,7 +90,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.ChatRoomMember'
     delete:
-      operationId: ChatRoomMembers_deleteChatRoomMember
+      operationId: deleteChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -107,7 +107,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms/{chatRoomId}/posts:
     post:
-      operationId: ChatRoomPosts_createChatRoomPost
+      operationId: createChatRoomPost
       parameters:
         - name: chatRoomId
           in: path
@@ -129,7 +129,7 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewChatRoomPost'
   /api/v1/chatrooms/{chatRoomId}/posts/{postId}:
     get:
-      operationId: ChatRoomPosts_getChatRoomPost
+      operationId: getChatRoomPost
       parameters:
         - name: chatRoomId
           in: path
@@ -149,7 +149,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.ChatRoomPost'
     delete:
-      operationId: ChatRoomPosts_deleteChatRoomPost
+      operationId: deleteChatRoomPost
       parameters:
         - name: chatRoomId
           in: path
@@ -166,7 +166,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/echo:
     get:
-      operationId: Echo_echoGet
+      operationId: echoGet
       parameters:
         - name: query
           in: query
@@ -177,7 +177,7 @@ paths:
         '200':
           description: The request has succeeded.
     post:
-      operationId: Echo_echoPost
+      operationId: echoPost
       parameters: []
       responses:
         '200':
@@ -190,7 +190,7 @@ paths:
               type: object
   /api/v1/me:
     get:
-      operationId: Me_getMe
+      operationId: getMe
       parameters: []
       responses:
         '200':
@@ -201,7 +201,7 @@ paths:
                 $ref: '#/components/schemas/Api.v1.Account'
   /api/v1/timelines/posts:
     post:
-      operationId: TimelinePosts_createTimelinePost
+      operationId: createTimelinePost
       parameters: []
       responses:
         '200':
@@ -218,7 +218,7 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewTimelinePost'
   /api/v1/timelines/posts/{postId}:
     get:
-      operationId: TimelinePosts_getTimelinePost
+      operationId: getTimelinePost
       parameters:
         - name: postId
           in: path
@@ -233,7 +233,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.TimelinePost'
     delete:
-      operationId: TimelinePosts_deleteTimelinePost
+      operationId: deleteTimelinePost
       parameters:
         - name: postId
           in: path
@@ -245,7 +245,7 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/users:
     post:
-      operationId: Users_createUser
+      operationId: createUser
       parameters: []
       responses:
         '200':
@@ -262,7 +262,7 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewUser'
   /api/v1/users/{userId}:
     get:
-      operationId: Users_getUser
+      operationId: getUser
       parameters:
         - name: userId
           in: path
@@ -277,7 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.User'
     delete:
-      operationId: Users_deleteUser
+      operationId: deleteUser
       parameters:
         - name: userId
           in: path
