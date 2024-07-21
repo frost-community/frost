@@ -21,9 +21,6 @@ BACKEND_PACKAGE_PATH="${WORKSPACE_PATH}/backend"
 FRONTEND_PACKAGE_PATH="${WORKSPACE_PATH}/frontend"
 CUSTOM_POST_CREATE_SCRIPT_PATH="${WORKSPACE_PATH}/.devcontainer/post_create_custom.sh"
 
-# Global Install typespec
-corepack pnpm install -g @typespec/compiler
-
 # 各パッケージの package.json を参照して pnpm と依存関係をインストールする
 echo "Install spec dependencies..."
 cd "$SPEC_PACKAGE_PATH"

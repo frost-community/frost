@@ -25,8 +25,6 @@ RUN apt-get install -y iputils-ping net-tools
 RUN apt-get install -y postgresql postgresql-contrib
 
 # Install pnpm
-ENV PATH="${PATH}:/workspaces/.pnpm"
-ENV PNPM_HOME=/workspaces/.pnpm
 RUN corepack enable pnpm
 
 # Switch user
