@@ -7,8 +7,10 @@ pnpm exec tsp --version
 ```
 pnpm run rebuild
 ```
+`tsp-output/@typespec/openapi3`ディレクトリに.yamlファイルが生成される。
 
-以下のコマンドでgeneratedディレクトリ下に.yamlファイルをコピーする
+このファイルを元に全体または部分的に`generated`ディレクトリの.yamlファイルを更新する。
+すべて置き換える場合は、以下のコマンドでも`generated`ディレクトリに.yamlファイルをコピーできる。
 ```
 pnpm run apply
 ```
