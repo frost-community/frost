@@ -2,6 +2,7 @@ node_modules
 dist
 tsconfig.build.tsbuildinfo
 .pnpm-store
+.pnpm/
 
 logs
 *.log

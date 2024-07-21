@@ -16,11 +16,16 @@ IFS=$'\n\t'
 
 # Constants
 WORKSPACE_PATH=/workspaces
+SPEC_PACKAGE_PATH="${WORKSPACE_PATH}/spec"
 BACKEND_PACKAGE_PATH="${WORKSPACE_PATH}/backend"
 FRONTEND_PACKAGE_PATH="${WORKSPACE_PATH}/frontend"
 CUSTOM_POST_CREATE_SCRIPT_PATH="${WORKSPACE_PATH}/.devcontainer/post_create_custom.sh"
 
 # 各パッケージの package.json を参照して pnpm と依存関係をインストールする
+echo "Install spec dependencies..."
+cd "$SPEC_PACKAGE_PATH"
+corepack pnpm install --frozen-lockfile
+
 echo "Install backend dependencies..."
 cd "$BACKEND_PACKAGE_PATH"
 corepack pnpm install --frozen-lockfile
