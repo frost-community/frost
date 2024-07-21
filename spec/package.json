@@ -8,12 +8,6 @@
     "rebuild": "rm -rf tsp-output && tsp compile .",
     "apply": "mkdir -p generated && cp -rf tsp-output/@typespec/openapi3/* generated"
   },
-  "peerDependencies": {
-    "@typespec/compiler": "latest",
-    "@typespec/http": "latest",
-    "@typespec/rest": "latest",
-    "@typespec/openapi3": "latest"
-  },
   "devDependencies": {
     "@typespec/compiler": "latest",
     "@typespec/http": "latest",
