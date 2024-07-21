@@ -34,7 +34,7 @@ interface ChatRooms {
   createChatRoom(@body chatRoom: NewChatRoom): ChatRoom;
 
   @delete
-  deleteChatRoom(@path id: string): void;
+  deleteChatRoom(@path chatRoomId: string): void;
 }
 
 @route("/chatrooms/{chatRoomId}/members")

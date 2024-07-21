@@ -38,6 +38,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewChatRoom'
+  /api/v1/chatrooms/{chatRoomId}:
+    delete:
+      operationId: ChatRooms_deleteChatRoom
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms/{chatRoomId}/members:
     get:
       operationId: ChatRoomMembers_listChatRoomMember
@@ -152,18 +164,6 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/chatrooms/{id}:
-    delete:
-      operationId: ChatRooms_deleteChatRoom
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/echo:
     get:
       operationId: Echo_echoGet
@@ -216,11 +216,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewTimelinePost'
-  /api/v1/timelines/posts/{id}:
+  /api/v1/timelines/posts/{postId}:
     get:
       operationId: TimelinePosts_getTimelinePost
       parameters:
-        - name: id
+        - name: postId
           in: path
           required: true
           schema:
@@ -235,7 +235,7 @@ paths:
     delete:
       operationId: TimelinePosts_deleteTimelinePost
       parameters:
-        - name: id
+        - name: postId
           in: path
           required: true
           schema:
@@ -260,11 +260,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewUser'
-  /api/v1/users/{id}:
+  /api/v1/users/{userId}:
     get:
       operationId: Users_getUser
       parameters:
-        - name: id
+        - name: userId
           in: path
           required: true
           schema:
@@ -279,7 +279,7 @@ paths:
     delete:
       operationId: Users_deleteUser
       parameters:
-        - name: id
+        - name: userId
           in: path
           required: true
           schema:

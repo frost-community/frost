@@ -20,8 +20,8 @@ interface Users {
   createUser(@body user: NewUser): User;
 
   @get
-  getUser(@path id: string): User;
+  getUser(@path userId: string): User;
 
   @delete
-  deleteUser(@path id: string): void;
+  deleteUser(@path userId: string): void;
 }

@@ -19,8 +19,8 @@ interface TimelinePosts {
   createTimelinePost(@body post: NewTimelinePost): TimelinePost;
 
   @get
-  getTimelinePost(@path id: string): TimelinePost;
+  getTimelinePost(@path postId: string): TimelinePost;
 
   @delete
-  deleteTimelinePost(@path id: string): void;
+  deleteTimelinePost(@path postId: string): void;
 }
