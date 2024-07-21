@@ -16,16 +16,33 @@ namespace Frost;
 namespace ApiVersion1 {
   // Account, User
 
+  model NewAccount {
+    name: string;
+    password: string;
+  }
+
   model Account {
     accountId: string;
     name: string;
+    passwordAuthEnabled: boolean;
     users: User[];
+  }
+
+  @route("/accounts")
+  interface Accounts {
+    @post
+    register(body: NewAccount): Account;
   }
 
   @route("/me")
   interface Me {
     @get
     get(): Account;
+  }
+
+  model NewUser {
+    name: string;
+    displayName: string;
   }
 
   model User {
@@ -37,7 +54,7 @@ namespace ApiVersion1 {
   @route("/users")
   interface Users {
     @post
-    create(): User;
+    create(body: NewUser): User;
 
     @get
     get(@path id: string): User;
@@ -48,30 +65,41 @@ namespace ApiVersion1 {
 
   // Post, Timeline, ChatRoom
 
-  model Post {
+  model TimelinePost {
     postId: string;
+    userId: string;
+    content: string;
+  }
+
+  model NewTimelinePost {
+    content: string;
   }
 
   @route("/timelines/posts")
   interface TimelinePosts {
     @post
-    create(): Post;
+    create(body: NewTimelinePost): TimelinePost;
 
     @get
-    get(@path id: string): Post;
+    get(@path id: string): TimelinePost;
 
     @delete
     delete(@path id: string): void;
   }
 
+  model NewChatRoom {
+    title: string;
+  }
+
   model ChatRoom {
     chatRoomId: string;
+    title: string;
   }
 
   @route("/chatrooms")
   interface ChatRooms {
     @post
-    create(): ChatRoom;
+    create(body: NewChatRoom): ChatRoom;
 
     @delete
     delete(@path id: string): void;
@@ -94,13 +122,24 @@ namespace ApiVersion1 {
     delete(@path chatRoomId: string, @path userId: string): void;
   }
 
+  model ChatRoomPost {
+    postId: string;
+    chatRoomId: string;
+    userId: string;
+    content: string;
+  }
+
+  model NewChatRoomPost {
+    content: string;
+  }
+
   @route("/chatrooms/{chatRoomId}/posts")
   interface ChatRoomPosts {
     @post
-    create(@path chatRoomId: string): Post;
+    create(@path chatRoomId: string, body: NewChatRoomPost): ChatRoomPost;
 
     @get
-    get(@path chatRoomId: string, @path postId: string): Post;
+    get(@path chatRoomId: string, @path postId: string): ChatRoomPost;
 
     @delete
     delete(@path chatRoomId: string, @path postId: string): void;

@@ -4,6 +4,28 @@ info:
   version: 0.1.0
 tags: []
 paths:
+  /api/v1/accounts:
+    post:
+      operationId: Accounts_register
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiVersion1.Account'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ApiVersion1.NewAccount'
+              required:
+                - body
   /api/v1/chatrooms:
     post:
       operationId: ChatRooms_create
@@ -15,6 +37,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiVersion1.ChatRoom'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ApiVersion1.NewChatRoom'
+              required:
+                - body
   /api/v1/chatrooms/{chatRoomId}/members:
     get:
       operationId: ChatRoomMembers_list
@@ -85,7 +118,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Post'
+                $ref: '#/components/schemas/ApiVersion1.ChatRoomPost'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ApiVersion1.NewChatRoomPost'
+              required:
+                - body
   /api/v1/chatrooms/{chatRoomId}/posts/{postId}:
     get:
       operationId: ChatRoomPosts_get
@@ -106,7 +150,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Post'
+                $ref: '#/components/schemas/ApiVersion1.ChatRoomPost'
     delete:
       operationId: ChatRoomPosts_delete
       parameters:
@@ -156,7 +200,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Post'
+                $ref: '#/components/schemas/ApiVersion1.TimelinePost'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ApiVersion1.NewTimelinePost'
+              required:
+                - body
   /api/v1/timelines/posts/{id}:
     get:
       operationId: TimelinePosts_get
@@ -172,7 +227,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiVersion1.Post'
+                $ref: '#/components/schemas/ApiVersion1.TimelinePost'
     delete:
       operationId: TimelinePosts_delete
       parameters:
@@ -195,6 +250,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiVersion1.User'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ApiVersion1.NewUser'
+              required:
+                - body
   /api/v1/users/{id}:
     get:
       operationId: Users_get
@@ -229,12 +295,15 @@ components:
       required:
         - accountId
         - name
+        - passwordAuthEnabled
         - users
       properties:
         accountId:
           type: string
         name:
           type: string
+        passwordAuthEnabled:
+          type: boolean
         users:
           type: array
           items:
@@ -243,8 +312,11 @@ components:
       type: object
       required:
         - chatRoomId
+        - title
       properties:
         chatRoomId:
+          type: string
+        title:
           type: string
     ApiVersion1.ChatRoomMember:
       type: object
@@ -256,12 +328,75 @@ components:
           type: string
         chatRoomId:
           type: string
-    ApiVersion1.Post:
+    ApiVersion1.ChatRoomPost:
       type: object
       required:
         - postId
+        - chatRoomId
+        - userId
+        - content
       properties:
         postId:
+          type: string
+        chatRoomId:
+          type: string
+        userId:
+          type: string
+        content:
+          type: string
+    ApiVersion1.NewAccount:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    ApiVersion1.NewChatRoom:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+    ApiVersion1.NewChatRoomPost:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+    ApiVersion1.NewTimelinePost:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+    ApiVersion1.NewUser:
+      type: object
+      required:
+        - name
+        - displayName
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+    ApiVersion1.TimelinePost:
+      type: object
+      required:
+        - postId
+        - userId
+        - content
+      properties:
+        postId:
+          type: string
+        userId:
+          type: string
+        content:
           type: string
     ApiVersion1.User:
       type: object
