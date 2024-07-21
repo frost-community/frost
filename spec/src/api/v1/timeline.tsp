@@ -4,27 +4,14 @@ using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
 
-model TimelinePost {
-  postId: string;
-  userId: string;
-  content: string;
-}
-
 model NewTimelinePost {
   content: string;
 }
 
+@tag("Timeline")
 @route("/timelines/posts")
-interface TimelinePosts {
-  @operationId("createTimelinePost")
+interface TimelinesPosts {
+  @operationId("CreateTimelinePost")
   @post
-  createTimelinePost(@body post: NewTimelinePost): TimelinePost;
-
-  @operationId("getTimelinePost")
-  @get
-  getTimelinePost(@path postId: string): TimelinePost;
-
-  @operationId("deleteTimelinePost")
-  @delete
-  deleteTimelinePost(@path postId: string): void;
+  createTimelinePost(@body post: NewTimelinePost): Post;
 }

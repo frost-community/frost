@@ -9,23 +9,18 @@ model NewAccount {
   password: string;
 }
 
-model Account {
-  accountId: string;
-  name: string;
-  passwordAuthEnabled: boolean;
-  users: User[];
-}
-
+@tag("Account")
 @route("/accounts")
 interface Accounts {
-  @operationId("registerAccount")
+  @operationId("RegisterAccount")
   @post
   registerAccount(@body account: NewAccount): Account;
 }
 
+@tag("Account")
 @route("/me")
 interface Me {
-  @operationId("getMe")
+  @operationId("GetMe")
   @get
   getMe(): Account;
 }

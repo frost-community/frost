@@ -9,23 +9,18 @@ model NewUser {
   displayName: string;
 }
 
-model User {
-  userId: string;
-  name: string;
-  displayName: string;
-}
-
+@tag("User")
 @route("/users")
 interface Users {
-  @operationId("createUser")
+  @operationId("CreateUser")
   @post
   createUser(@body user: NewUser): User;
 
-  @operationId("getUser")
+  @operationId("GetUser")
   @get
   getUser(@path userId: string): User;
 
-  @operationId("deleteUser")
+  @operationId("DeleteUser")
   @delete
   deleteUser(@path userId: string): void;
 }

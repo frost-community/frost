@@ -1,6 +1,8 @@
 import "./account.tsp";
 import "./chat-room.tsp";
 import "./echo.tsp";
+import "./models.tsp";
+import "./post.tsp";
 import "./timeline.tsp";
 import "./user.tsp";
 

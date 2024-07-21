@@ -2,11 +2,19 @@ openapi: 3.0.0
 info:
   title: Frost
   version: 0.1.0
-tags: []
+tags:
+  - name: Account
+  - name: ChatRoom
+  - name: Post
+  - name: Echo
+  - name: Timeline
+  - name: User
 paths:
   /api/v1/accounts:
     post:
-      operationId: registerAccount
+      tags:
+        - Account
+      operationId: RegisterAccount
       parameters: []
       responses:
         '200':
@@ -23,7 +31,9 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewAccount'
   /api/v1/chatrooms:
     post:
-      operationId: createChatRoom
+      tags:
+        - ChatRoom
+      operationId: CreateChatRoom
       parameters: []
       responses:
         '200':
@@ -40,7 +50,9 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewChatRoom'
   /api/v1/chatrooms/{chatRoomId}:
     delete:
-      operationId: deleteChatRoom
+      tags:
+        - ChatRoom
+      operationId: DeleteChatRoom
       parameters:
         - name: chatRoomId
           in: path
@@ -52,7 +64,9 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms/{chatRoomId}/members:
     get:
-      operationId: listChatRoomMember
+      tags:
+        - ChatRoom
+      operationId: ListChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -70,7 +84,9 @@ paths:
                   $ref: '#/components/schemas/Api.v1.ChatRoomMember'
   /api/v1/chatrooms/{chatRoomId}/members/{userId}:
     post:
-      operationId: createChatRoomMember
+      tags:
+        - ChatRoom
+      operationId: CreateChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -90,7 +106,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.ChatRoomMember'
     delete:
-      operationId: deleteChatRoomMember
+      tags:
+        - ChatRoom
+      operationId: DeleteChatRoomMember
       parameters:
         - name: chatRoomId
           in: path
@@ -107,7 +125,10 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms/{chatRoomId}/posts:
     post:
-      operationId: createChatRoomPost
+      tags:
+        - ChatRoom
+        - Post
+      operationId: CreateChatRoomPost
       parameters:
         - name: chatRoomId
           in: path
@@ -120,53 +141,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.ChatRoomPost'
+                $ref: '#/components/schemas/Api.v1.Post'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewChatRoomPost'
-  /api/v1/chatrooms/{chatRoomId}/posts/{postId}:
-    get:
-      operationId: getChatRoomPost
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.ChatRoomPost'
-    delete:
-      operationId: deleteChatRoomPost
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: postId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/echo:
     get:
-      operationId: echoGet
+      tags:
+        - Echo
+      operationId: EchoGet
       parameters:
         - name: query
           in: query
@@ -177,7 +163,9 @@ paths:
         '200':
           description: The request has succeeded.
     post:
-      operationId: echoPost
+      tags:
+        - Echo
+      operationId: EchoPost
       parameters: []
       responses:
         '200':
@@ -190,7 +178,9 @@ paths:
               type: object
   /api/v1/me:
     get:
-      operationId: getMe
+      tags:
+        - Account
+      operationId: GetMe
       parameters: []
       responses:
         '200':
@@ -199,26 +189,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Api.v1.Account'
-  /api/v1/timelines/posts:
-    post:
-      operationId: createTimelinePost
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.TimelinePost'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.NewTimelinePost'
-  /api/v1/timelines/posts/{postId}:
+  /api/v1/posts/{postId}:
     get:
-      operationId: getTimelinePost
+      tags:
+        - Post
+        - ChatRoom
+        - Timeline
+      operationId: GetPost
       parameters:
         - name: postId
           in: path
@@ -231,9 +208,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.TimelinePost'
+                $ref: '#/components/schemas/Api.v1.Post'
     delete:
-      operationId: deleteTimelinePost
+      tags:
+        - Post
+        - ChatRoom
+        - Timeline
+      operationId: DeletePost
       parameters:
         - name: postId
           in: path
@@ -243,9 +224,30 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/timelines/posts:
+    post:
+      tags:
+        - Timeline
+      operationId: CreateTimelinePost
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Post'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.NewTimelinePost'
   /api/v1/users:
     post:
-      operationId: createUser
+      tags:
+        - User
+      operationId: CreateUser
       parameters: []
       responses:
         '200':
@@ -262,7 +264,9 @@ paths:
               $ref: '#/components/schemas/Api.v1.NewUser'
   /api/v1/users/{userId}:
     get:
-      operationId: getUser
+      tags:
+        - User
+      operationId: GetUser
       parameters:
         - name: userId
           in: path
@@ -277,7 +281,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Api.v1.User'
     delete:
-      operationId: deleteUser
+      tags:
+        - User
+      operationId: DeleteUser
       parameters:
         - name: userId
           in: path
@@ -327,22 +333,6 @@ components:
           type: string
         chatRoomId:
           type: string
-    Api.v1.ChatRoomPost:
-      type: object
-      required:
-        - postId
-        - chatRoomId
-        - userId
-        - content
-      properties:
-        postId:
-          type: string
-        chatRoomId:
-          type: string
-        userId:
-          type: string
-        content:
-          type: string
     Api.v1.NewAccount:
       type: object
       required:
@@ -384,7 +374,7 @@ components:
           type: string
         displayName:
           type: string
-    Api.v1.TimelinePost:
+    Api.v1.Post:
       type: object
       required:
         - postId
@@ -392,6 +382,8 @@ components:
         - content
       properties:
         postId:
+          type: string
+        chatRoomId:
           type: string
         userId:
           type: string

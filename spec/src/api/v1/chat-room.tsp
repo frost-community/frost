@@ -8,64 +8,43 @@ model NewChatRoom {
   title: string;
 }
 
-model ChatRoom {
-  chatRoomId: string;
-  title: string;
-}
-
-model ChatRoomMember {
-  userId: string;
-  chatRoomId: string;
-}
-
-model ChatRoomPost {
-  postId: string;
-  chatRoomId: string;
-  userId: string;
-  content: string;
-}
-
 model NewChatRoomPost {
   content: string;
 }
 
+@tag("ChatRoom")
 @route("/chatrooms")
 interface ChatRooms {
-  @operationId("createChatRoom")
+  @operationId("CreateChatRoom")
   @post
   createChatRoom(@body chatRoom: NewChatRoom): ChatRoom;
 
-  @operationId("deleteChatRoom")
+  @operationId("DeleteChatRoom")
   @delete
   deleteChatRoom(@path chatRoomId: string): void;
 }
 
+@tag("ChatRoom")
 @route("/chatrooms/{chatRoomId}/members")
 interface ChatRoomMembers {
-  @operationId("createChatRoomMember")
+  @operationId("CreateChatRoomMember")
   @post
   createChatRoomMember(@path chatRoomId: string, @path userId: string): ChatRoomMember;
 
-  @operationId("listChatRoomMember")
+  @operationId("ListChatRoomMember")
   @get
   listChatRoomMember(@path chatRoomId: string): ChatRoomMember[];
 
-  @operationId("deleteChatRoomMember")
+  @operationId("DeleteChatRoomMember")
   @delete
   deleteChatRoomMember(@path chatRoomId: string, @path userId: string): void;
 }
 
+@tag("ChatRoom")
+@tag("Post")
 @route("/chatrooms/{chatRoomId}/posts")
 interface ChatRoomPosts {
-  @operationId("createChatRoomPost")
+  @operationId("CreateChatRoomPost")
   @post
-  createChatRoomPost(@path chatRoomId: string, @body post: NewChatRoomPost): ChatRoomPost;
-
-  @operationId("getChatRoomPost")
-  @get
-  getChatRoomPost(@path chatRoomId: string, @path postId: string): ChatRoomPost;
-
-  @operationId("deleteChatRoomPost")
-  @delete
-  deleteChatRoomPost(@path chatRoomId: string, @path postId: string): void;
+  createChatRoomPost(@path chatRoomId: string, @body post: NewChatRoomPost): Post;
 }
