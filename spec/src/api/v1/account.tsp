@@ -1,10 +1,10 @@
 using TypeSpec.Http;
 using TypeSpec.Rest;
 
-namespace Frost.Api.Version1;
+namespace Frost.Api.v1;
 
 model NewAccount {
-  name1: string;
+  name: string;
   password: string;
 }
 
@@ -18,11 +18,11 @@ model Account {
 @route("/accounts")
 interface Accounts {
   @post
-  register(@body account: NewAccount): Account;
+  registerAccount(@body account: NewAccount): Account;
 }
 
 @route("/me")
 interface Me {
   @get
-  get(): Account;
+  getMe(): Account;
 }

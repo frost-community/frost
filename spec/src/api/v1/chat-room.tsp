@@ -1,7 +1,7 @@
 using TypeSpec.Http;
 using TypeSpec.Rest;
 
-namespace Frost.Api.Version1;
+namespace Frost.Api.v1;
 
 model NewChatRoom {
   title: string;
@@ -31,32 +31,32 @@ model NewChatRoomPost {
 @route("/chatrooms")
 interface ChatRooms {
   @post
-  create(@body chatRoom: NewChatRoom): ChatRoom;
+  createChatRoom(@body chatRoom: NewChatRoom): ChatRoom;
 
   @delete
-  delete(@path id: string): void;
+  deleteChatRoom(@path id: string): void;
 }
 
 @route("/chatrooms/{chatRoomId}/members")
 interface ChatRoomMembers {
   @post
-  create(@path chatRoomId: string, @path userId: string): ChatRoomMember;
+  createChatRoomMember(@path chatRoomId: string, @path userId: string): ChatRoomMember;
 
   @get
-  list(@path chatRoomId: string): ChatRoomMember[];
+  listChatRoomMember(@path chatRoomId: string): ChatRoomMember[];
 
   @delete
-  delete(@path chatRoomId: string, @path userId: string): void;
+  deleteChatRoomMember(@path chatRoomId: string, @path userId: string): void;
 }
 
 @route("/chatrooms/{chatRoomId}/posts")
 interface ChatRoomPosts {
   @post
-  create(@path chatRoomId: string, @body post: NewChatRoomPost): ChatRoomPost;
+  createChatRoomPost(@path chatRoomId: string, @body post: NewChatRoomPost): ChatRoomPost;
 
   @get
-  get(@path chatRoomId: string, @path postId: string): ChatRoomPost;
+  getChatRoomPost(@path chatRoomId: string, @path postId: string): ChatRoomPost;
 
   @delete
-  delete(@path chatRoomId: string, @path postId: string): void;
+  deleteChatRoomPost(@path chatRoomId: string, @path postId: string): void;
 }
