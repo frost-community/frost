@@ -1,10 +1,13 @@
+import express from 'express';
 import { Container, inject, injectable } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
+import * as OpenApiValidator from 'express-openapi-validator';
 
 // controllers
 import '../controllers/RootController';
+import '../controllers/api/EchoController';
 import '../controllers/api/MeController';
 import '../controllers/api/UsersController';
 
@@ -19,6 +22,12 @@ export class HttpServerService {
     const server = new InversifyExpressServer(this.container);
 
     server.setConfig(app => {
+      app.use(express.json());
+      // app.use(OpenApiValidator.middleware({
+      //   apiSpec: '../spec/generated/openapi.yaml',
+      //   validateRequests: true,
+      //   validateResponses: false,
+      // }));
     });
     server.setErrorConfig(app => {
       app.use((req, res) => {

@@ -24,6 +24,7 @@
   "dependencies": {
     "drizzle-orm": "^0.31.4",
     "express": "^4.17.0",
+    "express-openapi-validator": "^5.2.0",
     "inversify": "^6.0.0",
     "inversify-express-utils": "^6.4.0",
     "pg": "^8.11.0",

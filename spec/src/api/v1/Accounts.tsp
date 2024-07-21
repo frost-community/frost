@@ -1,5 +1,6 @@
 using TypeSpec.Http;
 using TypeSpec.Rest;
+using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
 
@@ -8,21 +9,10 @@ model NewAccount {
   password: string;
 }
 
-model Account {
-  accountId: string;
-  name: string;
-  passwordAuthEnabled: boolean;
-  users: User[];
-}
-
+@tag("Account")
 @route("/accounts")
 interface Accounts {
+  @operationId("RegisterAccount")
   @post
   registerAccount(@body account: NewAccount): Account;
-}
-
-@route("/me")
-interface Me {
-  @get
-  getMe(): Account;
 }
