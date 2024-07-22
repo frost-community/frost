@@ -24,7 +24,7 @@ const LoginRouteRoute = LoginRouteImport.update({
 const RouteRoute = RouteImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any)
+} as any).lazy(() => import('./routes/route.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
