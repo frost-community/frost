@@ -1,7 +1,7 @@
 import express from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../container/types';
-import { endpoint } from 'src/util/endpoint';
+import { endpoint } from '../../../util/endpoint';
 
 @injectable()
 export class EchoRoute {

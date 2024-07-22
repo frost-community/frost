@@ -1,6 +1,8 @@
 import express from 'express';
-import type { RouteParameters } from 'express-serve-static-core';
 
+/**
+ * APIエンドポイント向けのリクエストハンドラを生成します。
+*/
 export function endpoint(
   handler: (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void> | void
 ): express.RequestHandler {

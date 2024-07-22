@@ -10,7 +10,9 @@ const TYPES = {
 
   // routes
   RootRoute: Symbol.for('RootRoute'),
+  AccountsRoute: Symbol.for('AccountsRoute'),
   EchoRoute: Symbol.for('EchoRoute'),
+  MeRoute: Symbol.for('MeRoute'),
   UsersRoute: Symbol.for('UsersRoute'),
 };
 
