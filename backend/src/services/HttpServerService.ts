@@ -5,6 +5,8 @@ import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
 import * as OpenApiValidator from 'express-openapi-validator';
 
+import { RootRoute } from '../routes';
+
 // controllers
 import '../controllers/RootController';
 import '../controllers/api/EchoController';
@@ -16,9 +18,13 @@ export class HttpServerService {
   constructor(
     @inject(TYPES.Container) private readonly container: Container,
     @inject(TYPES.AppConfig) private readonly config: AppConfig,
+    @inject(TYPES.RootRoute) private readonly rootRoute: RootRoute,
   ) {}
 
   listen(): Promise<void> {
+
+    this.rootRoute.create();
+
     const server = new InversifyExpressServer(this.container);
 
     server.setConfig(app => {
