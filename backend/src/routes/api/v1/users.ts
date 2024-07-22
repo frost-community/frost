@@ -2,6 +2,7 @@ import express from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../container/types';
 import { UserService } from '../../../services/UserService';
+import { api } from '../../../util/api';
 
 @injectable()
 export class UsersRoute {
@@ -12,28 +13,18 @@ export class UsersRoute {
   create() {
     const router = express.Router();
 
-    router.post('/users', async (req, res, next) => {
-      try {
-        const accountId = '';
-        const { name, displayName } = req.body;
-        const model = await this.userService.create({ accountId, name, displayName });
-        res.status(200).json(model);
-      } catch(err) {
-        // TODO: catch service error
-        next(err);
-      }
-    });
+    router.post('/users', api(async (req, res) => {
+      const accountId = '';
+      const { name, displayName } = req.body;
+      const model = await this.userService.create({ accountId, name, displayName });
+      res.status(200).json(model);
+    }));
 
-    router.get('/users/:userId', async (req, res, next) => {
-      try {
-        const { userId } = req.params;
-        const model = await this.userService.get({ userId });
-        res.status(200).json(model);
-      } catch(err) {
-        // TODO: catch service error
-        next(err);
-      }
-    });
+    router.get('/users/:userId', api(async (req, res) => {
+      const { userId } = req.params;
+      const model = await this.userService.get({ userId });
+      res.status(200).json(model);
+    }));
 
     return router;
   }
