@@ -1,13 +1,14 @@
 import { Container } from 'inversify';
 import { App, AppConfig } from '../app';
-import { DatabaseService } from '../services/DatabaseService';
-import { HttpServerService } from '../services/HttpServerService';
-import { TYPES } from './types';
-import { UserService } from '../services/UserService';
-import { AccountService } from '../services/AccountService';
-import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { env } from '../environment/variables';
 import { RootRouter } from '../routers';
 import { ApiVer1Router } from '../routers/api/v1';
+import { AccountService } from '../services/AccountService';
+import { DatabaseService } from '../services/DatabaseService';
+import { HttpServerService } from '../services/HttpServerService';
+import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { UserService } from '../services/UserService';
+import { TYPES } from './types';
 
 export function setupContainer(container: Container) {
   // app
@@ -15,8 +16,8 @@ export function setupContainer(container: Container) {
 
   // app config
   const appConfig: AppConfig = {
-    port: 3000,
-    env: 'development',
+    port: env.PORT,
+    env: env.ENV,
   };
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
