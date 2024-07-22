@@ -1,6 +1,7 @@
 import express from 'express';
+import type { RouteParameters } from 'express-serve-static-core';
 
-export function api(
+export function endpoint(
   handler: (req: express.Request, res: express.Response, next: express.NextFunction) => Promise<void> | void
 ): express.RequestHandler {
   return (req, res, next) => {
