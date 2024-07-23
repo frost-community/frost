@@ -152,14 +152,23 @@ paths:
         - Echo
       operationId: EchoGet
       parameters:
-        - name: query
+        - name: message
           in: query
           required: true
           schema:
-            type: object
+            type: string
       responses:
         '200':
           description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
     post:
       tags:
         - Echo
@@ -168,12 +177,26 @@ paths:
       responses:
         '200':
           description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              properties:
+                message:
+                  type: string
+              required:
+                - message
   /api/v1/me:
     get:
       tags:

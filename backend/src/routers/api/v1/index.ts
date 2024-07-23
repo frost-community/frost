@@ -22,11 +22,11 @@ export class ApiVer1Router {
     }));
 
     router.get('/echo', endpoint((req, res) => {
-      res.status(200).json(req.query);
+      res.status(200).json({ message: req.query.message });
     }));
 
     router.post('/echo', endpoint((req, res) => {
-      res.status(200).json(req.body);
+      res.status(200).json({ message: req.body.message });
     }));
 
     router.get('/me', endpoint(async (req, res) => {

@@ -1,9 +1,9 @@
 import express from 'express';
-import { Container, inject, injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
 import { RootRouter } from '../routers';
-//import * as OpenApiValidator from 'express-openapi-validator';
+import * as OpenApiValidator from 'express-openapi-validator';
 
 @injectable()
 export class HttpServerService {
@@ -16,11 +16,11 @@ export class HttpServerService {
     const app = express();
     app.use(express.json());
 
-    // app.use(OpenApiValidator.middleware({
-    //   apiSpec: '../spec/generated/openapi.yaml',
-    //   validateRequests: true,
-    //   validateResponses: false,
-    // }));
+    app.use(OpenApiValidator.middleware({
+      apiSpec: '../spec/generated/openapi.yaml',
+      validateRequests: true,
+      validateResponses: true,
+    }));
 
     app.use(this.rootRouter.create());
 
@@ -29,8 +29,15 @@ export class HttpServerService {
     });
     // @ts-ignore
     app.use((err, req, res, next) => {
+      if (err.expose == null || err.expose) {
+        if (err.status >= 400 && err.status < 500) {
+          res.status(err.status).json(err);
+          return;
+        }
+      }
       console.error(err);
-      res.status(500).json({ status: 500, error: { message: 'Internal server error' } });
+      const status = err.status || 500;
+      res.status(status).json({ status: status, error: { message: 'Internal server error' } });
     });
 
     return new Promise(resolve => {
