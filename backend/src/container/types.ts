@@ -8,12 +8,9 @@ const TYPES = {
   AccountService: Symbol.for('AccountService'),
   PasswordVerificationService: Symbol.for('PasswordVerificationService'),
 
-  // routes
-  RootRoute: Symbol.for('RootRoute'),
-  AccountsRoute: Symbol.for('AccountsRoute'),
-  EchoRoute: Symbol.for('EchoRoute'),
-  MeRoute: Symbol.for('MeRoute'),
-  UsersRoute: Symbol.for('UsersRoute'),
+  // routers
+  RootRouter: Symbol.for('RootRouter'),
+  ApiVer1Router: Symbol.for('ApiVer1Router'),
 };
 
 export { TYPES };

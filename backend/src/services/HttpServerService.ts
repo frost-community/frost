@@ -2,15 +2,14 @@ import express from 'express';
 import { Container, inject, injectable } from 'inversify';
 import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
+import { RootRouter } from '../routers';
 //import * as OpenApiValidator from 'express-openapi-validator';
-
-import { RootRoute } from '../routes';
 
 @injectable()
 export class HttpServerService {
   constructor(
     @inject(TYPES.AppConfig) private readonly config: AppConfig,
-    @inject(TYPES.RootRoute) private readonly rootRoute: RootRoute,
+    @inject(TYPES.RootRouter) private readonly rootRouter: RootRouter,
   ) {}
 
   listen(): Promise<void> {
@@ -23,7 +22,8 @@ export class HttpServerService {
     //   validateResponses: false,
     // }));
 
-    app.use(this.rootRoute.create());
+    app.use(this.rootRouter.create());
+
     app.use((req, res) => {
       res.status(404).json({ status: 404, error: { message: 'Not found' } });
     });
