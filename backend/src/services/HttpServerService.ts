@@ -4,6 +4,7 @@ import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
 import { RootRouter } from '../routers';
 import * as OpenApiValidator from 'express-openapi-validator';
+import { apiError } from '../modules/api-error';
 
 @injectable()
 export class HttpServerService {
@@ -19,19 +20,20 @@ export class HttpServerService {
     app.use(OpenApiValidator.middleware({
       apiSpec: '../spec/generated/openapi.yaml',
       validateRequests: true,
-      validateResponses: true,
+      validateResponses: (this.config.env == 'test'),
     }));
 
     app.use(this.rootRouter.create());
 
     app.use((req, res) => {
-      res.status(404).json({ status: 404, error: { message: 'Not found' } });
+      throw apiError('frost.endpointNotFound');
     });
     // @ts-ignore
     app.use((err, req, res, next) => {
+      OpenApiValidator.error.BadRequest
       if (err.expose == null || err.expose) {
         if (err.status >= 400 && err.status < 500) {
-          res.status(err.status).json(err);
+          res.status(err.status).json({ status: err.status, error: err });
           return;
         }
       }
