@@ -38,7 +38,7 @@ export class AccountService {
     };
   }
 
-  async get(accountId: string): Promise<AccountEntity> {
+  async get(opts: { accountId: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
@@ -48,7 +48,7 @@ export class AccountService {
     }).from(
       Account
     ).where(
-      eq(Account.accountId, accountId)
+      eq(Account.accountId, opts.accountId)
     );
 
     if (rows.length == 0) {
@@ -57,7 +57,7 @@ export class AccountService {
 
     return {
       ...rows[0],
-      users: await this.userService.listByAccountId(accountId),
+      users: await this.userService.listByAccountId(opts.accountId),
     };
   }
 }

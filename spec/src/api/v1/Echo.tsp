@@ -9,9 +9,9 @@ namespace Frost.Api.v1;
 interface Echo {
   @operationId("EchoGet")
   @get
-  echoGet(@query query: {}): {};
+  echoGet(@query message: string): { message: string };
 
   @operationId("EchoPost")
   @post
-  echoPost(@body body: {}): {};
+  echoPost(@body body: { message: string }): { message: string };
 }

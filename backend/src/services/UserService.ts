@@ -29,7 +29,7 @@ export class UserService {
     return rows[0];
   }
 
-  async get(userId: string): Promise<UserEntity> {
+  async get(opts: { userId: string }): Promise<UserEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
@@ -39,7 +39,7 @@ export class UserService {
     }).from(
       User
     ).where(
-      eq(User.userId, userId)
+      eq(User.userId, opts.userId)
     );
 
     if (rows.length == 0) {

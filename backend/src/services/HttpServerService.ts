@@ -1,49 +1,47 @@
 import express from 'express';
-import { Container, inject, injectable } from 'inversify';
-import { InversifyExpressServer } from 'inversify-express-utils';
+import { inject, injectable } from 'inversify';
 import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
+import { RootRouter } from '../routers';
 import * as OpenApiValidator from 'express-openapi-validator';
-
-// controllers
-import '../controllers/RootController';
-import '../controllers/api/EchoController';
-import '../controllers/api/MeController';
-import '../controllers/api/UsersController';
 
 @injectable()
 export class HttpServerService {
   constructor(
-    @inject(TYPES.Container) private readonly container: Container,
     @inject(TYPES.AppConfig) private readonly config: AppConfig,
+    @inject(TYPES.RootRouter) private readonly rootRouter: RootRouter,
   ) {}
 
   listen(): Promise<void> {
-    const server = new InversifyExpressServer(this.container);
+    const app = express();
+    app.use(express.json());
 
-    server.setConfig(app => {
-      app.use(express.json());
-      // app.use(OpenApiValidator.middleware({
-      //   apiSpec: '../spec/generated/openapi.yaml',
-      //   validateRequests: true,
-      //   validateResponses: false,
-      // }));
+    app.use(OpenApiValidator.middleware({
+      apiSpec: '../spec/generated/openapi.yaml',
+      validateRequests: true,
+      validateResponses: true,
+    }));
+
+    app.use(this.rootRouter.create());
+
+    app.use((req, res) => {
+      res.status(404).json({ status: 404, error: { message: 'Not found' } });
     });
-    server.setErrorConfig(app => {
-      app.use((req, res) => {
-        res.status(404).json({ status: 404, message: 'Not found' });
-      });
-      // @ts-ignore
-      app.use((err, req, res, next) => {
-        console.error(err);
-        res.status(500).json({ status: 500, message: 'Internal server error' });
-      });
+    // @ts-ignore
+    app.use((err, req, res, next) => {
+      if (err.expose == null || err.expose) {
+        if (err.status >= 400 && err.status < 500) {
+          res.status(err.status).json(err);
+          return;
+        }
+      }
+      console.error(err);
+      const status = err.status || 500;
+      res.status(status).json({ status: status, error: { message: 'Internal server error' } });
     });
 
     return new Promise(resolve => {
-      server
-        .build()
-        .listen(this.config.port, () => resolve());
+      app.listen(this.config.port, () => resolve());
     });
   }
 }
