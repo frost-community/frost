@@ -11,15 +11,15 @@ export class UserService {
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
   ) {}
 
-  async create(opts: { accountId: string, name: string, displayName: string }): Promise<UserEntity> {
+  async create(params: { accountId: string, name: string, displayName: string }): Promise<UserEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.insert(
       User
     ).values({
-      accountId: opts.accountId,
-      name: opts.name,
-      displayName: opts.displayName,
+      accountId: params.accountId,
+      name: params.name,
+      displayName: params.displayName,
     }).returning({
       userId: User.userId,
       name: User.name,
@@ -43,13 +43,13 @@ export class UserService {
     );
 
     if (rows.length == 0) {
-      throw new Error('not found');
+      throw new Error('userNotFound');
     }
 
     return rows[0];
   }
 
-  async listByAccountId(accountId: string): Promise<UserEntity[]> {
+  async listByAccountId(params: { accountId: string }): Promise<UserEntity[]> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
@@ -59,7 +59,7 @@ export class UserService {
     }).from(
       User
     ).where(
-      eq(User.accountId, accountId)
+      eq(User.accountId, params.accountId)
     );
 
     return rows;
