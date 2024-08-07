@@ -1,40 +1,124 @@
-export const errorInfo = {
-  // http standard
-  internalServerError: { name: 'Internal Server Error', status: 500 },
-  methodNotAllowed: { name: 'Method Not Allowed', status: 405 },
-  notFound: { name: 'Not Found', status: 404 },
-  forbidden: { name: 'Forbidden', status: 403 },
-  unauthorized: { name: 'Unauthorized', status: 401 },
-  badRequest: { name: 'Bad Request', status: 400 },
-  // application defined
-  endpointNotFound: { name: 'Endpoint Not Found', status: 404 },
-  accountNotFound: { name: 'Account Not Found', status: 404 },
-  userNotFound: { name: 'User Not Found', status: 404 },
-} satisfies Record<string, { name: string, status: number }>;
-
-export type ErrorCode = keyof typeof errorInfo;
-
-export interface IServiceError {
-  errorCode?: ErrorCode;
-  name: string;
-  status: number;
+export class AppError extends Error {
+  constructor(
+    public error: ErrorObject,
+  ) {
+    super(error.message);
+  }
 }
 
-export class ServiceError extends Error implements IServiceError {
+export interface ErrorObject {
+  code: string,
+  message: string,
+  status: number,
+}
+
+export function createError(error: ErrorObject): AppError {
+  return new AppError(error);
+}
+
+/**
+ * 任意のエラー情報を元にREST APIのエラーを組み立てます。
+*/
+export function buildRestApiError(err: unknown): { error: ErrorObject } {
+  // TODO: handle errors
+  // - app error
+  // - openapi validation error
+  // - server internal error
+  throw new Error('not implemented');
+}
+
+export class InvalidParamError implements ErrorObject {
+  code = 'invalidParam';
+  message = 'Invalid Param';
+  status = 400;
+  params: string[];
+
   constructor(
-    name: string,
-    public status: number,
-    public errorCode?: ErrorCode,
+    params: string[],
   ) {
-    super(name);
+    this.params = params;
   }
+}
 
-  create(errorCode: ErrorCode) {
-    const error = errorInfo[errorCode];
-    return new ServiceError(error.name, error.status, errorCode);
+export class AuthenticationRequiredError implements ErrorObject {
+  code = 'authenticationRequired';
+  message = 'Authentication Required';
+  status = 401;
+  path: string;
+
+  constructor(
+    path: string,
+  ) {
+    this.path = path;
   }
+}
 
-  createCustom(info: { name: string, status: number }) {
-    return new ServiceError(info.name, info.status);
+export class ServerError implements ErrorObject {
+  code = 'serverError';
+  message = 'Server Error';
+  status = 500;
+}
+
+export class AccessDenied implements ErrorObject {
+  code = 'accessDenied';
+  message = 'Access Denied';
+  status = 403;
+}
+
+export class AccountNotFound implements ErrorObject {
+  code = 'accountNotFound';
+  message = 'Account Not Found';
+  status = 404;
+  condition: {
+    accountId?: string,
+    email?: string,
+  };
+
+  constructor(
+    condition: AccountNotFound['condition'],
+  ) {
+    this.condition = condition;
+  }
+}
+
+export class UserNotFound implements ErrorObject {
+  code = 'userNotFound';
+  message = 'User Not Found';
+  status = 404;
+  condition: {
+    userId?: string,
+    userName?: string,
+  };
+
+  constructor(
+    condition: UserNotFound['condition'],
+  ) {
+    this.condition = condition;
+  }
+}
+
+export class EndpointNotFound implements ErrorObject {
+  code = 'endpointNotFound';
+  message = 'Endpoint Not Found';
+  status = 404;
+  path: string;
+
+  constructor(
+    path: string,
+  ) {
+    this.path = path;
+  }
+}
+
+export class MethodNotAllowed implements ErrorObject {
+  code = 'methodNotAllowed';
+  message = 'Method Not Allowed';
+  status = 405;
+  path: string;
+
+  constructor(
+    path: string,
+  ) {
+    this.path = path;
   }
 }
