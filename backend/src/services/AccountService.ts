@@ -6,6 +6,7 @@ import { AccountEntity } from '../entities/AccountEntity';
 import { DatabaseService } from './DatabaseService';
 import { UserService } from './UserService';
 import { PasswordVerificationService } from './PasswordVerificationService';
+import { AccountNotFound, createError } from '../modules/service-error';
 
 @injectable()
 export class AccountService {
@@ -52,7 +53,7 @@ export class AccountService {
     );
 
     if (rows.length == 0) {
-      throw new Error('accountNotFound');
+      throw createError(new AccountNotFound({ accountId: params.accountId }));
     }
 
     return {

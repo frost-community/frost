@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
-import { UserEntity } from 'src/entities/UserEntity';
+import { UserEntity } from '../entities/UserEntity';
 import { TYPES } from '../container/types';
 import { User } from '../database/schema';
 import { DatabaseService } from './DatabaseService';

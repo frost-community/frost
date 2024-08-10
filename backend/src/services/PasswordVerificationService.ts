@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import { TYPES } from '../container/types';
 import { PasswordVerification, PasswordVerificationRow } from '../database/schema';
 import { DatabaseService } from './DatabaseService';
+import { AccountNotFound, createError } from '../modules/service-error';
 
 /**
  * パスワード検証情報
@@ -61,7 +62,7 @@ export class PasswordVerificationService {
     );
 
     if (rows.length == 0) {
-      throw new Error('not found');
+      throw createError(new AccountNotFound({ accountId: params.accountId }));
     }
 
     return rows[0];

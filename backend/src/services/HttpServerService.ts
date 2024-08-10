@@ -4,7 +4,7 @@ import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
 import { RootRouter } from '../routers';
 import * as openapi from 'express-openapi-validator';
-import * as errors from '../modules/service-error';
+import { buildRestApiError, createError, EndpointNotFound } from '../modules/service-error';
 
 @injectable()
 export class HttpServerService {
@@ -26,11 +26,11 @@ export class HttpServerService {
     app.use(this.rootRouter.create());
 
     app.use((req, res, next) => {
-      next(errors.createError(new errors.EndpointNotFound()));
+      next(createError(new EndpointNotFound()));
     });
     // @ts-ignore
     app.use((err, req, res, next) => {
-      const errorResponse = errors.buildRestApiError(err);
+      const errorResponse = buildRestApiError(err);
       res.status(errorResponse.error.status).json(errorResponse);
       return;
     });
