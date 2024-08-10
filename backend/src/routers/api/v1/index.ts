@@ -15,39 +15,43 @@ export class ApiVer1Router {
   create() {
     const router = express.Router();
 
-    router.post('/accounts', endpoint(async (req, res) => {
+    router.post('/accounts', endpoint((req, res) => {
       const { name, password } = req.body;
-      const model = await this.accountService.create({ name, password });
-      res.status(200).json(model);
+      return this.accountService.create({ name, password });
     }));
 
     router.get('/echo', endpoint((req, res) => {
-      res.status(200).json({ message: req.query.message });
+      return { message: req.query.message };
     }));
 
     router.post('/echo', endpoint((req, res) => {
-      res.status(200).json({ message: req.body.message });
+      return { message: req.body.message };
     }));
 
-    router.get('/me', endpoint(async (req, res) => {
+    router.get('/me', endpoint((req, res) => {
       // TODO: get accountId of session user
-      const accountId = '00000001-0000-0000-0000-000000000000';
-
-      const model = await this.accountService.get({ accountId });
-      res.status(200).json(model);
-    }));
-
-    router.post('/users', endpoint(async (req, res) => {
       const accountId = '';
-      const { name, displayName } = req.body;
-      const model = await this.userService.create({ accountId, name, displayName });
-      res.status(200).json(model);
+
+      return this.accountService.get({ accountId });
     }));
 
-    router.get('/users/:userId', endpoint(async (req, res) => {
+    router.post('/users', endpoint((req, res) => {
+      // TODO: get accountId of session user
+      const accountId = '';
+
+      const { name, displayName } = req.body;
+      return this.userService.create({ accountId, name, displayName });
+    }));
+
+    router.get('/users/:userId', endpoint((req, res) => {
       const { userId } = req.params;
-      const model = await this.userService.get({ userId });
-      res.status(200).json(model);
+      return this.userService.get({ userId });
+    }));
+
+    router.delete('/users/:userId', endpoint(async (req, res) => {
+      const { userId } = req.params;
+      await this.userService.delete({ userId });
+      res.status(204).send();
     }));
 
     return router;

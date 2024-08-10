@@ -6,6 +6,7 @@ import { AccountEntity } from '../entities/AccountEntity';
 import { DatabaseService } from './DatabaseService';
 import { UserService } from './UserService';
 import { PasswordVerificationService } from './PasswordVerificationService';
+import { AccountNotFound, createError } from '../modules/service-error';
 
 @injectable()
 export class AccountService {
@@ -15,13 +16,13 @@ export class AccountService {
     @inject(TYPES.PasswordVerificationService) private readonly passwordVerificationService: PasswordVerificationService,
   ) {}
 
-  async create(opts: { name: string, password: string }): Promise<AccountEntity> {
+  async create(params: { name: string, password: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.insert(
       Account
     ).values({
-      name: opts.name,
+      name: params.name,
       passwordAuthEnabled: true,
     }).returning({
       accountId: Account.accountId,
@@ -30,7 +31,7 @@ export class AccountService {
     });
     const accountId = rows[0].accountId;
 
-    await this.passwordVerificationService.register(accountId, opts.password);
+    await this.passwordVerificationService.register({ accountId, password: params.password });
 
     return {
       ...rows[0],
@@ -38,7 +39,7 @@ export class AccountService {
     };
   }
 
-  async get(opts: { accountId: string }): Promise<AccountEntity> {
+  async get(params: { accountId: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
@@ -48,16 +49,16 @@ export class AccountService {
     }).from(
       Account
     ).where(
-      eq(Account.accountId, opts.accountId)
+      eq(Account.accountId, params.accountId)
     );
 
     if (rows.length == 0) {
-      throw new Error('not found');
+      throw createError(new AccountNotFound({ accountId: params.accountId }));
     }
 
     return {
       ...rows[0],
-      users: await this.userService.listByAccountId(opts.accountId),
+      users: await this.userService.listByAccountId({ accountId: params.accountId }),
     };
   }
 }

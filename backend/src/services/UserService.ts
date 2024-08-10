@@ -1,9 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
-import { UserEntity } from 'src/entities/UserEntity';
+import { UserEntity } from '../entities/UserEntity';
 import { TYPES } from '../container/types';
 import { User } from '../database/schema';
 import { DatabaseService } from './DatabaseService';
+import { createError, UserNotFound } from '../modules/service-error';
 
 @injectable()
 export class UserService {
@@ -11,15 +12,15 @@ export class UserService {
     @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
   ) {}
 
-  async create(opts: { accountId: string, name: string, displayName: string }): Promise<UserEntity> {
+  async create(params: { accountId: string, name: string, displayName: string }): Promise<UserEntity> {
     const db = this.db.getConnection();
 
     const rows = await db.insert(
       User
     ).values({
-      accountId: opts.accountId,
-      name: opts.name,
-      displayName: opts.displayName,
+      accountId: params.accountId,
+      name: params.name,
+      displayName: params.displayName,
     }).returning({
       userId: User.userId,
       name: User.name,
@@ -43,13 +44,13 @@ export class UserService {
     );
 
     if (rows.length == 0) {
-      throw new Error('not found');
+      throw createError(new UserNotFound({ userId: opts.userId }));
     }
 
     return rows[0];
   }
 
-  async listByAccountId(accountId: string): Promise<UserEntity[]> {
+  async listByAccountId(params: { accountId: string }): Promise<UserEntity[]> {
     const db = this.db.getConnection();
 
     const rows = await db.select({
@@ -59,9 +60,23 @@ export class UserService {
     }).from(
       User
     ).where(
-      eq(User.accountId, accountId)
+      eq(User.accountId, params.accountId)
     );
 
     return rows;
+  }
+
+  async delete(params: { userId: string }): Promise<void> {
+    const db = this.db.getConnection();
+
+    const rows = await db.delete(
+      User
+    ).where(
+      eq(User.userId, params.userId)
+    );
+
+    if (rows.rowCount == 0) {
+      throw createError(new UserNotFound({ userId: params.userId }));
+    }
   }
 }

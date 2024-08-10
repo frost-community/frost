@@ -3,7 +3,8 @@ import { inject, injectable } from 'inversify';
 import { AppConfig } from '../app';
 import { TYPES } from '../container/types';
 import { RootRouter } from '../routers';
-import * as OpenApiValidator from 'express-openapi-validator';
+import * as openapi from 'express-openapi-validator';
+import { buildRestApiError } from '../modules/service-error';
 
 @injectable()
 export class HttpServerService {
@@ -16,28 +17,23 @@ export class HttpServerService {
     const app = express();
     app.use(express.json());
 
-    app.use(OpenApiValidator.middleware({
+    app.use(openapi.middleware({
       apiSpec: '../spec/generated/openapi.yaml',
       validateRequests: true,
-      validateResponses: true,
+      validateResponses: (this.config.env == 'test'),
     }));
 
     app.use(this.rootRouter.create());
 
-    app.use((req, res) => {
-      res.status(404).json({ status: 404, error: { message: 'Not found' } });
+    app.use((req, res, next) => {
+      next(new Error('endpoint not implemented'));
     });
+
     // @ts-ignore
     app.use((err, req, res, next) => {
-      if (err.expose == null || err.expose) {
-        if (err.status >= 400 && err.status < 500) {
-          res.status(err.status).json(err);
-          return;
-        }
-      }
-      console.error(err);
-      const status = err.status || 500;
-      res.status(status).json({ status: status, error: { message: 'Internal server error' } });
+      const errorResponse = buildRestApiError(err);
+      res.status(errorResponse.error.status).json(errorResponse);
+      return;
     });
 
     return new Promise(resolve => {
