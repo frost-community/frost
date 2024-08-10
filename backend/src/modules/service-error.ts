@@ -67,7 +67,7 @@ export function buildRestApiError(err: unknown): { error: ErrorObject } {
 
 export class InvalidParam implements ErrorObject {
   code = 'invalidParam';
-  message = 'Invalid Paramer';
+  message = 'One or more of the parameters are invalid.';
   status = 400;
   details: openapiTypes.ValidationErrorItem[];
 
@@ -78,21 +78,21 @@ export class InvalidParam implements ErrorObject {
   }
 }
 
-export class NeedAuthentication implements ErrorObject {
-  code = 'needAuthentication';
-  message = 'Need Authentication';
+export class Unauthenticated implements ErrorObject {
+  code = 'unauthenticated';
+  message = 'Credentials are required for access.';
   status = 401;
 }
 
 export class AccessDenied implements ErrorObject {
   code = 'accessDenied';
-  message = 'Access Denied';
+  message = 'You do not have access permissions.';
   status = 403;
 }
 
 export class AccountNotFound implements ErrorObject {
   code = 'accountNotFound';
-  message = 'Account Not Found';
+  message = 'The specified account was not found.';
   status = 404;
   condition: {
     accountId?: string,
@@ -108,7 +108,7 @@ export class AccountNotFound implements ErrorObject {
 
 export class UserNotFound implements ErrorObject {
   code = 'userNotFound';
-  message = 'User Not Found';
+  message = 'The specified user was not found.';
   status = 404;
   condition: {
     userId?: string,
@@ -124,18 +124,18 @@ export class UserNotFound implements ErrorObject {
 
 export class EndpointNotFound implements ErrorObject {
   code = 'endpointNotFound';
-  message = 'Endpoint Not Found';
+  message = 'The specified API endpoint was not found.';
   status = 404;
 }
 
 export class MethodNotAllowed implements ErrorObject {
   code = 'methodNotAllowed';
-  message = 'Method Not Allowed';
+  message = 'This API endpoint does not support the specified operation.';
   status = 405;
 }
 
 export class ServerError implements ErrorObject {
   code = 'serverError';
-  message = 'Server Error';
+  message = 'An internal error occurred on the server.';
   status = 500;
 }
