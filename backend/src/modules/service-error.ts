@@ -1,15 +1,17 @@
+import { ValidationErrorItem } from "express-openapi-validator/dist/framework/types";
+
+export interface ErrorObject {
+  code: string,
+  message: string,
+  status: number,
+}
+
 export class AppError extends Error {
   constructor(
     public error: ErrorObject,
   ) {
     super(error.message);
   }
-}
-
-export interface ErrorObject {
-  code: string,
-  message: string,
-  status: number,
 }
 
 export function createError(error: ErrorObject): AppError {
@@ -27,36 +29,24 @@ export function buildRestApiError(err: unknown): { error: ErrorObject } {
   throw new Error('not implemented');
 }
 
-export class InvalidParamError implements ErrorObject {
+export class InvalidParamError extends Error implements ErrorObject {
   code = 'invalidParam';
-  message = 'Invalid Param';
+  message = 'Invalid Paramer';
   status = 400;
-  params: string[];
+  details: ValidationErrorItem[];
 
   constructor(
-    params: string[],
+    details: ValidationErrorItem[],
   ) {
-    this.params = params;
+    super('Invalid Parameter');
+    this.details = details;
   }
 }
 
-export class AuthenticationRequiredError implements ErrorObject {
-  code = 'authenticationRequired';
-  message = 'Authentication Required';
+export class NeedAuthentication implements ErrorObject {
+  code = 'needAuthentication';
+  message = 'Need Authentication';
   status = 401;
-  path: string;
-
-  constructor(
-    path: string,
-  ) {
-    this.path = path;
-  }
-}
-
-export class ServerError implements ErrorObject {
-  code = 'serverError';
-  message = 'Server Error';
-  status = 500;
 }
 
 export class AccessDenied implements ErrorObject {
@@ -121,4 +111,10 @@ export class MethodNotAllowed implements ErrorObject {
   ) {
     this.path = path;
   }
+}
+
+export class ServerError implements ErrorObject {
+  code = 'serverError';
+  message = 'Server Error';
+  status = 500;
 }
