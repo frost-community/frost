@@ -17,37 +17,33 @@ export class ApiVer1Router {
 
     router.post('/accounts', endpoint(async (req, res) => {
       const { name, password } = req.body;
-      const model = await this.accountService.create({ name, password });
-      res.status(200).json(model);
+      return await this.accountService.create({ name, password });
     }));
 
     router.get('/echo', endpoint((req, res) => {
-      res.status(200).json({ message: req.query.message });
+      return { message: req.query.message };
     }));
 
     router.post('/echo', endpoint((req, res) => {
-      res.status(200).json({ message: req.body.message });
+      return { message: req.body.message };
     }));
 
     router.get('/me', endpoint(async (req, res) => {
       // TODO: get accountId of session user
       const accountId = '00000001-0000-0000-0000-000000000000';
 
-      const model = await this.accountService.get({ accountId });
-      res.status(200).json(model);
+      return await this.accountService.get({ accountId });
     }));
 
     router.post('/users', endpoint(async (req, res) => {
       const accountId = '';
       const { name, displayName } = req.body;
-      const model = await this.userService.create({ accountId, name, displayName });
-      res.status(200).json(model);
+      return await this.userService.create({ accountId, name, displayName });
     }));
 
     router.get('/users/:userId', endpoint(async (req, res) => {
       const { userId } = req.params;
-      const model = await this.userService.get({ userId });
-      res.status(200).json(model);
+      return await this.userService.get({ userId });
     }));
 
     return router;

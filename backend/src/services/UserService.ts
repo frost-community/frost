@@ -4,6 +4,7 @@ import { UserEntity } from 'src/entities/UserEntity';
 import { TYPES } from '../container/types';
 import { User } from '../database/schema';
 import { DatabaseService } from './DatabaseService';
+import { createError, UserNotFound } from '../modules/service-error';
 
 @injectable()
 export class UserService {
@@ -43,7 +44,7 @@ export class UserService {
     );
 
     if (rows.length == 0) {
-      throw new Error('userNotFound');
+      throw createError(new UserNotFound({ userId: opts.userId }));
     }
 
     return rows[0];

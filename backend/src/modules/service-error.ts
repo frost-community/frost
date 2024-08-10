@@ -1,4 +1,5 @@
-import { ValidationErrorItem } from "express-openapi-validator/dist/framework/types";
+import * as openapiTypes from "express-openapi-validator/dist/framework/types";
+import { inspect } from "util";
 
 export interface ErrorObject {
   code: string,
@@ -22,21 +23,38 @@ export function createError(error: ErrorObject): AppError {
  * 任意のエラー情報を元にREST APIのエラーを組み立てます。
 */
 export function buildRestApiError(err: unknown): { error: ErrorObject } {
-  // TODO: handle errors
-  // - app error
-  // - openapi validation error
-  // - server internal error
-  throw new Error('not implemented');
+  // app error
+  if (err instanceof AppError) {
+    return { error: err.error };
+  }
+
+  // openapi validation error
+  if (err instanceof openapiTypes.HttpError) {
+    inspect(err, { depth: 10 });
+    return {
+      error: {
+        code: 'invalidParam',
+        message: err.message,
+        status: err.status,
+      },
+    };
+  }
+
+  // other errors
+  console.error(err);
+  return {
+    error: new ServerError(),
+  };
 }
 
 export class InvalidParamError extends Error implements ErrorObject {
   code = 'invalidParam';
   message = 'Invalid Paramer';
   status = 400;
-  details: ValidationErrorItem[];
+  details: openapiTypes.ValidationErrorItem[];
 
   constructor(
-    details: ValidationErrorItem[],
+    details: openapiTypes.ValidationErrorItem[],
   ) {
     super('Invalid Parameter');
     this.details = details;
@@ -91,13 +109,6 @@ export class EndpointNotFound implements ErrorObject {
   code = 'endpointNotFound';
   message = 'Endpoint Not Found';
   status = 404;
-  path: string;
-
-  constructor(
-    path: string,
-  ) {
-    this.path = path;
-  }
 }
 
 export class MethodNotAllowed implements ErrorObject {
