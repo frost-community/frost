@@ -30,13 +30,15 @@ export class ApiVer1Router {
 
     router.get('/me', endpoint((req, res) => {
       // TODO: get accountId of session user
-      const accountId = '00000001-0000-0000-0000-000000000000';
+      const accountId = '';
 
       return this.accountService.get({ accountId });
     }));
 
     router.post('/users', endpoint((req, res) => {
+      // TODO: get accountId of session user
       const accountId = '';
+
       const { name, displayName } = req.body;
       return this.userService.create({ accountId, name, displayName });
     }));
@@ -44,6 +46,12 @@ export class ApiVer1Router {
     router.get('/users/:userId', endpoint((req, res) => {
       const { userId } = req.params;
       return this.userService.get({ userId });
+    }));
+
+    router.delete('/users/:userId', endpoint(async (req, res) => {
+      const { userId } = req.params;
+      await this.userService.delete({ userId });
+      res.status(204).send();
     }));
 
     return router;

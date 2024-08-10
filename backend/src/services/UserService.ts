@@ -65,4 +65,18 @@ export class UserService {
 
     return rows;
   }
+
+  async delete(params: { userId: string }): Promise<void> {
+    const db = this.db.getConnection();
+
+    const rows = await db.delete(
+      User
+    ).where(
+      eq(User.userId, params.userId)
+    );
+
+    if (rows.rowCount == 0) {
+      throw createError(new UserNotFound({ userId: params.userId }));
+    }
+  }
 }
