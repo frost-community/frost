@@ -1,5 +1,4 @@
 import * as openapiTypes from "express-openapi-validator/dist/framework/types";
-import { inspect } from "util";
 
 export interface ErrorObject {
   code: string,
@@ -23,20 +22,39 @@ export function createError(error: ErrorObject): AppError {
  * 任意のエラー情報を元にREST APIのエラーを組み立てます。
 */
 export function buildRestApiError(err: unknown): { error: ErrorObject } {
-  // app error
-  if (err instanceof AppError) {
-    return { error: err.error };
+  // openapi error
+  if (err instanceof openapiTypes.HttpError) {
+    if (err instanceof openapiTypes.BadRequest) {
+      return {
+        error: new InvalidParam(err.errors),
+      };
+    }
+    // if (err instanceof openapiTypes.Unauthorized) {
+    //   return {
+    //     error: new NeedAuthentication(),
+    //   };
+    // }
+    // if (err instanceof openapiTypes.Forbidden) {
+    //   return {
+    //     error: new AccessDenied(),
+    //   };
+    // }
+    if (err instanceof openapiTypes.NotFound) {
+      return {
+        error: new EndpointNotFound(),
+      };
+    }
+    if (err instanceof openapiTypes.MethodNotAllowed) {
+      return {
+        error: new MethodNotAllowed(),
+      };
+    }
   }
 
-  // openapi validation error
-  if (err instanceof openapiTypes.HttpError) {
-    inspect(err, { depth: 10 });
+  // app error
+  if (err instanceof AppError) {
     return {
-      error: {
-        code: 'invalidParam',
-        message: err.message,
-        status: err.status,
-      },
+      error: err.error,
     };
   }
 
@@ -47,7 +65,7 @@ export function buildRestApiError(err: unknown): { error: ErrorObject } {
   };
 }
 
-export class InvalidParamError extends Error implements ErrorObject {
+export class InvalidParam implements ErrorObject {
   code = 'invalidParam';
   message = 'Invalid Paramer';
   status = 400;
@@ -56,7 +74,6 @@ export class InvalidParamError extends Error implements ErrorObject {
   constructor(
     details: openapiTypes.ValidationErrorItem[],
   ) {
-    super('Invalid Parameter');
     this.details = details;
   }
 }
@@ -115,13 +132,6 @@ export class MethodNotAllowed implements ErrorObject {
   code = 'methodNotAllowed';
   message = 'Method Not Allowed';
   status = 405;
-  path: string;
-
-  constructor(
-    path: string,
-  ) {
-    this.path = path;
-  }
 }
 
 export class ServerError implements ErrorObject {
