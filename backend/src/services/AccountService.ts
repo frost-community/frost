@@ -61,4 +61,18 @@ export class AccountService {
       users: await this.userService.listByAccountId({ accountId: params.accountId }),
     };
   }
+
+  async delete(params: { accountId: string }): Promise<void> {
+    const db = this.db.getConnection();
+
+    const rows = await db.delete(
+      Account
+    ).where(
+      eq(Account.accountId, params.accountId)
+    );
+
+    if (rows.rowCount == 0) {
+      throw createError(new AccountNotFound({ accountId: params.accountId }));
+    }
+  }
 }

@@ -15,11 +15,6 @@ export class ApiVer1Router {
   create() {
     const router = express.Router();
 
-    router.post('/accounts', endpoint((req, res) => {
-      const { name, password } = req.body;
-      return this.accountService.create({ name, password });
-    }));
-
     router.get('/echo', endpoint((req, res) => {
       return { message: req.query.message };
     }));
@@ -28,32 +23,61 @@ export class ApiVer1Router {
       return { message: req.body.message };
     }));
 
-    router.get('/me', endpoint((req, res) => {
-      // TODO: get accountId of session user
+    this.routeAccount(router);
+    this.routeUser(router);
+
+    return router;
+  }
+
+  private routeAccount(router: express.Router) {
+    // permission account.provider
+    router.post('/account', endpoint((req, res) => {
+      const { name, password } = req.body;
+      return this.accountService.create({ name, password });
+    }));
+
+    // permission account.read
+    router.get('/account/me', endpoint((req, res) => {
+      // TODO: get accountId of authenticated user
       const accountId = '';
 
       return this.accountService.get({ accountId });
     }));
 
-    router.post('/users', endpoint((req, res) => {
-      // TODO: get accountId of session user
+    // permission account.provider
+    router.delete('/account/me', endpoint(async (req, res) => {
+      // TODO: get accountId of authenticated user
       const accountId = '';
 
+      await this.accountService.delete({ accountId });
+      res.status(204).send();
+    }));
+  }
+
+  private routeUser(router: express.Router) {
+    // permission user.provider
+    router.post('/user', endpoint((req, res) => {
+      // TODO: get accountId of authenticated user
+      const accountId = '';
       const { name, displayName } = req.body;
+
       return this.userService.create({ accountId, name, displayName });
     }));
 
-    router.get('/users/:userId', endpoint((req, res) => {
-      const { userId } = req.params;
-      return this.userService.get({ userId });
+    // permission user.read
+    router.get('/user', endpoint((req, res) => {
+      const userId = req.query.userId as string | undefined;
+      const name = req.query.name as string | undefined;
+
+      return this.userService.get({ userId, name });
     }));
 
-    router.delete('/users/:userId', endpoint(async (req, res) => {
-      const { userId } = req.params;
+    // permission user.provider
+    router.delete('/user', endpoint(async (req, res) => {
+      const userId = req.query.userId as string;
+
       await this.userService.delete({ userId });
       res.status(204).send();
     }));
-
-    return router;
   }
 }
