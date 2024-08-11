@@ -9,11 +9,11 @@ tags:
   - name: Timeline
   - name: User
 paths:
-  /api/v1/accounts:
+  /api/v1/account:
     post:
       tags:
         - Account
-      operationId: RegisterAccount
+      operationId: CreateAccount
       parameters: []
       responses:
         '200':
@@ -28,6 +28,27 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewAccount'
+  /api/v1/account/me:
+    get:
+      tags:
+        - Account
+      operationId: GetMyAccount
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Account'
+    delete:
+      tags:
+        - Account
+      operationId: DeleteMyAccount
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
   /api/v1/chatrooms:
     post:
       tags:
@@ -197,20 +218,7 @@ paths:
                   type: string
               required:
                 - message
-  /api/v1/me:
-    get:
-      tags:
-        - Account
-      operationId: GetMe
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Account'
-  /api/v1/posts:
+  /api/v1/post:
     post:
       tags:
         - Timeline
@@ -229,7 +237,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewTimelinePost'
-  /api/v1/posts/{postId}:
+  /api/v1/post/{postId}:
     get:
       tags:
         - Timeline
@@ -262,7 +270,7 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/users:
+  /api/v1/user:
     post:
       tags:
         - User
@@ -281,15 +289,19 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewUser'
-  /api/v1/users/{userId}:
     get:
       tags:
         - User
       operationId: GetUser
       parameters:
         - name: userId
-          in: path
-          required: true
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: false
           schema:
             type: string
       responses:
@@ -305,7 +317,7 @@ paths:
       operationId: DeleteUser
       parameters:
         - name: userId
-          in: path
+          in: query
           required: true
           schema:
             type: string

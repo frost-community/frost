@@ -5,9 +5,13 @@ using TypeSpec.OpenAPI;
 namespace Frost.Api.v1;
 
 @tag("Account")
-@route("/me")
+@route("/account/me")
 interface Me {
-  @operationId("GetMe")
+  @operationId("GetMyAccount")
   @get
-  getMe(): Account;
+  getMyAccount(): Account;
+
+  @operationId("DeleteMyAccount")
+  @delete
+  deleteMyAccount(): void;
 }

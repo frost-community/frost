@@ -10,7 +10,7 @@ model NewUser {
 }
 
 @tag("User")
-@route("/users")
+@route("/user")
 interface Users {
   @operationId("CreateUser")
   @post
@@ -18,9 +18,9 @@ interface Users {
 
   @operationId("GetUser")
   @get
-  getUser(@path userId: string): User;
+  getUser(@query userId?: string, @query name?: string): User;
 
   @operationId("DeleteUser")
   @delete
-  deleteUser(@path userId: string): void;
+  deleteUser(@query userId: string): void;
 }

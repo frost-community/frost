@@ -10,9 +10,9 @@ model NewAccount {
 }
 
 @tag("Account")
-@route("/accounts")
+@route("/account")
 interface Accounts {
-  @operationId("RegisterAccount")
+  @operationId("CreateAccount")
   @post
-  registerAccount(@body account: NewAccount): Account;
+  createAccount(@body account: NewAccount): Account;
 }
