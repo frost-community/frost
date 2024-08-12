@@ -26,9 +26,9 @@
     "express": "^4.17.0",
     "express-openapi-validator": "^5.2.0",
     "inversify": "^6.0.0",
-    "inversify-express-utils": "^6.4.0",
     "pg": "^8.11.0",
-    "reflect-metadata": "^0.2.0"
+    "reflect-metadata": "^0.2.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.7.0",

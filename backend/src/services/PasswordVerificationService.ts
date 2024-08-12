@@ -65,7 +65,9 @@ export class PasswordVerificationService {
       throw createError(new AccountNotFound({ accountId: params.accountId }));
     }
 
-    return rows[0];
+    const row = rows[0]!;
+
+    return row;
   }
 
   /**

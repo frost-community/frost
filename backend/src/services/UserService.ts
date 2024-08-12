@@ -26,8 +26,9 @@ export class UserService {
       name: User.name,
       displayName: User.displayName,
     });
+    const row = rows[0]!;
 
-    return rows[0];
+    return row;
   }
 
   async get(opts: { userId?: string, name?: string }): Promise<UserEntity> {
@@ -54,8 +55,9 @@ export class UserService {
     if (rows.length == 0) {
       throw createError(new UserNotFound({ userId: opts.userId }));
     }
+    const row = rows[0]!;
 
-    return rows[0];
+    return row;
   }
 
   async listByAccountId(params: { accountId: string }): Promise<UserEntity[]> {
