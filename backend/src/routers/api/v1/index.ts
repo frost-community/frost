@@ -5,7 +5,7 @@ import { AccountService } from '../../../services/AccountService';
 import { UserService } from '../../../services/UserService';
 import { endpoint } from '../../util/endpoint';
 import { PasswordVerificationService } from '../../../services/PasswordVerificationService';
-import { createError } from '../../../modules/service-error';
+import { operations } from '../../../../generated/schema';
 
 @injectable()
 export class ApiVer1Router {
@@ -33,55 +33,50 @@ export class ApiVer1Router {
   }
 
   private routeAccount(router: express.Router) {
-    // permission: account.read
-    router.get('/account', endpoint((req, res) => {
-      const { accountId, name } = req.body as { accountId?: string, name?: string };
-      return this.accountService.get({ accountId, name });
+    router.get('/account', endpoint(async (req, res) => {
+      // permission: account.read
+      const query = req.query as NonNullable<operations['GetAccount']['parameters']['query']>;
+      return await this.accountService.get({ accountId: query.accountId, name: query.name }) as operations['GetAccount']['responses']['200']['content']['application/json'];
     }));
 
-    // permission account.delete
     router.delete('/account/me', endpoint(async (req, res) => {
+      // permission account.delete
       const accountId = ''; // TODO: get accountId of authenticated user
       await this.accountService.delete({ accountId });
       res.status(204).send();
     }));
 
-    // permission: account.special
-    router.post('/account/signup', endpoint((req, res) => {
-      const { name, password } = req.body as { name: string, password?: string };
-      return this.accountService.signup({ name, password });
+    router.post('/account/signup', endpoint(async (req, res) => {
+      // permission: account.auth
+      const body = req.body as NonNullable<operations['Signup']['requestBody']['content']['application/json']>;
+      return await this.accountService.signup({ name: body.name, password: body.password }) as operations['Signup']['responses']['200']['content']['application/json'];
     }));
 
-    // permission: account.special
-    router.post('/account/signin', endpoint((req, res) => {
-      const { name, password } = req.body as { name: string, password?: string };
-      return this.accountService.signin({ name, password });
+    router.post('/account/signin', endpoint(async (req, res) => {
+      // permission: account.auth
+      const body = req.body as NonNullable<operations['Signin']['requestBody']['content']['application/json']>;
+      return await this.accountService.signin({ name: body.name, password: body.password }) as operations['Signin']['responses']['200']['content']['application/json'];
     }));
   }
 
   private routeUser(router: express.Router) {
-    // permission user.provider
-    router.post('/user', endpoint((req, res) => {
-      // TODO: get accountId of authenticated user
-      const accountId = '';
-      const { name, displayName } = req.body;
-
-      return this.userService.create({ accountId, name, displayName });
+    router.post('/user', endpoint(async (req, res) => {
+      // permission user.provider
+      const accountId = ''; // TODO: get accountId of authenticated user
+      const body = req.body as NonNullable<operations['CreateUser']['requestBody']['content']['application/json']>;
+      return await this.userService.create({ accountId, name: body.name, displayName: body.displayName }) as operations['CreateUser']['responses']['200']['content']['application/json'];
     }));
 
-    // permission user.read
-    router.get('/user', endpoint((req, res) => {
-      const userId = req.query.userId as string | undefined;
-      const name = req.query.name as string | undefined;
-
-      return this.userService.get({ userId, name });
+    router.get('/user', endpoint(async (req, res) => {
+      // permission user.read
+      const query = req.query as NonNullable<operations['GetUser']['parameters']['query']>;
+      return await this.userService.get({ userId: query.userId, name: query.name }) as operations['GetUser']['responses']['200']['content']['application/json'];
     }));
 
-    // permission user.provider
     router.delete('/user', endpoint(async (req, res) => {
-      const userId = req.query.userId as string;
-
-      await this.userService.delete({ userId });
+      // permission user.provider
+      const query = req.query as NonNullable<operations['DeleteUser']['parameters']['query']>;
+      await this.userService.delete({ userId: query.userId });
       res.status(204).send();
     }));
   }

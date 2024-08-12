@@ -18,7 +18,7 @@ export class HttpServerService {
     app.use(express.json());
 
     app.use(openapi.middleware({
-      apiSpec: '../spec/generated/openapi.yaml',
+      apiSpec: './generated/openapi.yaml',
       validateRequests: true,
       validateResponses: (this.config.env == 'test'),
     }));

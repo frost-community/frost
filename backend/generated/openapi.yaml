@@ -1,0 +1,487 @@
+openapi: 3.0.0
+info:
+  title: Frost
+  version: 0.1.0
+tags:
+  - name: Account
+  - name: ChatRoom
+  - name: Echo
+  - name: Timeline
+  - name: User
+paths:
+  /api/v1/account:
+    get:
+      tags:
+        - Account
+      operationId: GetAccount
+      parameters:
+        - name: accountId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Account'
+  /api/v1/account/me:
+    delete:
+      tags:
+        - Account
+      operationId: DeleteMyAccount
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/account/signin:
+    post:
+      tags:
+        - Account
+      operationId: Signin
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthResult'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SigninBody'
+  /api/v1/account/signup:
+    post:
+      tags:
+        - Account
+      operationId: Signup
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthResult'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SignupBody'
+  /api/v1/chatrooms:
+    post:
+      tags:
+        - ChatRoom
+      operationId: CreateChatRoom
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.ChatRoom'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.NewChatRoom'
+  /api/v1/chatrooms/{chatRoomId}:
+    delete:
+      tags:
+        - ChatRoom
+      operationId: DeleteChatRoom
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/chatrooms/{chatRoomId}/members:
+    get:
+      tags:
+        - ChatRoom
+      operationId: ListChatRoomMember
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.ChatRoomMember'
+  /api/v1/chatrooms/{chatRoomId}/members/{userId}:
+    post:
+      tags:
+        - ChatRoom
+      operationId: CreateChatRoomMember
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.ChatRoomMember'
+    delete:
+      tags:
+        - ChatRoom
+      operationId: DeleteChatRoomMember
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/chatrooms/{chatRoomId}/posts:
+    post:
+      tags:
+        - ChatRoom
+      operationId: CreateChatRoomPost
+      parameters:
+        - name: chatRoomId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Post'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.NewChatRoomPost'
+  /api/v1/echo:
+    get:
+      tags:
+        - Echo
+      operationId: EchoGet
+      parameters:
+        - name: message
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+    post:
+      tags:
+        - Echo
+      operationId: EchoPost
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              required:
+                - message
+  /api/v1/post:
+    post:
+      tags:
+        - Timeline
+      operationId: CreateTimelinePost
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Post'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.NewTimelinePost'
+  /api/v1/post/{postId}:
+    get:
+      tags:
+        - Timeline
+        - ChatRoom
+      operationId: GetPost
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Post'
+    delete:
+      tags:
+        - Timeline
+        - ChatRoom
+      operationId: DeletePost
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/user:
+    post:
+      tags:
+        - User
+      operationId: CreateUser
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.User'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.CreateUserBody'
+    get:
+      tags:
+        - User
+      operationId: GetUser
+      parameters:
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.User'
+    delete:
+      tags:
+        - User
+      operationId: DeleteUser
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+components:
+  schemas:
+    Api.v1.Account:
+      type: object
+      required:
+        - accountId
+        - name
+        - passwordAuthEnabled
+        - users
+      properties:
+        accountId:
+          type: string
+        name:
+          type: string
+        passwordAuthEnabled:
+          type: boolean
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/Api.v1.User'
+    Api.v1.AuthResult:
+      type: object
+      required:
+        - accessToken
+        - account
+      properties:
+        accessToken:
+          type: string
+        account:
+          $ref: '#/components/schemas/Api.v1.Account'
+    Api.v1.ChatRoom:
+      type: object
+      required:
+        - chatRoomId
+        - title
+      properties:
+        chatRoomId:
+          type: string
+        title:
+          type: string
+    Api.v1.ChatRoomMember:
+      type: object
+      required:
+        - userId
+        - chatRoomId
+      properties:
+        userId:
+          type: string
+        chatRoomId:
+          type: string
+    Api.v1.CreateUserBody:
+      type: object
+      required:
+        - name
+        - displayName
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+    Api.v1.NewChatRoom:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+    Api.v1.NewChatRoomPost:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+    Api.v1.NewTimelinePost:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+    Api.v1.Post:
+      type: object
+      required:
+        - postId
+        - userId
+        - content
+      properties:
+        postId:
+          type: string
+        chatRoomId:
+          type: string
+        userId:
+          type: string
+        content:
+          type: string
+    Api.v1.SigninBody:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    Api.v1.SignupBody:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    Api.v1.User:
+      type: object
+      required:
+        - userId
+        - name
+        - displayName
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        displayName:
+          type: string
+servers:
+  - url: http://localhost:3000
+    description: local server
+    variables: {}
