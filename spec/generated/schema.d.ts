@@ -11,9 +11,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["GetAccount"];
         put?: never;
-        post: operations["CreateAccount"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -27,10 +27,42 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["GetMyAccount"];
+        get?: never;
         put?: never;
         post?: never;
         delete: operations["DeleteMyAccount"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/account/signin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Signin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/account/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Signup"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -190,6 +222,10 @@ export interface components {
             passwordAuthEnabled: boolean;
             users: components["schemas"]["Api.v1.User"][];
         };
+        "Api.v1.AuthResult": {
+            accessToken: string;
+            account: components["schemas"]["Api.v1.Account"];
+        };
         "Api.v1.ChatRoom": {
             chatRoomId: string;
             title: string;
@@ -198,9 +234,9 @@ export interface components {
             userId: string;
             chatRoomId: string;
         };
-        "Api.v1.NewAccount": {
+        "Api.v1.CreateUserBody": {
             name: string;
-            password: string;
+            displayName: string;
         };
         "Api.v1.NewChatRoom": {
             title: string;
@@ -211,15 +247,19 @@ export interface components {
         "Api.v1.NewTimelinePost": {
             content: string;
         };
-        "Api.v1.NewUser": {
-            name: string;
-            displayName: string;
-        };
         "Api.v1.Post": {
             postId: string;
             chatRoomId?: string;
             userId: string;
             content: string;
+        };
+        "Api.v1.SigninBody": {
+            name: string;
+            password?: string;
+        };
+        "Api.v1.SignupBody": {
+            name: string;
+            password?: string;
         };
         "Api.v1.User": {
             userId: string;
@@ -235,33 +275,12 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    CreateAccount: {
+    GetAccount: {
         parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Api.v1.NewAccount"];
+            query?: {
+                accountId?: string;
+                name?: string;
             };
-        };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.Account"];
-                };
-            };
-        };
-    };
-    GetMyAccount: {
-        parameters: {
-            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -294,6 +313,54 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    Signin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.SigninBody"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                };
+            };
+        };
+    };
+    Signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.SignupBody"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                };
             };
         };
     };
@@ -583,7 +650,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Api.v1.NewUser"];
+                "application/json": components["schemas"]["Api.v1.CreateUserBody"];
             };
         };
         responses: {

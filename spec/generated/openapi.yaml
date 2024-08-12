@@ -10,30 +10,21 @@ tags:
   - name: User
 paths:
   /api/v1/account:
-    post:
-      tags:
-        - Account
-      operationId: CreateAccount
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Account'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.NewAccount'
-  /api/v1/account/me:
     get:
       tags:
         - Account
-      operationId: GetMyAccount
-      parameters: []
+      operationId: GetAccount
+      parameters:
+        - name: accountId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: The request has succeeded.
@@ -41,6 +32,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Api.v1.Account'
+  /api/v1/account/me:
     delete:
       tags:
         - Account
@@ -49,6 +41,44 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
+  /api/v1/account/signin:
+    post:
+      tags:
+        - Account
+      operationId: Signin
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthResult'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SigninBody'
+  /api/v1/account/signup:
+    post:
+      tags:
+        - Account
+      operationId: Signup
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthResult'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SignupBody'
   /api/v1/chatrooms:
     post:
       tags:
@@ -288,7 +318,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Api.v1.NewUser'
+              $ref: '#/components/schemas/Api.v1.CreateUserBody'
     get:
       tags:
         - User
@@ -344,6 +374,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Api.v1.User'
+    Api.v1.AuthResult:
+      type: object
+      required:
+        - accessToken
+        - account
+      properties:
+        accessToken:
+          type: string
+        account:
+          $ref: '#/components/schemas/Api.v1.Account'
     Api.v1.ChatRoom:
       type: object
       required:
@@ -364,15 +404,15 @@ components:
           type: string
         chatRoomId:
           type: string
-    Api.v1.NewAccount:
+    Api.v1.CreateUserBody:
       type: object
       required:
         - name
-        - password
+        - displayName
       properties:
         name:
           type: string
-        password:
+        displayName:
           type: string
     Api.v1.NewChatRoom:
       type: object
@@ -395,16 +435,6 @@ components:
       properties:
         content:
           type: string
-    Api.v1.NewUser:
-      type: object
-      required:
-        - name
-        - displayName
-      properties:
-        name:
-          type: string
-        displayName:
-          type: string
     Api.v1.Post:
       type: object
       required:
@@ -419,6 +449,24 @@ components:
         userId:
           type: string
         content:
+          type: string
+    Api.v1.SigninBody:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+    Api.v1.SignupBody:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        password:
           type: string
     Api.v1.User:
       type: object
