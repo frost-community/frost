@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
 import { TYPES } from '../container/types';
 import { Account } from '../database/schema';
@@ -16,9 +16,8 @@ export class AccountService {
     @inject(TYPES.PasswordVerificationService) private readonly passwordVerificationService: PasswordVerificationService,
   ) {}
 
-  async create(params: { name: string, password: string }): Promise<AccountEntity> {
+  async create(params: { name: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
-
     const rows = await db.insert(
       Account
     ).values({
@@ -29,19 +28,20 @@ export class AccountService {
       name: Account.name,
       passwordAuthEnabled: Account.passwordAuthEnabled,
     });
-    const accountId = rows[0].accountId;
-
-    await this.passwordVerificationService.register({ accountId, password: params.password });
-
+    const account = rows[0];
     return {
-      ...rows[0],
+      ...account,
       users: [],
     };
   }
 
-  async get(params: { accountId: string }): Promise<AccountEntity> {
+  async get(params: { accountId?: string, name?: string }): Promise<AccountEntity> {
     const db = this.db.getConnection();
-
+    // either accountId or name must be specified
+    if ([params.accountId, params.name].every(x => x == null)) {
+      // TODO: エラー内容改善
+      throw createError(new AccountNotFound({ accountId: params.accountId, name: params.name }));
+    }
     const rows = await db.select({
       accountId: Account.accountId,
       name: Account.name,
@@ -49,28 +49,28 @@ export class AccountService {
     }).from(
       Account
     ).where(
-      eq(Account.accountId, params.accountId)
+      and(
+        eq(Account.accountId, params.accountId ?? Account.accountId),
+        eq(Account.accountId, params.name ?? Account.accountId)
+      )
     );
-
-    if (rows.length == 0) {
-      throw createError(new AccountNotFound({ accountId: params.accountId }));
+    if (rows.length != 1) {
+      throw createError(new AccountNotFound({ accountId: params.accountId, name: params.name }));
     }
-
+    const account = rows[0];
     return {
       ...rows[0],
-      users: await this.userService.listByAccountId({ accountId: params.accountId }),
+      users: await this.userService.listByAccountId({ accountId: account.accountId }),
     };
   }
 
   async delete(params: { accountId: string }): Promise<void> {
     const db = this.db.getConnection();
-
     const rows = await db.delete(
       Account
     ).where(
       eq(Account.accountId, params.accountId)
     );
-
     if (rows.rowCount == 0) {
       throw createError(new AccountNotFound({ accountId: params.accountId }));
     }

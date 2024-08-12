@@ -33,6 +33,11 @@ export class UserService {
   async get(opts: { userId?: string, name?: string }): Promise<UserEntity> {
     const db = this.db.getConnection();
 
+    // either userId or name must be specified
+    if ([opts.userId, opts.name].every(x => x == null)) {
+      throw createError(new UserNotFound({ userId: opts.userId, userName: opts.name }));
+    }
+
     const rows = await db.select({
       userId: User.userId,
       name: User.name,

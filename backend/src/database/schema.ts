@@ -4,13 +4,11 @@ import * as D from 'drizzle-orm/pg-core';
 
 export const Account = D.pgTable('account', {
   accountId: D.uuid('account_id').primaryKey().defaultRandom(),
-  name: D.varchar('name', { length: 64 }).notNull(),
+  name: D.varchar('name', { length: 64 }).unique().notNull(),
   passwordAuthEnabled: D.boolean('password_auth_enabled').notNull(),
 });
-
-export type AccountRow = typeof Account.$inferSelect;
-
-export type AccountInsertParams = typeof Account.$inferInsert;
+export type InferSelectAccount = typeof Account.$inferSelect;
+export type InferInsertAccount = typeof Account.$inferInsert;
 
 // password verification
 
@@ -22,10 +20,8 @@ export const PasswordVerification = D.pgTable('password_verification', {
   iteration: D.integer('iteration').notNull(),
   hash: D.varchar('hash', { length: 128 }).notNull(),
 });
-
-export type PasswordVerificationRow = typeof PasswordVerification.$inferSelect;
-
-export type PasswordVerificationInsertParams = typeof PasswordVerification.$inferInsert;
+export type InferSelectPasswordVerification = typeof PasswordVerification.$inferSelect;
+export type InferInsertPasswordVerification = typeof PasswordVerification.$inferInsert;
 
 // user
 
@@ -35,7 +31,5 @@ export const User = D.pgTable('user', {
   name: D.varchar('name', { length: 64 }).unique().notNull(),
   displayName: D.varchar('display_name', { length: 64 }).default('frost user').notNull(),
 });
-
-export type UserRow = typeof User.$inferSelect;
-
-export type UserInsertParams = typeof User.$inferInsert;
+export type InferSelectUser = typeof User.$inferSelect;
+export type InferInsertUser = typeof User.$inferInsert;
