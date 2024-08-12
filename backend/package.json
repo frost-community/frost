@@ -7,6 +7,7 @@
     "build": "tsc --project tsconfig.build.json",
     "rebuild": "pnpm clean && pnpm build",
     "clean": "rm -rf dist",
+    "update-spec": "mkdir -p generated && cp -r ../spec/generated/* generated",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "migration:generate": "drizzle-kit generate --name migration",
     "migration:push": "drizzle-kit push",
