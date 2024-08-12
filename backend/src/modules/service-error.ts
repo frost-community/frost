@@ -96,7 +96,7 @@ export class AccountNotFound implements ErrorObject {
   status = 404;
   condition: {
     accountId?: string,
-    email?: string,
+    name?: string,
   };
 
   constructor(

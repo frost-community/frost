@@ -7,6 +7,7 @@
     "build": "tsc --project tsconfig.build.json",
     "rebuild": "pnpm clean && pnpm build",
     "clean": "rm -rf dist",
+    "update-spec": "mkdir -p generated && cp -r ../spec/generated/* generated",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "migration:generate": "drizzle-kit generate --name migration",
     "migration:push": "drizzle-kit push",
@@ -26,9 +27,11 @@
     "express": "^4.17.0",
     "express-openapi-validator": "^5.2.0",
     "inversify": "^6.0.0",
-    "inversify-express-utils": "^6.4.0",
+    "passport": "^0.7.0",
+    "passport-oauth2": "^1.8.0",
     "pg": "^8.11.0",
-    "reflect-metadata": "^0.2.0"
+    "reflect-metadata": "^0.2.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.7.0",

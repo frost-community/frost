@@ -52,7 +52,7 @@ export class DatabaseService {
     if (!this.isConnected()) {
       throw new Error('It is not connected to the database');
     }
-    return this.#connectionLayers[0];
+    return this.#connectionLayers[0]!;
   }
 
   /**

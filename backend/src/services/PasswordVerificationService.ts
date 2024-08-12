@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { Container, inject, injectable } from 'inversify';
 import crypto from 'node:crypto';
 import { TYPES } from '../container/types';
-import { PasswordVerification, PasswordVerificationRow } from '../database/schema';
+import { PasswordVerification, InferSelectPasswordVerification } from '../database/schema';
 import { DatabaseService } from './DatabaseService';
 import { AccountNotFound, createError } from '../modules/service-error';
 
@@ -52,7 +52,7 @@ export class PasswordVerificationService {
   /**
    * 検証情報を取得します。
   */
-  private async get(params: { accountId: string }): Promise<PasswordVerificationRow> {
+  private async get(params: { accountId: string }): Promise<InferSelectPasswordVerification> {
     const db = this.db.getConnection();
 
     const rows = await db.select().from(
@@ -65,7 +65,9 @@ export class PasswordVerificationService {
       throw createError(new AccountNotFound({ accountId: params.accountId }));
     }
 
-    return rows[0];
+    const row = rows[0]!;
+
+    return row;
   }
 
   /**

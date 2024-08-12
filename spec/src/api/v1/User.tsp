@@ -4,23 +4,23 @@ using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
 
-model NewUser {
+model CreateUserBody {
   name: string;
   displayName: string;
 }
 
 @tag("User")
-@route("/users")
-interface Users {
+@route("/user")
+interface UserApi {
   @operationId("CreateUser")
   @post
-  createUser(@body user: NewUser): User;
+  createUser(@body user: CreateUserBody): User;
 
   @operationId("GetUser")
   @get
-  getUser(@path userId: string): User;
+  getUser(@query userId?: string, @query name?: string): User;
 
   @operationId("DeleteUser")
   @delete
-  deleteUser(@path userId: string): void;
+  deleteUser(@query userId: string): void;
 }

@@ -8,7 +8,7 @@ model NewTimelinePost {
   content: string;
 }
 
-@route("/posts")
+@route("/post")
 interface Posts {
   @tag("Timeline")
   @operationId("CreateTimelinePost")
