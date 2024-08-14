@@ -11,6 +11,10 @@
 FROM mcr.microsoft.com/devcontainers/base:noble AS devcontainer
 RUN apt-get update
 
+# Install sudo (for post_create_custom.sh)
+RUN apt-get install -y sudo
+RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+
 # Install network tools
 RUN apt-get install -y iputils-ping net-tools
 
