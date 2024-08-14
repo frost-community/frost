@@ -7,6 +7,7 @@ const TYPES = {
   UserService: Symbol.for('UserService'),
   AccountService: Symbol.for('AccountService'),
   PasswordVerificationService: Symbol.for('PasswordVerificationService'),
+  FrontendRenderingService: Symbol.for('FrontendRenderingService'),
 
   // routers
   RootRouter: Symbol.for('RootRouter'),

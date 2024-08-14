@@ -1,13 +1,16 @@
 import { Container } from 'inversify';
+import path from 'node:path';
 import { App, AppConfig } from '../app';
-import { DatabaseService } from '../services/DatabaseService';
-import { HttpServerService } from '../services/HttpServerService';
-import { TYPES } from './types';
-import { UserService } from '../services/UserService';
-import { AccountService } from '../services/AccountService';
-import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { env } from '../environment/variables';
 import { RootRouter } from '../routers';
 import { ApiVer1Router } from '../routers/api/v1';
+import { AccountService } from '../services/AccountService';
+import { DatabaseService } from '../services/DatabaseService';
+import { FrontendRenderingService } from '../services/FrontendRenderingService';
+import { HttpServerService } from '../services/HttpServerService';
+import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { UserService } from '../services/UserService';
+import { TYPES } from './types';
 
 export function setupContainer(container: Container) {
   // app
@@ -15,8 +18,19 @@ export function setupContainer(container: Container) {
 
   // app config
   const appConfig: AppConfig = {
-    port: 3000,
-    env: 'development',
+    port: env.PORT,
+    env: env.ENV,
+    origin: 'https://frost.example.com',
+    siteName: 'Frost',
+    frontendServing: {
+      staticDirectoryPath: path.resolve(
+        process.cwd(),
+        '..',
+        'frontend',
+        'dist',
+      ),
+      ejsRelativePath: 'index.ejs',
+    },
   };
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
@@ -26,6 +40,7 @@ export function setupContainer(container: Container) {
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
   container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
+  container.bind<FrontendRenderingService>(TYPES.FrontendRenderingService).to(FrontendRenderingService);
 
   // routers
   container.bind<RootRouter>(TYPES.RootRouter).to(RootRouter);
