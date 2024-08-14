@@ -13,7 +13,7 @@ RUN apt-get update
 
 # Install sudo (for post_create_custom.sh)
 RUN apt-get install -y sudo
-RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
 
 # Install network tools
 RUN apt-get install -y iputils-ping net-tools
