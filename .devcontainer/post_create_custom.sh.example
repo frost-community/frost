@@ -4,7 +4,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Install Vim
+# Install Emacs
 sudo apt-get update
 sudo apt-get install emacs --yes
 
