@@ -8,26 +8,14 @@
 # |                                                                                        | #
 # +----------------------------------------------------------------------------------------+ #
 
-# Node.js 20 image on Debian 12 (bookworm)
-FROM node:20-bookworm AS devcontainer
-ARG USERNAME=node
-
+FROM mcr.microsoft.com/devcontainers/base:noble AS devcontainer
 RUN apt-get update
 
-# Install sudo
-RUN apt-get install -y sudo
-RUN echo "node ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/node
+# Add sudoers (for post_create_custom.sh)
+RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
 
-# Install ping
+# Install network tools
 RUN apt-get install -y iputils-ping net-tools
 
 # Install PostgreSQL
-RUN apt-get install -y postgresql postgresql-contrib
-
-# Install pnpm
-RUN corepack enable pnpm
-
-# Switch user
-# この操作により権限が一般ユーザーになります。
-USER $USERNAME
-WORKDIR /home/$USERNAME/
+# RUN apt-get install -y postgresql postgresql-contrib

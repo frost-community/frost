@@ -4,15 +4,28 @@
   "service": "devcontainer",
   "workspaceFolder": "/workspace",
   "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
-  "remoteUser": "node",
-  "shutdownAction": "none",
+  "remoteUser": "ubuntu",
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/ubuntu/.ssh,readonly,type=bind"
   ],
   // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
-  // Configure tool-specific properties.
-  // "customizations": {},
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "installGradle": true,
+      "version": "22.0.1",
+      "jdkDistro": "open",
+      "gradleVersion": "7.5.1",
+      "mavenVersion": "latest",
+      "antVersion": "latest",
+      "groovyVersion": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20.16.0",
+      "nvmVersion": "latest"
+    }
+  },
   "customizations": {
     "vscode": {
       "extensions": [

@@ -4,8 +4,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Install Vim
-sudo apt-get install vim --yes
+# Install Emacs
+sudo apt-get update
+sudo apt-get install emacs --yes
 
 # [README]
 # Dev Containerのコンテナー作成後にお好きな処理 (お気に入りのエディターのインストールなど)をコンテナーで実行させたい場合は
