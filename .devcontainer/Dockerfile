@@ -11,8 +11,7 @@
 FROM mcr.microsoft.com/devcontainers/base:noble AS devcontainer
 RUN apt-get update
 
-# Install sudo (for post_create_custom.sh)
-RUN apt-get install -y sudo
+# Add sudoers (for post_create_custom.sh)
 RUN echo "ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/ubuntu
 
 # Install network tools

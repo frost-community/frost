@@ -14,15 +14,15 @@
   "features": {
     "ghcr.io/devcontainers/features/java:1": {
       "installGradle": true,
-      "version": "latest",
+      "version": "22.0.1",
       "jdkDistro": "open",
-      "gradleVersion": "latest",
+      "gradleVersion": "7.5.1",
       "mavenVersion": "latest",
       "antVersion": "latest",
       "groovyVersion": "latest"
     },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "lts",
+      "version": "20.16.0",
       "nvmVersion": "latest"
     }
   },
