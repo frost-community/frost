@@ -33,3 +33,33 @@ export const User = D.pgTable('user', {
 });
 export type InferSelectUser = typeof User.$inferSelect;
 export type InferInsertUser = typeof User.$inferInsert;
+
+// token
+
+export const Token = D.pgTable('token', {
+  tokenId: D.uuid('token_id').primaryKey().defaultRandom(),
+
+  // access_token, refresh_token
+  tokenKind: D.varchar('token_kind', { length: 16 }).notNull(),
+
+  userId: D.uuid('user_id').notNull(),
+
+  token: D.varchar('token', { length: 32 }).notNull(),
+
+  // nullは無期限を表す
+  expires: D.timestamp('expires', { mode: 'string' }),
+});
+export type InferSelectToken = typeof Token.$inferSelect;
+export type InferInsertToken = typeof Token.$inferInsert;
+
+// token scope
+
+export const TokenScope = D.pgTable('token_scope', {
+  tokenScopeId: D.uuid('token_scope_id').primaryKey().defaultRandom(),
+
+  tokenId: D.uuid('token_id').notNull(),
+
+  scopeName: D.varchar('scope_name', { length: 32 }).notNull(),
+});
+export type InferSelectTokenScope = typeof TokenScope.$inferSelect;
+export type InferInsertTokenScope = typeof TokenScope.$inferInsert;

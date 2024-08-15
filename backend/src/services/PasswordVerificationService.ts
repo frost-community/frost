@@ -3,7 +3,7 @@ import { Container, inject, injectable } from 'inversify';
 import crypto from 'node:crypto';
 import { TYPES } from '../container/types';
 import { PasswordVerification, InferSelectPasswordVerification } from '../database/schema';
-import { DatabaseService } from './DatabaseService';
+import { Database } from './DatabaseService';
 import { AccountNotFound, createError } from '../modules/service-error';
 
 /**
@@ -19,32 +19,32 @@ type PasswordVerificationInfo = {
 @injectable()
 export class PasswordVerificationService {
   constructor(
-    @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
   ) {}
 
   /**
    * パスワードの検証情報を登録します。
   */
-  async register(params: { accountId: string, password: string }): Promise<void> {
+  async register(params: { accountId: string, password: string }, db: Database): Promise<void> {
     const info = this.generateVerificationInfo({ password: params.password });
 
-    const db = this.db.getConnection();
-    await db.insert(
-      PasswordVerification
-    ).values({
-      accountId: params.accountId,
-      algorithm: info.algorithm,
-      salt: info.salt,
-      iteration: info.iteration,
-      hash: info.hash,
-    });
+    await db.getConnection()
+      .insert(
+        PasswordVerification
+      )
+      .values({
+        accountId: params.accountId,
+        algorithm: info.algorithm,
+        salt: info.salt,
+        iteration: info.iteration,
+        hash: info.hash,
+      });
   }
 
   /**
    * 検証情報からパスワードを検証します。
   */
-  async verifyPassword(params: { accountId: string, password: string }): Promise<boolean> {
-    const info = await this.get({ accountId: params.accountId });
+  async verifyPassword(params: { accountId: string, password: string }, db: Database): Promise<boolean> {
+    const info = await this.get({ accountId: params.accountId }, db);
     const hash = this.generateHash({ token: params.password, algorithm: info.algorithm, salt: info.salt, iteration: info.iteration });
     return (hash === info.hash);
   }
@@ -52,14 +52,15 @@ export class PasswordVerificationService {
   /**
    * 検証情報を取得します。
   */
-  private async get(params: { accountId: string }): Promise<InferSelectPasswordVerification> {
-    const db = this.db.getConnection();
-
-    const rows = await db.select().from(
-      PasswordVerification
-    ).where(
-      eq(PasswordVerification.accountId, params.accountId)
-    );
+  private async get(params: { accountId: string }, db: Database): Promise<InferSelectPasswordVerification> {
+    const rows = await db.getConnection()
+      .select()
+      .from(
+        PasswordVerification
+      )
+      .where(
+        eq(PasswordVerification.accountId, params.accountId)
+      );
 
     if (rows.length == 0) {
       throw createError(new AccountNotFound({ accountId: params.accountId }));

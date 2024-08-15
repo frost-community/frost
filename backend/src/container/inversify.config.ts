@@ -8,6 +8,7 @@ import { AccountService } from '../services/AccountService';
 import { PasswordVerificationService } from '../services/PasswordVerificationService';
 import { RootRouter } from '../routers';
 import { ApiVer1Router } from '../routers/api/v1';
+import { RouteService } from '../routers/util/endpoint';
 
 export function setupContainer(container: Container) {
   // app
@@ -17,14 +18,19 @@ export function setupContainer(container: Container) {
   const appConfig: AppConfig = {
     port: 3000,
     env: 'development',
+    db: {
+      connectionString: 'postgresql://postgres:postgres@db:5432/frost',
+      maxPool: 20,
+    },
   };
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
   // services
-  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
-  container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService());
+  container.bind<RouteService>(TYPES.RouteService).to(RouteService);
+  container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService(appConfig));
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
+  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
   container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
 
   // routers

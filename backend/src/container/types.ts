@@ -1,7 +1,9 @@
 const TYPES = {
-  App: Symbol.for('App'),
   Container: Symbol.for('Container'),
+
+  App: Symbol.for('App'),
   AppConfig: Symbol.for('AppConfig'),
+  RouteService: Symbol.for('RouteService'),
   DatabaseService: Symbol.for('DatabaseService'),
   HttpServerService: Symbol.for('HttpServerService'),
   UserService: Symbol.for('UserService'),
