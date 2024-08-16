@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import { TYPES } from '../container/types';
 import { PasswordVerification, InferSelectPasswordVerification } from '../database/schema';
 import { Database } from './DatabaseService';
-import { AccountNotFound, createError } from '../modules/service-error';
+import { createError, ResourceNotFound, UserNotFound } from '../modules/service-error';
 
 /**
  * パスワード検証情報
@@ -24,7 +24,7 @@ export class PasswordVerificationService {
   /**
    * パスワードの検証情報を登録します。
   */
-  async register(params: { accountId: string, password: string }, db: Database): Promise<void> {
+  async register(params: { userId: string, password: string }, db: Database): Promise<void> {
     const info = this.generateVerificationInfo({ password: params.password });
 
     await db.getConnection()
@@ -32,7 +32,7 @@ export class PasswordVerificationService {
         PasswordVerification
       )
       .values({
-        accountId: params.accountId,
+        userId: params.userId,
         algorithm: info.algorithm,
         salt: info.salt,
         iteration: info.iteration,
@@ -43,8 +43,8 @@ export class PasswordVerificationService {
   /**
    * 検証情報からパスワードを検証します。
   */
-  async verifyPassword(params: { accountId: string, password: string }, db: Database): Promise<boolean> {
-    const info = await this.get({ accountId: params.accountId }, db);
+  async verifyPassword(params: { userId: string, password: string }, db: Database): Promise<boolean> {
+    const info = await this.get({ userId: params.userId }, db);
     const hash = this.generateHash({ token: params.password, algorithm: info.algorithm, salt: info.salt, iteration: info.iteration });
     return (hash === info.hash);
   }
@@ -52,18 +52,18 @@ export class PasswordVerificationService {
   /**
    * 検証情報を取得します。
   */
-  private async get(params: { accountId: string }, db: Database): Promise<InferSelectPasswordVerification> {
+  private async get(params: { userId: string }, db: Database): Promise<InferSelectPasswordVerification> {
     const rows = await db.getConnection()
       .select()
       .from(
         PasswordVerification
       )
       .where(
-        eq(PasswordVerification.accountId, params.accountId)
+        eq(PasswordVerification.userId, params.userId)
       );
 
     if (rows.length == 0) {
-      throw createError(new AccountNotFound({ accountId: params.accountId }));
+      throw createError(new ResourceNotFound());
     }
 
     const row = rows[0]!;

@@ -1,14 +1,15 @@
 import { Container } from 'inversify';
 import { App, AppConfig } from '../app';
+
+import { RouteService } from '../routers/util/endpoint';
 import { DatabaseService } from '../services/DatabaseService';
 import { HttpServerService } from '../services/HttpServerService';
-import { TYPES } from './types';
 import { UserService } from '../services/UserService';
-import { AccountService } from '../services/AccountService';
 import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { TokenService } from '../services/TokenService';
+import { TYPES } from './types';
 import { RootRouter } from '../routers';
 import { ApiVer1Router } from '../routers/api/v1';
-import { RouteService } from '../routers/util/endpoint';
 
 export function setupContainer(container: Container) {
   // app
@@ -30,8 +31,8 @@ export function setupContainer(container: Container) {
   container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService(appConfig));
   container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
-  container.bind<AccountService>(TYPES.AccountService).to(AccountService);
   container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
+  container.bind<TokenService>(TYPES.TokenService).to(TokenService);
 
   // routers
   container.bind<RootRouter>(TYPES.RootRouter).to(RootRouter);

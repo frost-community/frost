@@ -3,13 +3,14 @@ import { Container, inject, injectable } from 'inversify';
 import { TYPES } from '../container/types';
 import { Database, DatabaseService } from './DatabaseService';
 import { InferInsertTokenScope, Token, TokenScope } from '../database/schema';
+import { TokenEntity } from '../modules/entities';
 
 @injectable()
 export class TokenService {
   constructor(
   ) {}
 
-  generateTokenValue(length: number) {
+  private generateTokenValue(length: number) {
     let token = '';
     for (const [_index, byte] of crypto.randomBytes(length).entries()) {
       token += TokenService.asciiTable[byte % TokenService.asciiTable.length];
@@ -17,8 +18,8 @@ export class TokenService {
     return token;
   }
 
-  async createToken(params: { userId: string, tokenKind: 'access_token' | 'refresh_token', scopes: string[] }, db: Database) {
-    const token = this.generateTokenValue(32);
+  async createToken(params: { userId: string, tokenKind: 'access_token' | 'refresh_token', scopes: string[] }, db: Database): Promise<TokenEntity> {
+    const tokenValue = this.generateTokenValue(32);
 
     // トークンを登録
     const tokenRows = await db.getConnection()
@@ -29,19 +30,18 @@ export class TokenService {
         {
           tokenKind: params.tokenKind,
           userId: params.userId,
-          token: token,
+          token: tokenValue,
         }
       ])
       .returning({
         tokenId: Token.tokenId,
       });
-    const accessTokenId = tokenRows[0]!.tokenId;
-    const refreshTokenId = tokenRows[1]!.tokenId;
+    const row = tokenRows[0]!;
 
     // トークンの権限を登録
-    const accessTokenScopes: InferInsertTokenScope[] = params.scopes.map(scope => {
+    const tokenScopes: InferInsertTokenScope[] = params.scopes.map(scope => {
       return {
-        tokenId: accessTokenId,
+        tokenId: row.tokenId,
         scopeName: scope,
       };
     });
@@ -50,13 +50,11 @@ export class TokenService {
         TokenScope
       )
       .values([
-        ...accessTokenScopes,
+        ...tokenScopes,
       ]);
 
-    db.release();
-
     return {
-      token,
+      token: tokenValue,
       scopes: [...params.scopes],
     };
   }

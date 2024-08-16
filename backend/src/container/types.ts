@@ -9,6 +9,7 @@ const TYPES = {
   UserService: Symbol.for('UserService'),
   AccountService: Symbol.for('AccountService'),
   PasswordVerificationService: Symbol.for('PasswordVerificationService'),
+  TokenService: Symbol.for('TokenService'),
 
   // routers
   RootRouter: Symbol.for('RootRouter'),
