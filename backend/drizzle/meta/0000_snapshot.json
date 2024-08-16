@@ -1,51 +1,22 @@
 {
-  "id": "6b940a04-25e0-4dd8-b9e5-45c6bb8bc19b",
+  "id": "3beb4f57-1a3b-4e46-bc6e-53c012ad375e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.account": {
-      "name": "account",
+    "public.password_verification": {
+      "name": "password_verification",
       "schema": "",
       "columns": {
-        "accountId": {
-          "name": "accountId",
+        "password_verification_id": {
+          "name": "password_verification_id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(64)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "passwordAuthEnabled": {
-          "name": "passwordAuthEnabled",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.passwordVerification": {
-      "name": "passwordVerification",
-      "schema": "",
-      "columns": {
-        "passwordVerificationId": {
-          "name": "passwordVerificationId",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "accountId": {
-          "name": "accountId",
+        "user_id": {
+          "name": "user_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -80,22 +51,86 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.user": {
-      "name": "user",
+    "public.token": {
+      "name": "token",
       "schema": "",
       "columns": {
-        "userId": {
-          "name": "userId",
+        "token_id": {
+          "name": "token_id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "accountId": {
-          "name": "accountId",
+        "token_kind": {
+          "name": "token_kind",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.token_scope": {
+      "name": "token_scope",
+      "schema": "",
+      "columns": {
+        "token_scope_id": {
+          "name": "token_scope_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "token_id": {
+          "name": "token_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "scope_name": {
+          "name": "scope_name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -103,12 +138,18 @@
           "primaryKey": false,
           "notNull": true
         },
-        "displayName": {
-          "name": "displayName",
+        "display_name": {
+          "name": "display_name",
           "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true,
           "default": "'frost user'"
+        },
+        "password_auth_enabled": {
+          "name": "password_auth_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},

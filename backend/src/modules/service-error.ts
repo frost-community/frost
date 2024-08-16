@@ -106,6 +106,12 @@ export class AccountNotFound implements ErrorObject {
   }
 }
 
+export class ResourceNotFound implements ErrorObject {
+  code = 'resourceNotFound';
+  message = 'The specified resource was not found.';
+  status = 404;
+}
+
 export class UserNotFound implements ErrorObject {
   code = 'userNotFound';
   message = 'The specified user was not found.';

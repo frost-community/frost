@@ -7,17 +7,20 @@ import { DatabaseService } from './services/DatabaseService';
 export type AppConfig = {
   port: number,
   env: 'development' | 'production' | 'test',
+  db: {
+    connectionString: string,
+    maxPool?: number,
+  },
 };
 
 @injectable()
 export class App {
   constructor(
     @inject(TYPES.HttpServerService) private readonly http: HttpServerService,
-    @inject(TYPES.DatabaseService) private readonly db: DatabaseService,
   ) {}
 
   async run(): Promise<void> {
-    await this.db.connect();
+    // TODO: validate app config
     await this.http.listen();
   }
 }

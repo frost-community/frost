@@ -1,12 +1,35 @@
 import { drizzle, NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { Container, inject, injectable } from 'inversify';
-import { Pool } from 'pg';
+import { Pool, PoolClient } from 'pg';
 import * as schema from '../database/schema';
 import { TYPES } from '../container/types';
 import { PgDatabase } from 'drizzle-orm/pg-core';
+import { PgTransaction } from 'drizzle-orm/pg-core';
+import { ExtractTablesWithRelations } from 'drizzle-orm';
+import { AppConfig } from '../app';
 
-@injectable()
 export class DatabaseService {
+  private pool: Pool;
+
+  constructor(
+    config: AppConfig,
+  ) {
+    this.pool = new Pool({
+      connectionString: config.db.connectionString,
+      max: config.db.maxPool ?? 10,
+    });
+  }
+
+  /**
+   * データベースのコネクションを取得します。
+  */
+  async acquire() {
+    const internalClient = await this.pool.connect();
+    return new Database(internalClient);
+  }
+}
+
+export class Database {
   /**
    * コネクションを保持する配列。
    * 
@@ -16,33 +39,21 @@ export class DatabaseService {
    * サブコネクションが破棄される時はサブコネクションはコレクションから削除され、\
    * サブコネクションが生成される前のコネクションに切り替わります。
   */
-  #connectionLayers: PgDatabase<NodePgQueryResultHKT, typeof schema>[] = [];
+  private connectionLayers: PgDatabase<NodePgQueryResultHKT, typeof schema>[] = [];
 
-  constructor() {}
+  private internalClient: PoolClient;
 
-  /**
-   * データベースに接続します。
-  */
-  async connect() {
-    if (this.isConnected()) {
-      throw new Error('It is already connected to the database');
-    }
-
-    const pg = new Pool({
-      connectionString: 'postgresql://postgres:postgres@db:5432/frost',
-      max: 10,
-    });
-    await pg.connect();
-
-    const db = drizzle(pg, { schema });
-    this.#connectionLayers.push(db);
+  constructor(internalClient: PoolClient) {
+    this.internalClient = internalClient;
+    const connection = drizzle(internalClient, { schema });
+    this.connectionLayers.push(connection);
   }
 
   /**
    * データベースへ接続されているかどうかを取得します。
   */
   isConnected(): boolean {
-    return (this.#connectionLayers.length > 0);
+    return (this.connectionLayers.length > 0);
   }
 
   /**
@@ -52,18 +63,23 @@ export class DatabaseService {
     if (!this.isConnected()) {
       throw new Error('It is not connected to the database');
     }
-    return this.#connectionLayers[0]!;
+    return this.connectionLayers[0]!;
   }
 
   /**
    * トランザクション内で指定されたアクションを実行します。
   */
-  async transaction<T>(action: () => Promise<T>): Promise<T> {
-    return this.getConnection().transaction(async (tx) => {
-      this.#connectionLayers.unshift(tx);
-      const returnValue = await action();
-      this.#connectionLayers.shift();
-      return returnValue;
-    });
+  async transaction<T>(action: (tx: PgTransaction<NodePgQueryResultHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>) => Promise<T>): Promise<T> {
+    return this.getConnection()
+      .transaction(async (tx) => {
+        this.connectionLayers.unshift(tx);
+        const returnValue = await action(tx);
+        this.connectionLayers.shift();
+        return returnValue;
+      });
+  }
+
+  release() {
+    this.internalClient.release();
   }
 }

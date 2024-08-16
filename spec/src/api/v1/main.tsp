@@ -1,5 +1,4 @@
 import "./models.tsp";
-import "./Account.tsp";
 import "./ChatRooms.tsp";
 import "./Echo.tsp";
 import "./Posts.tsp";
