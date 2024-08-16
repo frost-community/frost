@@ -2,17 +2,11 @@ using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
 
-model Account {
-  accountId: string;
-  name: string;
-  passwordAuthEnabled: boolean;
-  users: User[];
-}
-
 model User {
   userId: string;
   name: string;
   displayName: string;
+  passwordAuthEnabled: boolean;
 }
 
 model Post {

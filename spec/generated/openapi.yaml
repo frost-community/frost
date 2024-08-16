@@ -3,82 +3,12 @@ info:
   title: Frost
   version: 0.1.0
 tags:
-  - name: Account
   - name: ChatRoom
   - name: Echo
   - name: Timeline
   - name: User
+  - name: Auth
 paths:
-  /api/v1/account:
-    get:
-      tags:
-        - Account
-      operationId: GetAccount
-      parameters:
-        - name: accountId
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: name
-          in: query
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Account'
-  /api/v1/account/me:
-    delete:
-      tags:
-        - Account
-      operationId: DeleteMyAccount
-      parameters: []
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/account/signin:
-    post:
-      tags:
-        - Account
-      operationId: Signin
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.AuthResult'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.SigninBody'
-  /api/v1/account/signup:
-    post:
-      tags:
-        - Account
-      operationId: Signup
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.AuthResult'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.SignupBody'
   /api/v1/chatrooms:
     post:
       tags:
@@ -300,11 +230,12 @@ paths:
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/user:
+  /api/v1/signin:
     post:
       tags:
         - User
-      operationId: CreateUser
+        - Auth
+      operationId: Signin
       parameters: []
       responses:
         '200':
@@ -312,13 +243,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.User'
+                $ref: '#/components/schemas/Api.v1.AuthResult'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Api.v1.CreateUserBody'
+              $ref: '#/components/schemas/Api.v1.SigninBody'
+  /api/v1/signup:
+    post:
+      tags:
+        - User
+        - Auth
+      operationId: Signup
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthResult'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SignupBody'
+  /api/v1/user:
     get:
       tags:
         - User
@@ -356,34 +308,19 @@ paths:
           description: 'There is no content to send for this request, but the headers may be useful. '
 components:
   schemas:
-    Api.v1.Account:
-      type: object
-      required:
-        - accountId
-        - name
-        - passwordAuthEnabled
-        - users
-      properties:
-        accountId:
-          type: string
-        name:
-          type: string
-        passwordAuthEnabled:
-          type: boolean
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/Api.v1.User'
     Api.v1.AuthResult:
       type: object
       required:
         - accessToken
-        - account
+        - refreshToken
+        - user
       properties:
         accessToken:
-          type: string
-        account:
-          $ref: '#/components/schemas/Api.v1.Account'
+          $ref: '#/components/schemas/Api.v1.Token'
+        refreshToken:
+          $ref: '#/components/schemas/Api.v1.Token'
+        user:
+          $ref: '#/components/schemas/Api.v1.User'
     Api.v1.ChatRoom:
       type: object
       required:
@@ -463,17 +400,33 @@ components:
       type: object
       required:
         - name
+        - displayName
       properties:
         name:
           type: string
         password:
           type: string
+        displayName:
+          type: string
+    Api.v1.Token:
+      type: object
+      required:
+        - token
+        - scopes
+      properties:
+        token:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
     Api.v1.User:
       type: object
       required:
         - userId
         - name
         - displayName
+        - passwordAuthEnabled
       properties:
         userId:
           type: string
@@ -481,6 +434,8 @@ components:
           type: string
         displayName:
           type: string
+        passwordAuthEnabled:
+          type: boolean
 servers:
   - url: http://localhost:3000
     description: local server

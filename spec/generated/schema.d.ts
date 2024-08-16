@@ -4,70 +4,6 @@
  */
 
 export interface paths {
-    "/api/v1/account": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["GetAccount"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/account/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["DeleteMyAccount"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/account/signin": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Signin"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/account/signup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Signup"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/chatrooms": {
         parameters: {
             query?: never;
@@ -196,6 +132,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/signin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Signin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Signup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/user": {
         parameters: {
             query?: never;
@@ -205,7 +173,7 @@ export interface paths {
         };
         get: operations["GetUser"];
         put?: never;
-        post: operations["CreateUser"];
+        post?: never;
         delete: operations["DeleteUser"];
         options?: never;
         head?: never;
@@ -216,15 +184,10 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        "Api.v1.Account": {
-            accountId: string;
-            name: string;
-            passwordAuthEnabled: boolean;
-            users: components["schemas"]["Api.v1.User"][];
-        };
         "Api.v1.AuthResult": {
-            accessToken: string;
-            account: components["schemas"]["Api.v1.Account"];
+            accessToken: components["schemas"]["Api.v1.Token"];
+            refreshToken: components["schemas"]["Api.v1.Token"];
+            user: components["schemas"]["Api.v1.User"];
         };
         "Api.v1.ChatRoom": {
             chatRoomId: string;
@@ -260,11 +223,17 @@ export interface components {
         "Api.v1.SignupBody": {
             name: string;
             password?: string;
+            displayName: string;
+        };
+        "Api.v1.Token": {
+            token: string;
+            scopes: string[];
         };
         "Api.v1.User": {
             userId: string;
             name: string;
             displayName: string;
+            passwordAuthEnabled: boolean;
         };
     };
     responses: never;
@@ -275,95 +244,6 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    GetAccount: {
-        parameters: {
-            query?: {
-                accountId?: string;
-                name?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.Account"];
-                };
-            };
-        };
-    };
-    DeleteMyAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description There is no content to send for this request, but the headers may be useful.  */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    Signin: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Api.v1.SigninBody"];
-            };
-        };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.AuthResult"];
-                };
-            };
-        };
-    };
-    Signup: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Api.v1.SignupBody"];
-            };
-        };
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.AuthResult"];
-                };
-            };
-        };
-    };
     CreateChatRoom: {
         parameters: {
             query?: never;
@@ -618,6 +498,54 @@ export interface operations {
             };
         };
     };
+    Signin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.SigninBody"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                };
+            };
+        };
+    };
+    Signup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.SignupBody"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                };
+            };
+        };
+    };
     GetUser: {
         parameters: {
             query?: {
@@ -629,30 +557,6 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.User"];
-                };
-            };
-        };
-    };
-    CreateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Api.v1.CreateUserBody"];
-            };
-        };
         responses: {
             /** @description The request has succeeded. */
             200: {
