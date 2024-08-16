@@ -19,12 +19,12 @@ interface Posts {
   @tag("ChatRoom")
   @operationId("GetPost")
   @get
-  getPost(@path postId: string): Post;
+  getPost(@query postId: string): Post;
 
 
   @tag("Timeline")
   @tag("ChatRoom")
   @operationId("DeletePost")
   @delete
-  deletePost(@path postId: string): void;
+  deletePost(@query postId: string): void;
 }

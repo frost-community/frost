@@ -7,6 +7,7 @@ import { HttpServerService } from '../services/HttpServerService';
 import { UserService } from '../services/UserService';
 import { PasswordVerificationService } from '../services/PasswordVerificationService';
 import { TokenService } from '../services/TokenService';
+import { PostService } from '../services/PostService';
 import { TYPES } from './types';
 import { RootRouter } from '../routers';
 import { ApiVer1Router } from '../routers/api/v1';
@@ -33,6 +34,7 @@ export function setupContainer(container: Container) {
   container.bind<UserService>(TYPES.UserService).to(UserService);
   container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
   container.bind<TokenService>(TYPES.TokenService).to(TokenService);
+  container.bind<PostService>(TYPES.PostService).to(PostService);
 
   // routers
   container.bind<RootRouter>(TYPES.RootRouter).to(RootRouter);

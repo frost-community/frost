@@ -197,7 +197,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Api.v1.NewTimelinePost'
-  /api/v1/post/{postId}:
     get:
       tags:
         - Timeline
@@ -205,7 +204,7 @@ paths:
       operationId: GetPost
       parameters:
         - name: postId
-          in: path
+          in: query
           required: true
           schema:
             type: string
@@ -223,7 +222,7 @@ paths:
       operationId: DeletePost
       parameters:
         - name: postId
-          in: path
+          in: query
           required: true
           schema:
             type: string

@@ -47,3 +47,14 @@ export const TokenScope = D.pgTable('token_scope', {
 });
 export type InferSelectTokenScope = typeof TokenScope.$inferSelect;
 export type InferInsertTokenScope = typeof TokenScope.$inferInsert;
+
+// post
+
+export const Post = D.pgTable('post', {
+  postId: D.uuid('post_id').primaryKey().defaultRandom(),
+  chatRoomId: D.uuid('chat_room_id'),
+  userId: D.uuid('user_id').notNull(),
+  content: D.varchar('content', { length: 256 }).notNull(),
+});
+export type InferSelectPost = typeof Post.$inferSelect;
+export type InferInsertPost = typeof Post.$inferInsert;

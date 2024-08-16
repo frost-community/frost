@@ -3,13 +3,15 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../container/types';
 import { UserService } from '../../../services/UserService';
 import { RouteService } from '../../util/endpoint';
-import { GetUserQuery, GetUserResponse, SigninBody, SigninResponse, SignupBody, SignupResponse } from '../../../modules/endpoint-types';
+import { CreateTimelinePostBody, CreateTimelinePostResponse, DeletePostQuery, GetPostQuery, GetPostResponse, GetUserQuery, GetUserResponse, SigninBody, SigninResponse, SignupBody, SignupResponse } from '../../../modules/endpoint-types';
+import { PostService } from '../../../services/PostService';
 
 @injectable()
 export class ApiVer1Router {
   constructor(
     @inject(TYPES.RouteService) private readonly routeService: RouteService,
     @inject(TYPES.UserService) private readonly userService: UserService,
+    @inject(TYPES.PostService) private readonly postService: PostService,
   ) {}
 
   create() {
@@ -24,6 +26,7 @@ export class ApiVer1Router {
     }));
 
     this.routeUser(router);
+    this.routePost(router);
 
     return router;
   }
@@ -60,6 +63,33 @@ export class ApiVer1Router {
       //const query = req.query as NonNullable<operations['DeleteUser']['parameters']['query']>;
       //await this.userService.delete({ userId: query.userId }, db);
       //res.status(204).send();
+    }));
+  }
+
+  private routePost(router: express.Router) {
+    router.post('/post', this.routeService.createWithTransaction(async ({ req, res, db }) => {
+      // permission: post.write
+      const userId = ''; // TODO
+      const body = req.body as CreateTimelinePostBody;
+      return await this.postService.create({
+        userId: userId,
+        content: body.content,
+      }, db) as CreateTimelinePostResponse;
+    }));
+
+    router.get('/post', this.routeService.create(async ({ req, res, db }) => {
+      // permission post.read
+      const query = req.query as GetPostQuery;
+      return await this.postService.get({
+        postId: query.postId,
+      }, db) as GetPostResponse;
+    }));
+
+    router.delete('/post', this.routeService.createWithTransaction(async ({ req, res, db }) => {
+      // permission post.delete
+      const query = req.query as DeletePostQuery;
+      await this.postService.delete({ postId: query.postId }, db);
+      res.status(204).send();
     }));
   }
 }

@@ -128,6 +128,21 @@ export class UserNotFound implements ErrorObject {
   }
 }
 
+export class PostNotFound implements ErrorObject {
+  code = 'postNotFound';
+  message = 'The specified post was not found.';
+  status = 404;
+  condition: {
+    postId: string,
+  };
+
+  constructor(
+    condition: PostNotFound['condition'],
+  ) {
+    this.condition = condition;
+  }
+}
+
 export class EndpointNotFound implements ErrorObject {
   code = 'endpointNotFound';
   message = 'The specified API endpoint was not found.';
