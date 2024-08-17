@@ -1,16 +1,25 @@
 import { Container } from 'inversify';
 import { App, AppConfig } from '../app';
-
-import { RouteService } from '../routers/util/endpoint';
-import { DatabaseService } from '../services/DatabaseService';
-import { HttpServerService } from '../services/HttpServerService';
-import { UserService } from '../services/UserService';
-import { PasswordVerificationService } from '../services/PasswordVerificationService';
-import { TokenService } from '../services/TokenService';
-import { PostService } from '../services/PostService';
 import { TYPES } from './types';
-import { RootRouter } from '../routers';
-import { ApiVer1Router } from '../routers/api/v1';
+
+// modules
+import { ConnectionPool } from '../modules/database';
+
+// repositories
+import { PasswordVerificationRepository } from '../repositories/PasswordVerificationRepository';
+import { PostRepository } from '../repositories/PostRepository';
+import { TokenRepository } from '../repositories/TokenRepository';
+import { UserRepository } from '../repositories/UserRepository';
+
+// services
+import { PasswordVerificationService } from '../services/PasswordVerificationService';
+import { PostService } from '../services/PostService';
+import { TokenService } from '../services/TokenService';
+import { UserService } from '../services/UserService';
+
+// routers
+import { RootRouter } from '../routes';
+import { ApiVer1Router } from '../routes/api/v1';
 
 export function setupContainer(container: Container) {
   // app
@@ -27,10 +36,16 @@ export function setupContainer(container: Container) {
   };
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
+  // modules
+  container.bind<ConnectionPool>(TYPES.ConnectionPool).toConstantValue(new ConnectionPool(appConfig));
+
+  // repositories
+  container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository);
+  container.bind<PasswordVerificationRepository>(TYPES.PasswordVerificationRepository).to(PasswordVerificationRepository);
+  container.bind<TokenRepository>(TYPES.TokenRepository).to(TokenRepository);
+  container.bind<PostRepository>(TYPES.PostRepository).to(PostRepository);
+
   // services
-  container.bind<RouteService>(TYPES.RouteService).to(RouteService);
-  container.bind<DatabaseService>(TYPES.DatabaseService).toConstantValue(new DatabaseService(appConfig));
-  container.bind<HttpServerService>(TYPES.HttpServerService).to(HttpServerService);
   container.bind<UserService>(TYPES.UserService).to(UserService);
   container.bind<PasswordVerificationService>(TYPES.PasswordVerificationService).to(PasswordVerificationService);
   container.bind<TokenService>(TYPES.TokenService).to(TokenService);

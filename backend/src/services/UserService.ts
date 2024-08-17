@@ -1,12 +1,12 @@
-import { and, eq } from 'drizzle-orm';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../container/types';
-import { Database } from './DatabaseService';
-import { User } from '../database/schema';
-import { createError, InvalidParam, UserNotFound } from '../modules/service-error';
-import { PasswordVerificationService } from './PasswordVerificationService';
-import { TokenService } from './TokenService';
-import { AuthResultEntity, UserEntity } from '../modules/entities';
+import { and, eq } from "drizzle-orm";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../container/types";
+import { User } from "../database/schema";
+import { appError, InvalidParam, UserNotFound } from "../modules/apiErrors";
+import { PasswordVerificationService } from "./PasswordVerificationService";
+import { TokenService } from "./TokenService";
+import { AuthResultEntity, UserEntity } from "../types/entities";
+import { AccessContext } from "../types/access-context";
 
 @injectable()
 export class UserService {
@@ -15,64 +15,64 @@ export class UserService {
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
   ) {}
 
-  async signup(params: { name: string, displayName: string, password?: string }, db: Database): Promise<AuthResultEntity> {
+  async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.password == null) {
-      throw createError({ code: 'authMethodRequired', message: 'Authentication method required.', status: 400 });
+      throw appError({ code: "authMethodRequired", message: "Authentication method required.", status: 400 });
     }
     const user = await this.create({
       name: params.name,
       displayName: params.displayName,
       passwordAuthEnabled: true,
-    }, db);
+    }, ctx);
     await this.passwordVerificationService.register({
       userId: user.userId,
       password: params.password,
-    }, db);
+    }, ctx);
     const accessToken = await this.tokenService.createToken({
       userId: user.userId,
-      tokenKind: 'access_token',
-      scopes: ['user.read'],
-    }, db);
+      tokenKind: "access_token",
+      scopes: ["user.read"],
+    }, ctx);
     const refreshToken = await this.tokenService.createToken({
       userId: user.userId,
-      tokenKind: 'refresh_token',
-      scopes: ['user.read'],
-    }, db);
+      tokenKind: "refresh_token",
+      scopes: ["user.read"],
+    }, ctx);
     return { accessToken, refreshToken, user };
   }
 
-  async signin(params: { name: string, password?: string }, db: Database): Promise<AuthResultEntity> {
+  async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     const user = await this.get({
       name: params.name,
-    }, db);
+    }, ctx);
     if (user.passwordAuthEnabled) {
       if (params.password == null) {
-        throw createError(new InvalidParam([{ path: 'password', message: '"password" field required.' }]));
+        throw appError(new InvalidParam([{ path: "password", message: '"password" field required.' }]));
       }
       const verification = await this.passwordVerificationService.verifyPassword({
         userId: user.userId,
         password: params.password,
-      }, db);
+      }, ctx);
       if (!verification) {
-        throw createError({ code: 'signinFailure', message: 'Signin failure.', status: 401 });
+        throw appError({ code: "signinFailure", message: "Signin failure.", status: 401 });
       }
       const accessToken = await this.tokenService.createToken({
         userId: user.userId,
-        tokenKind: 'access_token',
-        scopes: ['user.read'],
-      }, db);
+        tokenKind: "access_token",
+        scopes: ["user.read"],
+      }, ctx);
       const refreshToken = await this.tokenService.createToken({
         userId: user.userId,
-        tokenKind: 'refresh_token',
-        scopes: ['user.read'],
-      }, db);
+        tokenKind: "refresh_token",
+        scopes: ["user.read"],
+      }, ctx);
       return { accessToken, refreshToken, user };
     }
-    throw new Error('authentication method not exists: ' + user.userId);
+    throw new Error("authentication method not exists: " + user.userId);
   }
 
-  async create(params: { name: string, displayName: string, passwordAuthEnabled: boolean }, db: Database): Promise<UserEntity> {
-    const rows = await db.getConnection()
+  private async create(params: { name: string, displayName: string, passwordAuthEnabled: boolean }, ctx: AccessContext): Promise<UserEntity> {
+    const rows = await ctx.db.getCurrent()
       .insert(
         User
       )
@@ -87,12 +87,12 @@ export class UserService {
     return user;
   }
 
-  async get(params: { userId?: string, name?: string }, db: Database): Promise<UserEntity> {
+  async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
     // either userId or name must be specified
     if ([params.userId, params.name].every(x => x == null)) {
-      throw createError(new UserNotFound({ userId: params.userId, userName: params.name }));
+      throw appError(new UserNotFound({ userId: params.userId, userName: params.name }));
     }
-    const rows = await db.getConnection()
+    const rows = await ctx.db.getCurrent()
       .select({
         userId: User.userId,
         name: User.name,
@@ -110,15 +110,15 @@ export class UserService {
       );
 
     if (rows.length == 0) {
-      throw createError(new UserNotFound({ userId: params.userId }));
+      throw appError(new UserNotFound({ userId: params.userId }));
     }
     const user = rows[0]!;
 
     return user;
   }
 
-  async delete(params: { userId: string }, db: Database): Promise<void> {
-    const rows = await db.getConnection()
+  async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
+    const rows = await ctx.db.getCurrent()
       .delete(
         User
       )
@@ -127,7 +127,7 @@ export class UserService {
       );
 
     if (rows.rowCount == 0) {
-      throw createError(new UserNotFound({ userId: params.userId }));
+      throw appError(new UserNotFound({ userId: params.userId }));
     }
   }
 }

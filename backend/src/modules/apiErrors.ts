@@ -14,7 +14,7 @@ export class AppError extends Error {
   }
 }
 
-export function createError(error: ErrorObject): AppError {
+export function appError(error: ErrorObject): AppError {
   return new AppError(error);
 }
 

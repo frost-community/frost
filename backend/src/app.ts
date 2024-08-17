@@ -1,8 +1,7 @@
 import 'reflect-metadata';
-import { inject, injectable } from 'inversify';
-import { HttpServerService } from './services/HttpServerService';
+import { Container, inject, injectable } from 'inversify';
+import { createHttpServer } from './modules/httpServer';
 import { TYPES } from './container/types';
-import { DatabaseService } from './services/DatabaseService';
 
 export type AppConfig = {
   port: number,
@@ -16,11 +15,11 @@ export type AppConfig = {
 @injectable()
 export class App {
   constructor(
-    @inject(TYPES.HttpServerService) private readonly http: HttpServerService,
+    @inject(TYPES.Container) private readonly container: Container,
   ) {}
 
   async run(): Promise<void> {
     // TODO: validate app config
-    await this.http.listen();
+    await createHttpServer(this.container);
   }
 }

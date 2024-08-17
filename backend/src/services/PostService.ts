@@ -1,24 +1,24 @@
-import { eq } from 'drizzle-orm';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../container/types';
-import { Database } from './DatabaseService';
-import { Post } from '../database/schema';
-import { createError, PostNotFound } from '../modules/service-error';
-import { PostEntity } from '../modules/entities';
+import { eq } from "drizzle-orm";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../container/types";
+import { postTable } from "../database/schema";
+import { appError, PostNotFound } from "../modules/apiErrors";
+import { PostEntity } from "../types/entities";
+import { AccessContext } from "../types/access-context";
 
 @injectable()
 export class PostService {
   constructor(
   ) {}
 
-  async create(params: { userId: string, chatRoomId?: string, content: string }, db: Database): Promise<PostEntity> {
-    const rows = await db.getConnection()
+  async create(params: { chatRoomId?: string, content: string }, ctx: AccessContext): Promise<PostEntity> {
+    const rows = await ctx.db.getCurrent()
       .insert(
-        Post
+        postTable
       )
       .values({
         chatRoomId: params.chatRoomId,
-        userId: params.userId,
+        userId: ctx.userId,
         content: params.content,
       })
       .returning();
@@ -33,23 +33,23 @@ export class PostService {
     return post;
   }
 
-  async get(params: { postId: string }, db: Database): Promise<PostEntity> {
-    const rows = await db.getConnection()
+  async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity> {
+    const rows = await ctx.db.getCurrent()
       .select({
-        postId: Post.postId,
-        chatRoomId: Post.chatRoomId,
-        userId: Post.userId,
-        content: Post.content,
+        postId: postTable.postId,
+        chatRoomId: postTable.chatRoomId,
+        userId: postTable.userId,
+        content: postTable.content,
       })
       .from(
-        Post
+        postTable
       )
       .where(
-        eq(Post.postId, params.postId)
+        eq(postTable.postId, params.postId)
       );
 
     if (rows.length == 0) {
-      throw createError(new PostNotFound({ postId: params.postId }));
+      throw appError(new PostNotFound({ postId: params.postId }));
     }
     const row = rows[0]!;
 
@@ -62,17 +62,17 @@ export class PostService {
     return post;
   }
 
-  async delete(params: { postId: string }, db: Database): Promise<void> {
-    const rows = await db.getConnection()
+  async delete(params: { postId: string }, ctx: AccessContext): Promise<void> {
+    const rows = await ctx.db.getCurrent()
       .delete(
-        Post
+        postTable
       )
       .where(
-        eq(Post.postId, params.postId)
+        eq(postTable.postId, params.postId)
       );
 
     if (rows.rowCount == 0) {
-      throw createError(new PostNotFound({ postId: params.postId }));
+      throw appError(new PostNotFound({ postId: params.postId }));
     }
   }
 }
