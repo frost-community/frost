@@ -83,7 +83,7 @@ export class ApiVer1Router {
       path: '/post',
       scope: 'post.write',
       async requestHandler(ctx) {
-        const result = await postService.create(ctx.params, { userId: ctx.auth!.userId, db: ctx.db });
+        const result = await postService.createTimelinePost(ctx.params, { userId: ctx.auth!.userId, db: ctx.db });
         return result;
       },
     });

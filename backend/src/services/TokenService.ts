@@ -1,17 +1,40 @@
+import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
-import { Container, inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { ConnectionLayers } from "../modules/database";
-import { InferInsertTokenScope, tokenTable, tokenScopeTable } from "../database/schema";
-import { TokenEntity } from "../types/entities";
-import { eq } from "drizzle-orm";
-import { appError, Unauthenticated } from "../modules/apiErrors";
+import { appError, InvalidParam, Unauthenticated } from "../modules/apiErrors";
+import { TokenKind, TokenRepository } from "../repositories/TokenRepository";
 import { AccessContext } from "../types/access-context";
+import { TokenEntity } from "../types/entities";
 
 @injectable()
 export class TokenService {
   constructor(
+    @inject(TYPES.TokenRepository) private readonly tokenRepository: TokenRepository,
   ) {}
+
+  async create(params: { userId: string, tokenKind: TokenKind, scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
+    const tokenValue = this.generateTokenValue(32);
+    const tokenEntity = await this.tokenRepository.create({
+      userId: params.userId,
+      tokenKind: params.tokenKind,
+      scopes: params.scopes,
+      token: tokenValue,
+    }, ctx);
+    return tokenEntity;
+  }
+
+  async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
+    if (params.token.length < 1) {
+      throw appError(new InvalidParam([]));
+    }
+    const info = await this.tokenRepository.get({
+      token: params.token,
+    }, ctx);
+    if (info == null) {
+      throw appError(new Unauthenticated());
+    }
+    return info;
+  }
 
   private generateTokenValue(length: number) {
     let token = "";
@@ -19,80 +42,6 @@ export class TokenService {
       token += TokenService.asciiTable[byte % TokenService.asciiTable.length];
     }
     return token;
-  }
-
-  async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: string, userId: string, scopes: string[] }> {
-    const rows = await ctx.db.getCurrent()
-      .select({
-        tokenKind: tokenTable.tokenKind,
-        userId: tokenTable.userId,
-        scopeName: tokenScopeTable.scopeName,
-      })
-      .from(
-        tokenTable
-      )
-      .leftJoin(
-        tokenScopeTable,
-        eq(tokenScopeTable.tokenId, tokenTable.tokenId)
-      )
-      .where(
-        eq(tokenTable.token, params.token)
-      );
-
-    if (rows.length == 0) {
-      throw appError(new Unauthenticated());
-    }
-
-    let scopes = rows
-      .map(row => row.scopeName)
-      .filter(scope => scope != null);
-
-    return {
-      userId: rows[0]!.userId,
-      tokenKind: rows[0]!.tokenKind,
-      scopes,
-    };
-  }
-
-  async createToken(params: { userId: string, tokenKind: "access_token" | "refresh_token", scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
-    const tokenValue = this.generateTokenValue(32);
-
-    // トークンを登録
-    const tokenRows = await ctx.db.getCurrent()
-      .insert(
-        tokenTable
-      )
-      .values([
-        {
-          tokenKind: params.tokenKind,
-          userId: params.userId,
-          token: tokenValue,
-        }
-      ])
-      .returning({
-        tokenId: tokenTable.tokenId,
-      });
-    const row = tokenRows[0]!;
-
-    // トークンの権限を登録
-    const tokenScopes: InferInsertTokenScope[] = params.scopes.map(scope => {
-      return {
-        tokenId: row.tokenId,
-        scopeName: scope,
-      };
-    });
-    await ctx.db.getCurrent()
-      .insert(
-        tokenScopeTable
-      )
-      .values([
-        ...tokenScopes,
-      ]);
-
-    return {
-      token: tokenValue,
-      scopes: [...params.scopes],
-    };
   }
 
   private static asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";

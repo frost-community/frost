@@ -1,39 +1,46 @@
-import { and, eq } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { User } from "../database/schema";
-import { appError, InvalidParam, UserNotFound } from "../modules/apiErrors";
+import { appError, InvalidParam, MissingParameter, UserNotFound } from "../modules/apiErrors";
+import { UserRepository } from "../repositories/UserRepository";
+import { AccessContext } from "../types/access-context";
+import { AuthResultEntity, UserEntity } from "../types/entities";
 import { PasswordVerificationService } from "./PasswordVerificationService";
 import { TokenService } from "./TokenService";
-import { AuthResultEntity, UserEntity } from "../types/entities";
-import { AccessContext } from "../types/access-context";
 
 @injectable()
 export class UserService {
   constructor(
+    @inject(TYPES.UserRepository) private readonly userRepository: UserRepository,
     @inject(TYPES.PasswordVerificationService) private readonly passwordVerificationService: PasswordVerificationService,
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
   ) {}
 
   async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
-    if (params.password == null) {
-      throw appError({ code: "authMethodRequired", message: "Authentication method required.", status: 400 });
+    if (params.name.length < 5) {
+      throw appError(new InvalidParam([]));
     }
-    const user = await this.create({
+    if (params.password == null) {
+      throw appError({
+        code: "authMethodRequired",
+        message: "Authentication method required.",
+        status: 400,
+      });
+    }
+    const user = await this.userRepository.create({
       name: params.name,
       displayName: params.displayName,
       passwordAuthEnabled: true,
     }, ctx);
-    await this.passwordVerificationService.register({
+    await this.passwordVerificationService.create({
       userId: user.userId,
       password: params.password,
     }, ctx);
-    const accessToken = await this.tokenService.createToken({
+    const accessToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "access_token",
       scopes: ["user.read"],
     }, ctx);
-    const refreshToken = await this.tokenService.createToken({
+    const refreshToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "refresh_token",
       scopes: ["user.read"],
@@ -42,26 +49,36 @@ export class UserService {
   }
 
   async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
-    const user = await this.get({
+    if (params.name.length < 1) {
+      throw appError(new InvalidParam([]));
+    }
+    const user = await this.userRepository.get({
       name: params.name,
     }, ctx);
+    if (user == null) {
+      throw appError(new UserNotFound());
+    }
     if (user.passwordAuthEnabled) {
-      if (params.password == null) {
-        throw appError(new InvalidParam([{ path: "password", message: '"password" field required.' }]));
+      if (params.password == null || params.password.length > 8) {
+        throw appError(new InvalidParam([]));
       }
       const verification = await this.passwordVerificationService.verifyPassword({
         userId: user.userId,
         password: params.password,
       }, ctx);
       if (!verification) {
-        throw appError({ code: "signinFailure", message: "Signin failure.", status: 401 });
+        throw appError({
+          code: "incorrectCredential",
+          message: "The username and/or password is incorrect.",
+          status: 401,
+        });
       }
-      const accessToken = await this.tokenService.createToken({
+      const accessToken = await this.tokenService.create({
         userId: user.userId,
         tokenKind: "access_token",
         scopes: ["user.read"],
       }, ctx);
-      const refreshToken = await this.tokenService.createToken({
+      const refreshToken = await this.tokenService.create({
         userId: user.userId,
         tokenKind: "refresh_token",
         scopes: ["user.read"],
@@ -71,63 +88,28 @@ export class UserService {
     throw new Error("authentication method not exists: " + user.userId);
   }
 
-  private async create(params: { name: string, displayName: string, passwordAuthEnabled: boolean }, ctx: AccessContext): Promise<UserEntity> {
-    const rows = await ctx.db.getCurrent()
-      .insert(
-        User
-      )
-      .values({
-        name: params.name,
-        displayName: params.displayName,
-        passwordAuthEnabled: params.passwordAuthEnabled,
-      })
-      .returning();
-    const user = rows[0]!;
-
-    return user;
-  }
-
   async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
     // either userId or name must be specified
     if ([params.userId, params.name].every(x => x == null)) {
-      throw appError(new UserNotFound({ userId: params.userId, userName: params.name }));
+      throw appError(new MissingParameter());
     }
-    const rows = await ctx.db.getCurrent()
-      .select({
-        userId: User.userId,
-        name: User.name,
-        displayName: User.displayName,
-        passwordAuthEnabled: User.passwordAuthEnabled,
-      })
-      .from(
-        User
-      )
-      .where(
-        and(
-          eq(User.userId, params.userId != null ? params.userId : User.userId),
-          eq(User.name, params.name != null ? params.name : User.name)
-        )
-      );
-
-    if (rows.length == 0) {
-      throw appError(new UserNotFound({ userId: params.userId }));
+    const userEntity = await this.userRepository.get({
+      userId: params.userId,
+      name: params.name,
+    }, ctx);
+    if (userEntity == null) {
+      throw appError(new UserNotFound());
     }
-    const user = rows[0]!;
-
-    return user;
+    return userEntity;
   }
 
   async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
-    const rows = await ctx.db.getCurrent()
-      .delete(
-        User
-      )
-      .where(
-        eq(User.userId, params.userId)
-      );
+    const success = await this.userRepository.delete({
+      userId: params.userId,
+    }, ctx);
 
-    if (rows.rowCount == 0) {
-      throw appError(new UserNotFound({ userId: params.userId }));
+    if (!success) {
+      throw appError(new UserNotFound());
     }
   }
 }

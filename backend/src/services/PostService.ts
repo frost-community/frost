@@ -1,78 +1,49 @@
-import { eq } from "drizzle-orm";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { postTable } from "../database/schema";
-import { appError, PostNotFound } from "../modules/apiErrors";
-import { PostEntity } from "../types/entities";
+import { appError, InvalidParam, PostNotFound } from "../modules/apiErrors";
+import { PostRepository } from "../repositories/PostRepository";
 import { AccessContext } from "../types/access-context";
+import { PostEntity } from "../types/entities";
 
 @injectable()
 export class PostService {
   constructor(
+    @inject(TYPES.PostRepository) private readonly postRepository: PostRepository,
   ) {}
 
-  async create(params: { chatRoomId?: string, content: string }, ctx: AccessContext): Promise<PostEntity> {
-    const rows = await ctx.db.getCurrent()
-      .insert(
-        postTable
-      )
-      .values({
-        chatRoomId: params.chatRoomId,
-        userId: ctx.userId,
-        content: params.content,
-      })
-      .returning();
-    const row = rows[0]!;
-
-    const post = {
-      postId: row.postId,
-      chatRoomId: row.chatRoomId ?? undefined,
-      userId: row.userId,
-      content: row.content,
-    };
+  async createTimelinePost(params: { content: string }, ctx: AccessContext): Promise<PostEntity> {
+    if (params.content.length < 1) {
+      throw appError(new InvalidParam([]));
+    }
+    const post = await this.postRepository.create({
+      userId: ctx.userId,
+      content: params.content,
+    }, ctx);
     return post;
   }
 
   async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity> {
-    const rows = await ctx.db.getCurrent()
-      .select({
-        postId: postTable.postId,
-        chatRoomId: postTable.chatRoomId,
-        userId: postTable.userId,
-        content: postTable.content,
-      })
-      .from(
-        postTable
-      )
-      .where(
-        eq(postTable.postId, params.postId)
-      );
-
-    if (rows.length == 0) {
-      throw appError(new PostNotFound({ postId: params.postId }));
+    if (params.postId.length < 1) {
+      throw appError(new InvalidParam([]));
     }
-    const row = rows[0]!;
-
-    const post = {
-      postId: row.postId,
-      chatRoomId: row.chatRoomId ?? undefined,
-      userId: row.userId,
-      content: row.content,
-    };
+    const post = await this.postRepository.get({
+      postId: params.postId
+    }, ctx);
+    if (post == null) {
+      throw appError(new PostNotFound());
+    }
     return post;
   }
 
   async delete(params: { postId: string }, ctx: AccessContext): Promise<void> {
-    const rows = await ctx.db.getCurrent()
-      .delete(
-        postTable
-      )
-      .where(
-        eq(postTable.postId, params.postId)
-      );
-
-    if (rows.rowCount == 0) {
-      throw appError(new PostNotFound({ postId: params.postId }));
+    if (params.postId.length < 1) {
+      throw appError(new InvalidParam([]));
+    }
+    const success = await this.postRepository.delete({
+      postId: params.postId,
+    }, ctx);
+    if (!success) {
+      throw appError(new PostNotFound());
     }
   }
 }
