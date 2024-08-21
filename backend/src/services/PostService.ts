@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam, PostNotFound } from "../modules/apiErrors";
+import { AccessDenied, appError, InvalidParam, PostNotFound } from "../modules/apiErrors";
 import { PostRepository } from "../repositories/PostRepository";
 import { AccessContext } from "../types/access-context";
 import { PostEntity } from "../types/entities";
@@ -39,6 +39,18 @@ export class PostService {
     if (params.postId.length < 1) {
       throw appError(new InvalidParam([]));
     }
+
+    // 作成者以外は削除できない
+    const post = await this.postRepository.get({
+      postId: params.postId
+    }, ctx);
+    if (post == null) {
+      throw appError(new PostNotFound());
+    }
+    if (post.userId != ctx.userId) {
+      throw appError(new AccessDenied());
+    }
+
     const success = await this.postRepository.delete({
       postId: params.postId,
     }, ctx);
