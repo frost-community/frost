@@ -1,6 +1,7 @@
 import * as openapiTypes from "express-openapi-validator/dist/framework/types";
 
 export interface ErrorObject {
+  [x: string]: any,
   code: string,
   message: string,
   status: number,
@@ -14,7 +15,7 @@ export class AppError extends Error {
   }
 }
 
-export function createError(error: ErrorObject): AppError {
+export function appError(error: ErrorObject): AppError {
   return new AppError(error);
 }
 
@@ -65,6 +66,12 @@ export function buildRestApiError(err: unknown): { error: ErrorObject } {
   };
 }
 
+export class MissingParameter implements ErrorObject {
+  code = 'missingParameter';
+  message = 'One or more of the parameters are missing.';
+  status = 400;
+}
+
 export class InvalidParam implements ErrorObject {
   code = 'invalidParam';
   message = 'One or more of the parameters are invalid.';
@@ -94,16 +101,6 @@ export class AccountNotFound implements ErrorObject {
   code = 'accountNotFound';
   message = 'The specified account was not found.';
   status = 404;
-  condition: {
-    accountId?: string,
-    name?: string,
-  };
-
-  constructor(
-    condition: AccountNotFound['condition'],
-  ) {
-    this.condition = condition;
-  }
 }
 
 export class ResourceNotFound implements ErrorObject {
@@ -116,16 +113,12 @@ export class UserNotFound implements ErrorObject {
   code = 'userNotFound';
   message = 'The specified user was not found.';
   status = 404;
-  condition: {
-    userId?: string,
-    userName?: string,
-  };
+}
 
-  constructor(
-    condition: UserNotFound['condition'],
-  ) {
-    this.condition = condition;
-  }
+export class PostNotFound implements ErrorObject {
+  code = 'postNotFound';
+  message = 'The specified post was not found.';
+  status = 404;
 }
 
 export class EndpointNotFound implements ErrorObject {

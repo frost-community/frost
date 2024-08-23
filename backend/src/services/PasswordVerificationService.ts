@@ -1,14 +1,10 @@
-import { eq } from 'drizzle-orm';
-import { Container, inject, injectable } from 'inversify';
-import crypto from 'node:crypto';
-import { TYPES } from '../container/types';
-import { PasswordVerification, InferSelectPasswordVerification } from '../database/schema';
-import { Database } from './DatabaseService';
-import { createError, ResourceNotFound, UserNotFound } from '../modules/service-error';
+import { inject, injectable } from "inversify";
+import crypto from "node:crypto";
+import { TYPES } from "../container/types";
+import { appError, InvalidParam } from "../modules/appErrors";
+import { PasswordVerificationRepository } from "../repositories/PasswordVerificationRepository";
+import { AccessContext } from "../types/access-context";
 
-/**
- * パスワード検証情報
-*/
 type PasswordVerificationInfo = {
   algorithm: string,
   salt: string,
@@ -16,69 +12,65 @@ type PasswordVerificationInfo = {
   hash: string,
 };
 
+/**
+ * パスワード検証情報
+*/
 @injectable()
 export class PasswordVerificationService {
   constructor(
+    @inject(TYPES.PasswordVerificationRepository) private readonly passwordVerificationRepository: PasswordVerificationRepository,
   ) {}
 
   /**
-   * パスワードの検証情報を登録します。
+   * パスワードの検証情報を作成します。
   */
-  async register(params: { userId: string, password: string }, db: Database): Promise<void> {
-    const info = this.generateVerificationInfo({ password: params.password });
-
-    await db.getConnection()
-      .insert(
-        PasswordVerification
-      )
-      .values({
-        userId: params.userId,
-        algorithm: info.algorithm,
-        salt: info.salt,
-        iteration: info.iteration,
-        hash: info.hash,
-      });
-  }
-
-  /**
-   * 検証情報からパスワードを検証します。
-  */
-  async verifyPassword(params: { userId: string, password: string }, db: Database): Promise<boolean> {
-    const info = await this.get({ userId: params.userId }, db);
-    const hash = this.generateHash({ token: params.password, algorithm: info.algorithm, salt: info.salt, iteration: info.iteration });
-    return (hash === info.hash);
-  }
-
-  /**
-   * 検証情報を取得します。
-  */
-  private async get(params: { userId: string }, db: Database): Promise<InferSelectPasswordVerification> {
-    const rows = await db.getConnection()
-      .select()
-      .from(
-        PasswordVerification
-      )
-      .where(
-        eq(PasswordVerification.userId, params.userId)
-      );
-
-    if (rows.length == 0) {
-      throw createError(new ResourceNotFound());
+  async create(params: { userId: string, password: string }, ctx: AccessContext): Promise<void> {
+    if (params.password.length < 8) {
+      throw appError(new InvalidParam([]));
     }
+    await this.passwordVerificationRepository.create({
+      userId: ctx.userId,
+      ...this.generateInfo({
+        password: params.password,
+      }),
+    }, ctx);
+  }
 
-    const row = rows[0]!;
-
-    return row;
+  /**
+   * パスワード検証情報を用いてパスワードが正しいかどうかを確認します。
+  */
+  async verifyPassword(params: { userId: string, password: string }, ctx: AccessContext): Promise<boolean> {
+    if (params.password.length < 8) {
+      throw appError(new InvalidParam([]));
+    }
+    const info = await this.passwordVerificationRepository.get({
+      userId: params.userId,
+    }, ctx);
+    if (info == null) {
+      throw new Error("PasswordVerification record not found");
+    }
+    const hash = this.generateHash({
+      token: params.password,
+      algorithm: info.algorithm,
+      salt: info.salt,
+      iteration: info.iteration,
+    });
+    return (hash === info.hash);
   }
 
   /**
    * パスワード認証情報を生成します。
   */
-  private generateVerificationInfo(params: { password: string }): PasswordVerificationInfo {
-    const algorithm = 'sha256';
+  private generateInfo(params: { password: string }): PasswordVerificationInfo {
+    const algorithm = "sha256";
     const salt = this.generateSalt();
     const iteration = 100000;
-    const hash = this.generateHash({ token: params.password, algorithm, salt, iteration });
+    const hash = this.generateHash({
+      token: params.password,
+      algorithm,
+      salt,
+      iteration,
+    });
     return {
       algorithm,
       salt,
@@ -88,26 +80,24 @@ export class PasswordVerificationService {
   }
 
   /**
-   * 塩を生成します。
-  */
-  private generateSalt(): string {
-    // 128bit random (length = 32)
-    return crypto.randomBytes(16).toString('hex');
-  }
-
-  /**
    * ハッシュを生成します。
   */
   private generateHash(params: { token: string, algorithm: string, salt: string, iteration: number }): string {
     if (params.iteration < 1) {
-      throw new Error('validation error: iteration');
+      throw new Error("The iteration value must be 1 or greater");
     }
-
     let token = params.token;
     for (let i = 0; i < params.iteration; i++) {
-      token = crypto.hash(params.algorithm, token + params.salt, 'hex');
+      token = crypto.hash(params.algorithm, token + params.salt, "hex");
     }
-
     return token;
+  }
+
+  /**
+   * 塩を生成します。
+  */
+  private generateSalt(): string {
+    // 128bit random (length = 32)
+    return crypto.randomBytes(16).toString("hex");
   }
 }

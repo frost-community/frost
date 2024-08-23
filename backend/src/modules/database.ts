@@ -1,14 +1,12 @@
-import { drizzle, NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
-import { Container, inject, injectable } from 'inversify';
-import { Pool, PoolClient } from 'pg';
-import * as schema from '../database/schema';
-import { TYPES } from '../container/types';
-import { PgDatabase } from 'drizzle-orm/pg-core';
-import { PgTransaction } from 'drizzle-orm/pg-core';
-import { ExtractTablesWithRelations } from 'drizzle-orm';
-import { AppConfig } from '../app';
+import { drizzle, NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import { Pool, PoolClient } from "pg";
+import * as schema from "../database/schema";
+import { PgDatabase } from "drizzle-orm/pg-core";
+import { PgTransaction } from "drizzle-orm/pg-core";
+import { ExtractTablesWithRelations } from "drizzle-orm";
+import { AppConfig } from "../app";
 
-export class DatabaseService {
+export class ConnectionPool {
   private pool: Pool;
 
   constructor(
@@ -25,11 +23,11 @@ export class DatabaseService {
   */
   async acquire() {
     const internalClient = await this.pool.connect();
-    return new Database(internalClient);
+    return new ConnectionLayers(internalClient);
   }
 }
 
-export class Database {
+export class ConnectionLayers {
   /**
    * コネクションを保持する配列。
    * 
@@ -39,47 +37,40 @@ export class Database {
    * サブコネクションが破棄される時はサブコネクションはコレクションから削除され、\
    * サブコネクションが生成される前のコネクションに切り替わります。
   */
-  private connectionLayers: PgDatabase<NodePgQueryResultHKT, typeof schema>[] = [];
+  private layers: PgDatabase<NodePgQueryResultHKT, typeof schema>[] = [];
 
   private internalClient: PoolClient;
 
   constructor(internalClient: PoolClient) {
     this.internalClient = internalClient;
     const connection = drizzle(internalClient, { schema });
-    this.connectionLayers.push(connection);
+    this.layers.push(connection);
   }
 
   /**
-   * データベースへ接続されているかどうかを取得します。
+   * 現在のコネクションを取得します。
   */
-  isConnected(): boolean {
-    return (this.connectionLayers.length > 0);
-  }
-
-  /**
-   * 現在のデータベース接続またはトランザクションを取得します。
-  */
-  getConnection(): PgDatabase<NodePgQueryResultHKT, typeof schema> {
-    if (!this.isConnected()) {
-      throw new Error('It is not connected to the database');
-    }
-    return this.connectionLayers[0]!;
+  getCurrent(): PgDatabase<NodePgQueryResultHKT, typeof schema> {
+    return this.layers[0]!;
   }
 
   /**
    * トランザクション内で指定されたアクションを実行します。
   */
-  async transaction<T>(action: (tx: PgTransaction<NodePgQueryResultHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>) => Promise<T>): Promise<T> {
-    return this.getConnection()
+  async execAction<T>(action: (tx: PgTransaction<NodePgQueryResultHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>) => Promise<T>): Promise<T> {
+    return this.getCurrent()
       .transaction(async (tx) => {
-        this.connectionLayers.unshift(tx);
+        this.layers.unshift(tx);
         const returnValue = await action(tx);
-        this.connectionLayers.shift();
+        this.layers.shift();
         return returnValue;
       });
   }
 
-  release() {
+  /**
+   * データベース接続を開放します。
+  */
+  dispose() {
     this.internalClient.release();
   }
 }

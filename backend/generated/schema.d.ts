@@ -107,25 +107,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        post: operations["CreateTimelinePost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/post/{postId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
         get: operations["GetPost"];
         put?: never;
-        post?: never;
+        post: operations["CreateTimelinePost"];
         delete: operations["DeletePost"];
         options?: never;
         head?: never;
@@ -432,6 +416,28 @@ export interface operations {
             };
         };
     };
+    GetPost: {
+        parameters: {
+            query: {
+                postId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Api.v1.Post"];
+                };
+            };
+        };
+    };
     CreateTimelinePost: {
         parameters: {
             query?: never;
@@ -456,35 +462,13 @@ export interface operations {
             };
         };
     };
-    GetPost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                postId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The request has succeeded. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Api.v1.Post"];
-                };
-            };
-        };
-    };
     DeletePost: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
+            query: {
                 postId: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;

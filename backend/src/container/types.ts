@@ -1,15 +1,23 @@
 const TYPES = {
   Container: Symbol.for('Container'),
-
   App: Symbol.for('App'),
   AppConfig: Symbol.for('AppConfig'),
-  RouteService: Symbol.for('RouteService'),
-  DatabaseService: Symbol.for('DatabaseService'),
-  HttpServerService: Symbol.for('HttpServerService'),
+
+  // modules
+  HttpRoute: Symbol.for('HttpRoute'),
+  ConnectionPool: Symbol.for('ConnectionPool'),
+
+  // services
   UserService: Symbol.for('UserService'),
-  AccountService: Symbol.for('AccountService'),
   PasswordVerificationService: Symbol.for('PasswordVerificationService'),
   TokenService: Symbol.for('TokenService'),
+  PostService: Symbol.for('PostService'),
+
+  // repositories
+  UserRepository: Symbol.for('UserRepository'),
+  PasswordVerificationRepository: Symbol.for('PasswordVerificationRepository'),
+  TokenRepository: Symbol.for('TokenRepository'),
+  PostRepository: Symbol.for('PostRepository'),
 
   // routers
   RootRouter: Symbol.for('RootRouter'),
