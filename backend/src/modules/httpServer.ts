@@ -4,7 +4,7 @@ import { AppConfig } from "../app";
 import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
 import * as openapi from "express-openapi-validator";
-import { buildRestApiError } from "./apiErrors";
+import { buildRestApiError } from "./appErrors";
 import { configureServer } from "./httpAuthentication";
 
 export function createHttpServer(container: Container) {
@@ -39,4 +39,3 @@ export function createHttpServer(container: Container) {
     app.listen(config.port, () => resolve());
   });
 }
-

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam } from "../modules/apiErrors";
+import { appError, InvalidParam } from "../modules/appErrors";
 import { PasswordVerificationRepository } from "../repositories/PasswordVerificationRepository";
 import { AccessContext } from "../types/access-context";
 

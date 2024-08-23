@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { AccessDenied, appError, InvalidParam, PostNotFound } from "../modules/apiErrors";
+import { AccessDenied, appError, InvalidParam, PostNotFound } from "../modules/appErrors";
 import { PostRepository } from "../repositories/PostRepository";
 import { AccessContext } from "../types/access-context";
 import { PostEntity } from "../types/entities";

@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam, MissingParameter, UserNotFound } from "../modules/apiErrors";
+import { appError, InvalidParam, MissingParameter, UserNotFound } from "../modules/appErrors";
 import { UserRepository } from "../repositories/UserRepository";
 import { AccessContext } from "../types/access-context";
 import { AuthResultEntity, UserEntity } from "../types/entities";
