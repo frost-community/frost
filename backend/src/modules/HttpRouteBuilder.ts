@@ -64,7 +64,7 @@ function createMiddlewareStack<P, R>(
   // authenticate
   if (requiredScope != null) {
     if (typeof requiredScope == 'string' || requiredScope.length > 0) {
-      middlewares.push(...authenticate({ scope: requiredScope }));
+      middlewares.push(...authenticate(requiredScope));
     }
   }
 
