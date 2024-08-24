@@ -35,15 +35,16 @@ export class UserService {
       userId: user.userId,
       password: params.password,
     }, ctx);
+    const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
     const accessToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "access_token",
-      scopes: ["user.read"],
+      scopes: scopes,
     }, ctx);
     const refreshToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "refresh_token",
-      scopes: ["user.read"],
+      scopes: scopes,
     }, ctx);
     return { accessToken, refreshToken, user };
   }
@@ -59,7 +60,7 @@ export class UserService {
       throw appError(new UserNotFound());
     }
     if (user.passwordAuthEnabled) {
-      if (params.password == null || params.password.length > 8) {
+      if (params.password == null || params.password.length < 1) {
         throw appError(new InvalidParam([]));
       }
       const verification = await this.passwordVerificationService.verifyPassword({
@@ -73,15 +74,16 @@ export class UserService {
           status: 401,
         });
       }
+      const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
       const accessToken = await this.tokenService.create({
         userId: user.userId,
         tokenKind: "access_token",
-        scopes: ["user.read"],
+        scopes: scopes,
       }, ctx);
       const refreshToken = await this.tokenService.create({
         userId: user.userId,
         tokenKind: "refresh_token",
-        scopes: ["user.read"],
+        scopes: scopes,
       }, ctx);
       return { accessToken, refreshToken, user };
     }

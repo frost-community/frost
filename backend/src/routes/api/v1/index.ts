@@ -14,6 +14,17 @@ export class ApiVer1Router {
 
   create() {
     const router = express.Router();
+
+    // CORS
+    router.use((req, res, next) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'POST,GET,DELETE');
+      if (req.method == 'OPTIONS') {
+        return res.send(200);
+      }
+      next();
+    });
+
     const routeBuilder = new HttpRouteBuilder(router, this.container);
 
     const userService = this.container.get<UserService>(TYPES.UserService);

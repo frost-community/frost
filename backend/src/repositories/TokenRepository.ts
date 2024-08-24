@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreateTokenScopeParameters, tokenScopeTable, tokenTable } from "../database/schema";
 import { AccessContext } from "../types/access-context";
@@ -42,27 +42,25 @@ export class TokenRepository {
   async get(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] } | undefined> {
     const rows = await ctx.db.getCurrent()
       .select({
-        tokenKind: tokenTable.tokenKind,
         userId: tokenTable.userId,
-        scopeName: tokenScopeTable.scopeName,
+        tokenKind: tokenTable.tokenKind,
+        scopes:  sql<string[]>`array_agg(${tokenScopeTable.scopeName})`,
       })
       .from(tokenTable)
       .leftJoin(
         tokenScopeTable,
         eq(tokenScopeTable.tokenId, tokenTable.tokenId)
       )
-      .where(eq(tokenTable.token, params.token));
+      .where(eq(tokenTable.token, params.token))
+      .groupBy(tokenTable.tokenId);
     if (rows.length == 0) {
       return undefined;
     }
-    let scopes = rows
-      .map(row => row.scopeName)
-      .filter(scope => scope != null);
     const row = rows[0]!;
     return {
       userId: row.userId,
       tokenKind: row.tokenKind as TokenKind,
-      scopes,
+      scopes: row.scopes,
     };
   }
 

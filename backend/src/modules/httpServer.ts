@@ -5,14 +5,16 @@ import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
 import * as openapi from "express-openapi-validator";
 import { buildRestApiError } from "./appErrors";
-import { configureServer } from "./httpAuthentication";
+import * as auth from "./httpAuthentication";
 
 export function createHttpServer(container: Container) {
   const config = container.get<AppConfig>(TYPES.AppConfig);
   const rootRouter = container.get<RootRouter>(TYPES.RootRouter);
 
   const app = express();
-  configureServer(container);
+  app.disable("x-powered-by");
+
+  auth.configureServer(container);
 
   app.use(express.json());
 
