@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, SQL } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreateUserParameters, userTable } from "../database/schema";
 import { AccessContext } from "../types/access-context";
@@ -19,6 +19,13 @@ export class UserRepository {
     if ([params.userId, params.name].every(x => x == null)) {
       throw new Error("invalid condition");
     }
+    const conditions: SQL[] = [];
+    if (params.userId != null) {
+      conditions.push(eq(userTable.userId, params.userId));
+    }
+    if (params.name != null) {
+      conditions.push(eq(userTable.name, params.name));
+    }
     const rows = await ctx.db.getCurrent()
       .select({
         userId: userTable.userId,
@@ -27,12 +34,7 @@ export class UserRepository {
         passwordAuthEnabled: userTable.passwordAuthEnabled,
       })
       .from(userTable)
-      .where(
-        and(
-          eq(userTable.userId, params.userId != null ? params.userId : userTable.userId),
-          eq(userTable.name, params.name != null ? params.name : userTable.name)
-        )
-      );
+      .where(and(...conditions));
     if (rows.length == 0) {
       return undefined;
     }
