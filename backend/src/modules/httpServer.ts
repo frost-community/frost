@@ -3,7 +3,6 @@ import { Container } from "inversify";
 import { AppConfig } from "../app";
 import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
-import * as openapi from "express-openapi-validator";
 import { buildRestApiError } from "./appErrors";
 import * as auth from "./httpAuthentication";
 
@@ -18,17 +17,7 @@ export function createHttpServer(container: Container) {
 
   app.use(express.json());
 
-  app.use(openapi.middleware({
-    apiSpec: "./generated/openapi.yaml",
-    validateRequests: true,
-    validateResponses: (config.env == "test"),
-  }));
-
   app.use(rootRouter.create());
-
-  app.use((req, res, next) => {
-    next(new Error("endpoint not implemented"));
-  });
 
   // @ts-ignore
   app.use((err, req, res, next) => {

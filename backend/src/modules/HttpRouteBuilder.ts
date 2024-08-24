@@ -3,7 +3,7 @@ import { Container } from "inversify";
 import z from 'zod';
 import { TYPES } from "../container/types";
 import { UserEntity } from "../types/entities";
-import { appError } from "./appErrors";
+import { appError, BadRequest } from "./appErrors";
 import { ConnectionLayers, ConnectionPool } from "./database";
 import { authenticate } from "./httpAuthentication";
 
@@ -35,7 +35,12 @@ export class HandlerContext {
   validateParams<T>(schema: z.ZodType<T>): T {
     const result = schema.safeParse(this.params);
     if (!result.success) {
-      throw appError({ code: 'validationError', message: 'Validation error.', status: 400 });
+      result.error.issues[0]?.message
+      throw appError(new BadRequest(
+        result.error.issues.map(x => {
+          return { code: x.code, path: x.path, message: x.message };
+        })
+      ));
     }
     return result.data;
   }

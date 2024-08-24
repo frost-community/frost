@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam, MissingParameter, UserNotFound } from "../modules/appErrors";
+import { appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
 import { UserRepository } from "../repositories/UserRepository";
 import { AccessContext } from "../types/access-context";
 import { AuthResultEntity, UserEntity } from "../types/entities";
@@ -17,7 +17,9 @@ export class UserService {
 
   async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 5) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'name invalid.' },
+      ]));
     }
     if (params.password == null) {
       throw appError({
@@ -51,17 +53,21 @@ export class UserService {
 
   async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 1) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'name invalid.' },
+      ]));
     }
     const user = await this.userRepository.get({
       name: params.name,
     }, ctx);
     if (user == null) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
     if (user.passwordAuthEnabled) {
       if (params.password == null || params.password.length < 1) {
-        throw appError(new InvalidParam([]));
+        throw appError(new BadRequest([
+          { message: 'password invalid.' },
+        ]));
       }
       const verification = await this.passwordVerificationService.verifyPassword({
         userId: user.userId,
@@ -93,14 +99,16 @@ export class UserService {
   async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
     // either userId or name must be specified
     if ([params.userId, params.name].every(x => x == null)) {
-      throw appError(new MissingParameter());
+      throw appError(new BadRequest([
+        { message: "Please specify the userId or name." },
+      ]));
     }
     const userEntity = await this.userRepository.get({
       userId: params.userId,
       name: params.name,
     }, ctx);
     if (userEntity == null) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
     return userEntity;
   }
@@ -111,7 +119,7 @@ export class UserService {
     }, ctx);
 
     if (!success) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
   }
 }

@@ -6,6 +6,7 @@ import { HttpRouteBuilder } from '../../../modules/HttpRouteBuilder';
 import { PostService } from '../../../services/PostService';
 import { UserService } from '../../../services/UserService';
 import * as routeTypes from '../../../types/endpoints';
+import { appError, EndpointNotFound } from '../../../modules/appErrors';
 
 @injectable()
 export class ApiVer1Router {
@@ -37,7 +38,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<{ message: string }> {
         const params: { message: string } = ctx.validateParams(
           z.object({
-            message: z.string(),
+            message: z.string().min(1),
           })
         );
         return { message: params.message };
@@ -50,7 +51,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<{ message: string }> {
         const params: { message: string } = ctx.validateParams(
           z.object({
-            message: z.string(),
+            message: z.string().min(1),
           })
         );
         return { message: params.message };
@@ -64,9 +65,9 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<routeTypes.SignupResponse> {
         const params: routeTypes.SignupBody = ctx.validateParams(
           z.object({
-            name: z.string(),
-            password: z.string().optional(),
-            displayName: z.string(),
+            name: z.string().min(1),
+            password: z.string().min(1).optional(),
+            displayName: z.string().min(1),
           })
         );
         const result = await userService.signup(params, { userId: ctx.getUser().userId, db: ctx.db });
@@ -81,8 +82,8 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<routeTypes.SigninResponse> {
         const params: routeTypes.SigninBody = ctx.validateParams(
           z.object({
-            name: z.string(),
-            password: z.string().optional(),
+            name: z.string().min(1),
+            password: z.string().min(1).optional(),
           })
         );
         const result = await userService.signin(params, { userId: ctx.getUser().userId, db: ctx.db });
@@ -97,8 +98,8 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<routeTypes.GetUserResponse> {
         const params: routeTypes.GetUserQuery = ctx.validateParams(
           z.object({
-            userId: z.string().optional(),
-              name: z.string().optional(),
+            userId: z.string().length(32).optional(),
+            name: z.string().min(1).optional(),
           })
         );
         const result = await userService.get(params, { userId: ctx.getUser().userId, db: ctx.db });
@@ -126,7 +127,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<routeTypes.CreateTimelinePostResponse> {
         const params: routeTypes.CreateTimelinePostBody = ctx.validateParams(
           z.object({
-            content: z.string(),
+            content: z.string().min(1),
           })
         );
         const result = await postService.createTimelinePost(params, { userId: ctx.getUser().userId, db: ctx.db });
@@ -141,7 +142,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<routeTypes.GetPostResponse> {
         const params: routeTypes.GetPostQuery = ctx.validateParams(
           z.object({
-            postId: z.string(),
+            postId: z.string().length(32),
           })
         );
         const result = await postService.get(params, { userId: ctx.getUser().userId, db: ctx.db });
@@ -156,11 +157,15 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<void> {
         const params: routeTypes.DeletePostQuery = ctx.validateParams(
           z.object({
-            postId: z.string(),
+            postId: z.string().length(32),
           })
         );
         await postService.delete(params, { userId: ctx.getUser().userId, db: ctx.db });
       },
+    });
+
+    router.use((req, res, next) => {
+      next(appError(new EndpointNotFound()));
     });
 
     return router;

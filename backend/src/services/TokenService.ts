@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam, Unauthenticated } from "../modules/appErrors";
+import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
 import { TokenKind, TokenRepository } from "../repositories/TokenRepository";
 import { AccessContext } from "../types/access-context";
 import { TokenEntity } from "../types/entities";
@@ -25,7 +25,9 @@ export class TokenService {
 
   async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
     if (params.token.length < 1) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'token invalid.' },
+      ]));
     }
     const info = await this.tokenRepository.get({
       token: params.token,

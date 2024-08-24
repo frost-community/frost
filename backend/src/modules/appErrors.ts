@@ -23,35 +23,6 @@ export function appError(error: ErrorObject): AppError {
  * 任意のエラー情報を元にREST APIのエラーを組み立てます。
 */
 export function buildRestApiError(err: unknown): { error: ErrorObject } {
-  // openapi error
-  if (err instanceof openapiTypes.HttpError) {
-    if (err instanceof openapiTypes.BadRequest) {
-      return {
-        error: new InvalidParam(err.errors),
-      };
-    }
-    // if (err instanceof openapiTypes.Unauthorized) {
-    //   return {
-    //     error: new NeedAuthentication(),
-    //   };
-    // }
-    // if (err instanceof openapiTypes.Forbidden) {
-    //   return {
-    //     error: new AccessDenied(),
-    //   };
-    // }
-    if (err instanceof openapiTypes.NotFound) {
-      return {
-        error: new EndpointNotFound(),
-      };
-    }
-    if (err instanceof openapiTypes.MethodNotAllowed) {
-      return {
-        error: new MethodNotAllowed(),
-      };
-    }
-  }
-
   // app error
   if (err instanceof AppError) {
     return {
@@ -66,20 +37,14 @@ export function buildRestApiError(err: unknown): { error: ErrorObject } {
   };
 }
 
-export class MissingParameter implements ErrorObject {
-  code = 'missingParameter';
-  message = 'One or more of the parameters are missing.';
+export class BadRequest implements ErrorObject {
+  code = 'badRequest';
+  message = 'The request is invalid.';
   status = 400;
-}
-
-export class InvalidParam implements ErrorObject {
-  code = 'invalidParam';
-  message = 'One or more of the parameters are invalid.';
-  status = 400;
-  details: openapiTypes.ValidationErrorItem[];
+  details?: { code?: string, path?: (string | number)[], message: string }[];
 
   constructor(
-    details: openapiTypes.ValidationErrorItem[],
+    details?: BadRequest["details"],
   ) {
     this.details = details;
   }
@@ -97,28 +62,14 @@ export class AccessDenied implements ErrorObject {
   status = 403;
 }
 
-export class AccountNotFound implements ErrorObject {
-  code = 'accountNotFound';
-  message = 'The specified account was not found.';
-  status = 404;
-}
-
 export class ResourceNotFound implements ErrorObject {
   code = 'resourceNotFound';
   message = 'The specified resource was not found.';
   status = 404;
-}
 
-export class UserNotFound implements ErrorObject {
-  code = 'userNotFound';
-  message = 'The specified user was not found.';
-  status = 404;
-}
-
-export class PostNotFound implements ErrorObject {
-  code = 'postNotFound';
-  message = 'The specified post was not found.';
-  status = 404;
+  constructor(
+    public resorceName: string,
+  ) {}
 }
 
 export class EndpointNotFound implements ErrorObject {

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam } from "../modules/appErrors";
+import { appError, BadRequest } from "../modules/appErrors";
 import { PasswordVerificationRepository } from "../repositories/PasswordVerificationRepository";
 import { AccessContext } from "../types/access-context";
 
@@ -26,7 +26,9 @@ export class PasswordVerificationService {
   */
   async create(params: { userId: string, password: string }, ctx: AccessContext): Promise<void> {
     if (params.password.length < 8) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'password invalid.' },
+      ]));
     }
     await this.passwordVerificationRepository.create({
       userId: ctx.userId,
@@ -41,7 +43,9 @@ export class PasswordVerificationService {
   */
   async verifyPassword(params: { userId: string, password: string }, ctx: AccessContext): Promise<boolean> {
     if (params.password.length < 1) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'password invalid.' },
+      ]));
     }
     const info = await this.passwordVerificationRepository.get({
       userId: params.userId,
