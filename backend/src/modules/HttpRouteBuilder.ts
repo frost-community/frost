@@ -1,20 +1,44 @@
 import express from "express";
-import { UserEntity } from "../types/entities";
-import { ConnectionLayers, ConnectionPool } from "./database";
 import { Container } from "inversify";
+import z from 'zod';
 import { TYPES } from "../container/types";
+import { UserEntity } from "../types/entities";
+import { appError } from "./appErrors";
+import { ConnectionLayers, ConnectionPool } from "./database";
 import { authenticate } from "./httpAuthentication";
 
-export type HandlerContext<P> = {
-  params: P,
-  auth?: {
-    userId: string,
-    user?: UserEntity,
-    scope: string[],
-  },
-  db: ConnectionLayers,
-  req: express.Request,
-  res: express.Response,
+export class HandlerContext {
+  _user: UserEntity | undefined;
+  _scopes: string[] | undefined;
+  constructor(
+    public params: unknown,
+    public db: ConnectionLayers,
+    public req: express.Request,
+    public res: express.Response,
+    user: UserEntity | undefined,
+    scopes: string[] | undefined,
+  ) {
+    this._user = user;
+    this._scopes = scopes;
+  }
+  
+  getUser(): UserEntity {
+    if (this._user == null) throw new Error('not authenticated');
+    return this._user;
+  }
+
+  getScopes(): string[] {
+    if (this._scopes == null) throw new Error('not authenticated');
+    return this._scopes;
+  }
+
+  validateParams<T>(schema: z.ZodType<T>): T {
+    const result = schema.safeParse(this.params);
+    if (!result.success) {
+      throw appError({ code: 'validationError', message: 'Validation error.', status: 400 });
+    }
+    return result.data;
+  }
 };
 
 export class HttpRouteBuilder {
@@ -27,15 +51,15 @@ export class HttpRouteBuilder {
     this.connectionPool = container.get<ConnectionPool>(TYPES.ConnectionPool);
   }
 
-  public build<P, R>(
+  public build<R>(
     params: {
       method: 'GET' | 'POST' | 'DELETE'
       path: string,
       scope?: string | string[],
-      requestHandler: (ctx: HandlerContext<P>) => Promise<R>,
+      requestHandler: (ctx: HandlerContext) => Promise<R>,
     },
   ) {
-    const middlewares = createMiddlewareStack<P, R>(params.method, params.scope, this.connectionPool, params.requestHandler);
+    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.connectionPool, params.requestHandler);
     switch (params.method) {
       case 'POST': {
         this.router.post(params.path, ...middlewares);
@@ -53,11 +77,11 @@ export class HttpRouteBuilder {
   }
 }
 
-function createMiddlewareStack<P, R>(
+function createMiddlewareStack<R>(
   method: 'POST' | 'DELETE' | 'GET',
   requiredScope: string | string[] | undefined,
   connectionPool: ConnectionPool,
-  handler: (ctx: HandlerContext<P>) => Promise<R> | R
+  handler: (ctx: HandlerContext) => Promise<R> | R
 ): express.RequestHandler[] {
   const middlewares: express.RequestHandler[] = [];
 
@@ -84,19 +108,11 @@ function createMiddlewareStack<P, R>(
     }
 
     // ハンドラ用の認証情報
-    let auth: {
-      userId: string,
-      user?: UserEntity,
-      scope: string[],
-    } | undefined;
+    let user: UserEntity | undefined;
+    let scopes: string[] | undefined;
     if (req.authInfo != null) {
-      const user = req.user as UserEntity;
-      const scope: string[] = (req.authInfo as any).scope;
-      auth = {
-        userId: user.userId,
-        user: user,
-        scope,
-      };
+      user = req.user as UserEntity;
+      scopes = (req.authInfo as { scope: string[] }).scope;
     }
 
     async function asyncHandler() {
@@ -107,23 +123,11 @@ function createMiddlewareStack<P, R>(
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
           returnValue = await db.execAction(async () => {
-            return await handler({
-              params,
-              auth,
-              db: db as ConnectionLayers,
-              req,
-              res,
-            });
+            return await handler(new HandlerContext(params, db!, req, res, user, scopes));
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
-          returnValue = await handler({
-            params,
-            auth,
-            db,
-            req,
-            res,
-          });
+          returnValue = await handler(new HandlerContext(params, db!, req, res, user, scopes));
         }
       } finally {
         // DBのコネクションを解放
