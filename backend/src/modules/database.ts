@@ -2,8 +2,6 @@ import { drizzle, NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { Pool, PoolClient } from "pg";
 import * as schema from "../database/schema";
 import { PgDatabase } from "drizzle-orm/pg-core";
-import { PgTransaction } from "drizzle-orm/pg-core";
-import { ExtractTablesWithRelations } from "drizzle-orm";
 import { AppConfig } from "../app";
 
 export class ConnectionPool {
