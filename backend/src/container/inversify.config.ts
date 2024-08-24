@@ -22,6 +22,8 @@ import { RootRouter } from '../routes';
 import { ApiVer1Router } from '../routes/api/v1';
 
 export function setupContainer(container: Container) {
+  container.bind<Container>(TYPES.Container).toConstantValue(container);
+
   // app
   container.bind<App>(TYPES.App).to(App);
 

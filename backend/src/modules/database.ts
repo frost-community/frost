@@ -25,6 +25,13 @@ export class ConnectionPool {
     const internalClient = await this.pool.connect();
     return new ConnectionLayers(internalClient);
   }
+
+  /**
+   * コネクションプールを破棄します。
+  */
+  async dispose() {
+    return this.pool.end();
+  }
 }
 
 export class ConnectionLayers {
@@ -57,14 +64,14 @@ export class ConnectionLayers {
   /**
    * トランザクション内で指定されたアクションを実行します。
   */
-  async execAction<T>(action: (tx: PgTransaction<NodePgQueryResultHKT, typeof schema, ExtractTablesWithRelations<typeof schema>>) => Promise<T>): Promise<T> {
-    return this.getCurrent()
-      .transaction(async (tx) => {
-        this.layers.unshift(tx);
-        const returnValue = await action(tx);
-        this.layers.shift();
-        return returnValue;
-      });
+  async execAction<T>(action: () => Promise<T>): Promise<T> {
+    const db = this.getCurrent();
+    return db.transaction(async (tx) => {
+      this.layers.unshift(tx);
+      const returnValue = await action();
+      this.layers.shift();
+      return returnValue;
+    });
   }
 
   /**

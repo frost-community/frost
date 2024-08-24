@@ -35,15 +35,16 @@ export class UserService {
       userId: user.userId,
       password: params.password,
     }, ctx);
+    const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
     const accessToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "access_token",
-      scopes: ["user.read"],
+      scopes: scopes,
     }, ctx);
     const refreshToken = await this.tokenService.create({
       userId: user.userId,
       tokenKind: "refresh_token",
-      scopes: ["user.read"],
+      scopes: scopes,
     }, ctx);
     return { accessToken, refreshToken, user };
   }

@@ -106,21 +106,14 @@ function createMiddlewareStack<P, R>(
         db = await connectionPool.acquire();
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
-          returnValue = await db.execAction(async (tx) => {
-            try {
-              return await handler({
-                params,
-                auth,
-                db: db as ConnectionLayers,
-                req,
-                res,
-              });
-            } catch (err) {
-              console.error(err);
-              // handler内で何らかのエラーが発生した場合は、変更をロールバックする。
-              tx.rollback();
-              throw err;
-            }
+          returnValue = await db.execAction(async () => {
+            return await handler({
+              params,
+              auth,
+              db: db as ConnectionLayers,
+              req,
+              res,
+            });
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
