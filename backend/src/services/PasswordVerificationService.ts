@@ -40,7 +40,7 @@ export class PasswordVerificationService {
    * パスワード検証情報を用いてパスワードが正しいかどうかを確認します。
   */
   async verifyPassword(params: { userId: string, password: string }, ctx: AccessContext): Promise<boolean> {
-    if (params.password.length < 8) {
+    if (params.password.length < 1) {
       throw appError(new InvalidParam([]));
     }
     const info = await this.passwordVerificationRepository.get({
