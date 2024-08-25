@@ -7,6 +7,7 @@ import { HttpRouteBuilder } from '../../../modules/HttpRouteBuilder';
 import { PostService } from '../../../services/PostService';
 import { UserService } from '../../../services/UserService';
 import * as routeTypes from '../../../types/endpoints';
+import { corsApi } from '../../../modules/httpCors';
 
 @injectable()
 export class ApiVer1Router {
@@ -17,15 +18,7 @@ export class ApiVer1Router {
   public create() {
     const router = express.Router();
 
-    // CORS
-    router.use((req, res, next) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'POST,GET,DELETE');
-      if (req.method == 'OPTIONS') {
-        return res.send(200);
-      }
-      next();
-    });
+    router.use(corsApi());
 
     const routeBuilder = new HttpRouteBuilder(router, this.container);
 

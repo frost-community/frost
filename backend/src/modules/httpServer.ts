@@ -24,12 +24,18 @@ function buildRestApiError(err: unknown): { error: ErrorObject } {
   };
 }
 
-export function createHttpServer(container: Container) {
+export async function createHttpServer(container: Container) {
   const config = container.get<AppConfig>(TYPES.AppConfig);
   const rootRouter = container.get<RootRouter>(TYPES.RootRouter);
 
   const app = express();
   app.disable("x-powered-by");
+
+  // security
+  app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "DENY");
+    next();
+  });
 
   auth.configureServer(container);
 
@@ -44,7 +50,9 @@ export function createHttpServer(container: Container) {
     return;
   });
 
-  return new Promise<void>(resolve => {
+  await new Promise<void>(resolve => {
     app.listen(config.port, () => resolve());
   });
+
+  console.log('listen on port ' + config.port);
 }
