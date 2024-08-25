@@ -8,7 +8,7 @@ import { AccessContext } from "../types/access-context";
 */
 @injectable()
 export class PasswordVerificationRepository {
-  async create(params: CreatePasswordVerificationParameters, ctx: AccessContext): Promise<PasswordVerificationRecord> {
+  public async create(params: CreatePasswordVerificationParameters, ctx: AccessContext): Promise<PasswordVerificationRecord> {
     const rows = await ctx.db.getCurrent()
       .insert(passwordVerificationTable)
       .values(params)
@@ -17,7 +17,7 @@ export class PasswordVerificationRepository {
     return row;
   }
 
-  async get(params: { userId: string }, ctx: AccessContext): Promise<PasswordVerificationRecord | undefined> {
+  public async get(params: { userId: string }, ctx: AccessContext): Promise<PasswordVerificationRecord | undefined> {
     const rows = await ctx.db.getCurrent()
       .select()
       .from(passwordVerificationTable)
@@ -32,7 +32,7 @@ export class PasswordVerificationRepository {
   /**
    * @returns 削除に成功したかどうか
   */
-  async delete(params: { userId: string }, ctx: AccessContext): Promise<boolean> {
+  public async delete(params: { userId: string }, ctx: AccessContext): Promise<boolean> {
     const rows = await ctx.db.getCurrent()
       .delete(passwordVerificationTable)
       .where(eq(passwordVerificationTable.userId, params.userId));

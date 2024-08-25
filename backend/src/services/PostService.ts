@@ -11,7 +11,7 @@ export class PostService {
     @inject(TYPES.PostRepository) private readonly postRepository: PostRepository,
   ) {}
 
-  async createTimelinePost(params: { content: string }, ctx: AccessContext): Promise<PostEntity> {
+  public async createTimelinePost(params: { content: string }, ctx: AccessContext): Promise<PostEntity> {
     if (params.content.length < 1) {
       throw appError(new BadRequest([
         { message: 'content invalid.' },
@@ -24,7 +24,7 @@ export class PostService {
     return post;
   }
 
-  async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity> {
+  public async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity> {
     if (params.postId.length < 1) {
       throw appError(new BadRequest([
         { message: 'postId invalid.' },
@@ -39,7 +39,7 @@ export class PostService {
     return post;
   }
 
-  async delete(params: { postId: string }, ctx: AccessContext): Promise<void> {
+  public async delete(params: { postId: string }, ctx: AccessContext): Promise<void> {
     if (params.postId.length < 1) {
       throw appError(new BadRequest([
         { message: 'postId invalid.' },

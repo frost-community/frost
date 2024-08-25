@@ -15,7 +15,7 @@ export class UserService {
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
   ) {}
 
-  async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
+  public async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 5) {
       throw appError(new BadRequest([
         { message: 'name invalid.' },
@@ -51,7 +51,7 @@ export class UserService {
     return { accessToken, refreshToken, user };
   }
 
-  async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
+  public async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 1) {
       throw appError(new BadRequest([
         { message: 'name invalid.' },
@@ -96,7 +96,7 @@ export class UserService {
     throw new Error("authentication method not exists: " + user.userId);
   }
 
-  async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
+  public async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
     // either userId or name must be specified
     if ([params.userId, params.name].every(x => x == null)) {
       throw appError(new BadRequest([
@@ -113,7 +113,7 @@ export class UserService {
     return userEntity;
   }
 
-  async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
+  public async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
     const success = await this.userRepository.delete({
       userId: params.userId,
     }, ctx);

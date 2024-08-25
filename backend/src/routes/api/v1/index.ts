@@ -14,7 +14,7 @@ export class ApiVer1Router {
     @inject(TYPES.Container) private readonly container: Container,
   ) {}
 
-  create() {
+  public create() {
     const router = express.Router();
 
     // CORS
@@ -62,8 +62,8 @@ export class ApiVer1Router {
       method: 'POST',
       path: '/signup',
       scope: 'user.auth',
-      async requestHandler(ctx): Promise<routeTypes.SignupResponse> {
-        const params: routeTypes.SignupBody = ctx.validateParams(
+      async requestHandler(ctx): Promise<routeTypes.SignupResult> {
+        const params: routeTypes.SignupParams = ctx.validateParams(
           z.object({
             name: z.string().min(1),
             password: z.string().min(1).optional(),
@@ -79,8 +79,8 @@ export class ApiVer1Router {
       method: 'POST',
       path: '/signin',
       scope: 'user.auth',
-      async requestHandler(ctx): Promise<routeTypes.SigninResponse> {
-        const params: routeTypes.SigninBody = ctx.validateParams(
+      async requestHandler(ctx): Promise<routeTypes.SigninResult> {
+        const params: routeTypes.SigninParams = ctx.validateParams(
           z.object({
             name: z.string().min(1),
             password: z.string().min(1).optional(),
@@ -95,8 +95,8 @@ export class ApiVer1Router {
       method: 'GET',
       path: '/user',
       scope: 'user.read',
-      async requestHandler(ctx): Promise<routeTypes.GetUserResponse> {
-        const params: routeTypes.GetUserQuery = ctx.validateParams(
+      async requestHandler(ctx): Promise<routeTypes.GetUserResult> {
+        const params: routeTypes.GetUserParams = ctx.validateParams(
           z.object({
             userId: z.string().length(32).optional(),
             name: z.string().min(1).optional(),
@@ -111,7 +111,7 @@ export class ApiVer1Router {
       method: 'DELETE',
       path: '/user',
       scope: 'user.delete',
-      async requestHandler(ctx): Promise<routeTypes.GetUserResponse> {
+      async requestHandler(ctx): Promise<routeTypes.GetUserResult> {
         throw new Error('not implemented');
         // const accessUser = req.user as UserEntity;
         // const params = req.query as DeleteUserQuery;
@@ -124,8 +124,8 @@ export class ApiVer1Router {
       method: 'POST',
       path: '/post',
       scope: 'post.write',
-      async requestHandler(ctx): Promise<routeTypes.CreateTimelinePostResponse> {
-        const params: routeTypes.CreateTimelinePostBody = ctx.validateParams(
+      async requestHandler(ctx): Promise<routeTypes.CreateTimelinePostResult> {
+        const params: routeTypes.CreateTimelinePostParams = ctx.validateParams(
           z.object({
             content: z.string().min(1),
           })
@@ -139,8 +139,8 @@ export class ApiVer1Router {
       method: 'GET',
       path: '/post',
       scope: 'post.read',
-      async requestHandler(ctx): Promise<routeTypes.GetPostResponse> {
-        const params: routeTypes.GetPostQuery = ctx.validateParams(
+      async requestHandler(ctx): Promise<routeTypes.GetPostResult> {
+        const params: routeTypes.GetPostParams = ctx.validateParams(
           z.object({
             postId: z.string().length(32),
           })
@@ -155,7 +155,7 @@ export class ApiVer1Router {
       path: '/post',
       scope: 'post.delete',
       async requestHandler(ctx): Promise<void> {
-        const params: routeTypes.DeletePostQuery = ctx.validateParams(
+        const params: routeTypes.DeletePostParams = ctx.validateParams(
           z.object({
             postId: z.string().length(32),
           })

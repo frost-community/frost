@@ -19,7 +19,7 @@ export class ConnectionPool {
   /**
    * データベースのコネクションを取得します。
   */
-  async acquire() {
+  public async acquire() {
     const internalClient = await this.pool.connect();
     return new ConnectionLayers(internalClient);
   }
@@ -27,7 +27,7 @@ export class ConnectionPool {
   /**
    * コネクションプールを破棄します。
   */
-  async dispose() {
+  public async dispose() {
     return this.pool.end();
   }
 }
@@ -55,14 +55,14 @@ export class ConnectionLayers {
   /**
    * 現在のコネクションを取得します。
   */
-  getCurrent(): PgDatabase<NodePgQueryResultHKT, typeof schema> {
+  public getCurrent(): PgDatabase<NodePgQueryResultHKT, typeof schema> {
     return this.layers[0]!;
   }
 
   /**
    * トランザクション内で指定されたアクションを実行します。
   */
-  async execAction<T>(action: () => Promise<T>): Promise<T> {
+  public async execAction<T>(action: () => Promise<T>): Promise<T> {
     const db = this.getCurrent();
     return db.transaction(async (tx) => {
       this.layers.unshift(tx);
@@ -75,7 +75,7 @@ export class ConnectionLayers {
   /**
    * データベース接続を開放します。
   */
-  dispose() {
+  public dispose() {
     this.internalClient.release();
   }
 }

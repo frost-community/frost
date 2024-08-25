@@ -12,7 +12,7 @@ export class TokenService {
     @inject(TYPES.TokenRepository) private readonly tokenRepository: TokenRepository,
   ) {}
 
-  async create(params: { userId: string, tokenKind: TokenKind, scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
+  public async create(params: { userId: string, tokenKind: TokenKind, scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
     const tokenValue = this.generateTokenValue(32);
     const tokenEntity = await this.tokenRepository.create({
       userId: params.userId,
@@ -23,7 +23,7 @@ export class TokenService {
     return tokenEntity;
   }
 
-  async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
+  public async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
     if (params.token.length < 1) {
       throw appError(new BadRequest([
         { message: 'token invalid.' },
@@ -38,7 +38,10 @@ export class TokenService {
     return info;
   }
 
-  private generateTokenValue(length: number) {
+  /**
+   * @internal
+  */
+  public generateTokenValue(length: number) {
     let token = "";
     for (const [_index, byte] of crypto.randomBytes(length).entries()) {
       token += TokenService.asciiTable[byte % TokenService.asciiTable.length];

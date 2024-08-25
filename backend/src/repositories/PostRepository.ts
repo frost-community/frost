@@ -6,7 +6,7 @@ import { PostEntity } from "../types/entities";
 
 @injectable()
 export class PostRepository {
-  async create(params: CreatePostParameters, ctx: AccessContext): Promise<PostEntity> {
+  public async create(params: CreatePostParameters, ctx: AccessContext): Promise<PostEntity> {
     const rows = await ctx.db.getCurrent()
       .insert(postTable)
       .values(params)
@@ -15,7 +15,7 @@ export class PostRepository {
     return this.mapEntity(row);
   }
 
-  async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity | undefined> {
+  public async get(params: { postId: string }, ctx: AccessContext): Promise<PostEntity | undefined> {
     const rows = await ctx.db.getCurrent()
       .select()
       .from(postTable)
@@ -30,7 +30,7 @@ export class PostRepository {
   /**
    * @returns 削除に成功したかどうか
   */
-  async delete(params: { postId: string }, ctx: AccessContext): Promise<boolean> {
+  public async delete(params: { postId: string }, ctx: AccessContext): Promise<boolean> {
     const rows = await ctx.db.getCurrent()
       .delete(postTable)
       .where(eq(postTable.postId, params.postId));

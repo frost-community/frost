@@ -18,7 +18,7 @@ export class App {
     @inject(TYPES.Container) private readonly container: Container,
   ) {}
 
-  async run(): Promise<void> {
+  public async run(): Promise<void> {
     // TODO: validate app config
     await createHttpServer(this.container);
   }

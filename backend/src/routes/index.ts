@@ -9,7 +9,7 @@ export class RootRouter {
     @inject(TYPES.ApiVer1Router) private readonly apiVer1Router: ApiVer1Router
   ) {}
 
-  create() {
+  public create() {
     const router = express.Router();
 
     router.use('/api/v1', this.apiVer1Router.create());

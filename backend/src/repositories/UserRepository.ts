@@ -6,7 +6,7 @@ import { UserEntity } from "../types/entities";
 
 @injectable()
 export class UserRepository {
-  async create(params: CreateUserParameters, ctx: AccessContext): Promise<UserEntity> {
+  public async create(params: CreateUserParameters, ctx: AccessContext): Promise<UserEntity> {
     const rows = await ctx.db.getCurrent()
       .insert(userTable)
       .values(params)
@@ -15,7 +15,7 @@ export class UserRepository {
     return row;
   }
 
-  async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity | undefined> {
+  public async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity | undefined> {
     if ([params.userId, params.name].every(x => x == null)) {
       throw new Error("invalid condition");
     }
@@ -45,7 +45,7 @@ export class UserRepository {
   /**
    * @returns 削除に成功したかどうか
   */
-  async delete(params: { userId: string }, ctx: AccessContext): Promise<boolean> {
+  public async delete(params: { userId: string }, ctx: AccessContext): Promise<boolean> {
     const rows = await ctx.db.getCurrent()
       .delete(userTable)
       .where(eq(userTable.userId, params.userId));

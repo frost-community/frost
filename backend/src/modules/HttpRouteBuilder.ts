@@ -8,8 +8,8 @@ import { ConnectionLayers, ConnectionPool } from "./database";
 import { authenticate } from "./httpAuthentication";
 
 export class HandlerContext {
-  _user: UserEntity | undefined;
-  _scopes: string[] | undefined;
+  private _user: UserEntity | undefined;
+  private _scopes: string[] | undefined;
   constructor(
     public params: unknown,
     public db: ConnectionLayers,
@@ -22,17 +22,17 @@ export class HandlerContext {
     this._scopes = scopes;
   }
   
-  getUser(): UserEntity {
+  public getUser(): UserEntity {
     if (this._user == null) throw new Error('not authenticated');
     return this._user;
   }
 
-  getScopes(): string[] {
+  public getScopes(): string[] {
     if (this._scopes == null) throw new Error('not authenticated');
     return this._scopes;
   }
 
-  validateParams<T>(schema: z.ZodType<T>): T {
+  public validateParams<T>(schema: z.ZodType<T>): T {
     const result = schema.safeParse(this.params);
     if (!result.success) {
       throw appError(new BadRequest(

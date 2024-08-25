@@ -24,7 +24,7 @@ export class PasswordVerificationService {
   /**
    * パスワードの検証情報を作成します。
   */
-  async create(params: { userId: string, password: string }, ctx: AccessContext): Promise<void> {
+  public async create(params: { userId: string, password: string }, ctx: AccessContext): Promise<void> {
     if (params.password.length < 8) {
       throw appError(new BadRequest([
         { message: 'password invalid.' },
@@ -41,7 +41,7 @@ export class PasswordVerificationService {
   /**
    * パスワード検証情報を用いてパスワードが正しいかどうかを確認します。
   */
-  async verifyPassword(params: { userId: string, password: string }, ctx: AccessContext): Promise<boolean> {
+  public async verifyPassword(params: { userId: string, password: string }, ctx: AccessContext): Promise<boolean> {
     if (params.password.length < 1) {
       throw appError(new BadRequest([
         { message: 'password invalid.' },
@@ -64,8 +64,9 @@ export class PasswordVerificationService {
 
   /**
    * パスワード認証情報を生成します。
+   * @internal
   */
-  private generateInfo(params: { password: string }): PasswordVerificationInfo {
+  public generateInfo(params: { password: string }): PasswordVerificationInfo {
     const algorithm = "sha256";
     const salt = this.generateSalt();
     const iteration = 100000;
@@ -85,8 +86,9 @@ export class PasswordVerificationService {
 
   /**
    * ハッシュを生成します。
+   * @internal
   */
-  private generateHash(params: { token: string, algorithm: string, salt: string, iteration: number }): string {
+  public generateHash(params: { token: string, algorithm: string, salt: string, iteration: number }): string {
     if (params.iteration < 1) {
       throw new Error("The iteration value must be 1 or greater");
     }
@@ -99,8 +101,9 @@ export class PasswordVerificationService {
 
   /**
    * 塩を生成します。
+   * @internal
   */
-  private generateSalt(): string {
+  public generateSalt(): string {
     // 128bit random (length = 32)
     return crypto.randomBytes(16).toString("hex");
   }

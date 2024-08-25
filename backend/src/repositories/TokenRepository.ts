@@ -8,7 +8,7 @@ export type TokenKind = "access_token" | "refresh_token";
 
 @injectable()
 export class TokenRepository {
-  async create(params: { userId: string, tokenKind: TokenKind, scopes: string[], token: string, }, ctx: AccessContext): Promise<TokenEntity> {
+  public async create(params: { userId: string, tokenKind: TokenKind, scopes: string[], token: string, }, ctx: AccessContext): Promise<TokenEntity> {
     // トークンを登録
     const tokenRows = await ctx.db.getCurrent()
       .insert(tokenTable)
@@ -39,7 +39,7 @@ export class TokenRepository {
     };
   }
 
-  async get(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] } | undefined> {
+  public async get(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] } | undefined> {
     const rows = await ctx.db.getCurrent()
       .select({
         userId: tokenTable.userId,
@@ -67,7 +67,7 @@ export class TokenRepository {
   /**
    * @returns 削除に成功したかどうか
   */
-  async delete(params: { token: string }, ctx: AccessContext): Promise<boolean> {
+  public async delete(params: { token: string }, ctx: AccessContext): Promise<boolean> {
     const tokenRows = await ctx.db.getCurrent()
       .select({
         tokenId: tokenTable.tokenId,
