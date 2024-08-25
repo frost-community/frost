@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Container, inject, injectable } from 'inversify';
-import { createHttpServer } from './modules/httpServer';
 import { TYPES } from './container/types';
+import { createHttpServer } from './modules/httpServer';
 
 export type AppConfig = {
   port: number,

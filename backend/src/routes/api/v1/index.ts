@@ -2,11 +2,11 @@ import express from 'express';
 import { Container, inject, injectable } from 'inversify';
 import z from 'zod';
 import { TYPES } from '../../../container/types';
+import { appError, EndpointNotFound } from '../../../modules/appErrors';
 import { HttpRouteBuilder } from '../../../modules/HttpRouteBuilder';
 import { PostService } from '../../../services/PostService';
 import { UserService } from '../../../services/UserService';
 import * as routeTypes from '../../../types/endpoints';
-import { appError, EndpointNotFound } from '../../../modules/appErrors';
 
 @injectable()
 export class ApiVer1Router {

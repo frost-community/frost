@@ -3,8 +3,26 @@ import { Container } from "inversify";
 import { AppConfig } from "../app";
 import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
-import { buildRestApiError } from "./appErrors";
+import { AppError, ErrorObject, ServerError } from "./appErrors";
 import * as auth from "./httpAuthentication";
+
+/**
+ * 任意のエラー情報を元にREST APIのエラーを組み立てます。
+*/
+function buildRestApiError(err: unknown): { error: ErrorObject } {
+  // app error
+  if (err instanceof AppError) {
+    return {
+      error: err.error,
+    };
+  }
+
+  // other errors
+  console.error(err);
+  return {
+    error: new ServerError(),
+  };
+}
 
 export function createHttpServer(container: Container) {
   const config = container.get<AppConfig>(TYPES.AppConfig);

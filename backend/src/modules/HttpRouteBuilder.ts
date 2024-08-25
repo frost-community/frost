@@ -35,7 +35,6 @@ export class HandlerContext {
   validateParams<T>(schema: z.ZodType<T>): T {
     const result = schema.safeParse(this.params);
     if (!result.success) {
-      result.error.issues[0]?.message
       throw appError(new BadRequest(
         result.error.issues.map(x => {
           return { code: x.code, path: x.path, message: x.message };

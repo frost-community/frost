@@ -1,5 +1,3 @@
-import * as openapiTypes from "express-openapi-validator/dist/framework/types";
-
 export interface ErrorObject {
   [x: string]: any,
   code: string,
@@ -19,26 +17,8 @@ export function appError(error: ErrorObject): AppError {
   return new AppError(error);
 }
 
-/**
- * 任意のエラー情報を元にREST APIのエラーを組み立てます。
-*/
-export function buildRestApiError(err: unknown): { error: ErrorObject } {
-  // app error
-  if (err instanceof AppError) {
-    return {
-      error: err.error,
-    };
-  }
-
-  // other errors
-  console.error(err);
-  return {
-    error: new ServerError(),
-  };
-}
-
 export class BadRequest implements ErrorObject {
-  code = 'badRequest';
+  code = 'bad_request';
   message = 'The request is invalid.';
   status = 400;
   details?: { code?: string, path?: (string | number)[], message: string }[];
@@ -57,13 +37,13 @@ export class Unauthenticated implements ErrorObject {
 }
 
 export class AccessDenied implements ErrorObject {
-  code = 'accessDenied';
+  code = 'access_denied';
   message = 'You do not have access permissions.';
   status = 403;
 }
 
 export class ResourceNotFound implements ErrorObject {
-  code = 'resourceNotFound';
+  code = 'resource_not_found';
   message = 'The specified resource was not found.';
   status = 404;
 
@@ -73,19 +53,19 @@ export class ResourceNotFound implements ErrorObject {
 }
 
 export class EndpointNotFound implements ErrorObject {
-  code = 'endpointNotFound';
+  code = 'endpoint_not_found';
   message = 'The specified API endpoint was not found.';
   status = 404;
 }
 
 export class MethodNotAllowed implements ErrorObject {
-  code = 'methodNotAllowed';
+  code = 'method_not_allowed';
   message = 'This API endpoint does not support the specified operation.';
   status = 405;
 }
 
 export class ServerError implements ErrorObject {
-  code = 'serverError';
+  code = 'server_error';
   message = 'An internal error occurred on the server.';
   status = 500;
 }

@@ -1,8 +1,8 @@
 import { drizzle, NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
-import { Pool, PoolClient } from "pg";
-import * as schema from "../database/schema";
 import { PgDatabase } from "drizzle-orm/pg-core";
+import { Pool, PoolClient } from "pg";
 import { AppConfig } from "../app";
+import * as schema from "../database/schema";
 
 export class ConnectionPool {
   private pool: Pool;
