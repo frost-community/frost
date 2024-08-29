@@ -19,7 +19,7 @@ import { UserService } from '../services/UserService';
 
 // routers
 import { RootRouter } from '../routes';
-import { ApiVer1Router } from '../routes/api/v1';
+import { ApiVer1Router } from '../routes/apiVer1';
 
 export function setupContainer(container: Container) {
   container.bind<Container>(TYPES.Container).toConstantValue(container);

@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { TYPES } from "../container/types";
 import { appError, BadRequest } from "../modules/appErrors";
 import { PasswordVerificationRepository } from "../repositories/PasswordVerificationRepository";
-import { AccessContext } from "../types/access-context";
+import { AccessContext } from "../modules/AccessContext";
 
 type PasswordVerificationInfo = {
   algorithm: string,

@@ -3,8 +3,8 @@ import crypto from "node:crypto";
 import { TYPES } from "../container/types";
 import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
 import { TokenKind, TokenRepository } from "../repositories/TokenRepository";
-import { AccessContext } from "../types/access-context";
-import { TokenEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { TokenEntity } from "../modules/entities";
 
 @injectable()
 export class TokenService {

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreatePasswordVerificationParameters, PasswordVerificationRecord, passwordVerificationTable } from "../database/schema";
-import { AccessContext } from "../types/access-context";
+import { AccessContext } from "../modules/AccessContext";
 
 /**
  * パスワード検証情報

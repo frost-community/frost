@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreatePostParameters, PostRecord, postTable } from "../database/schema";
-import { AccessContext } from "../types/access-context";
-import { PostEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { PostEntity } from "../modules/entities";
 
 @injectable()
 export class PostRepository {

@@ -1,8 +1,8 @@
 import { and, eq, SQL } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreateUserParameters, userTable } from "../database/schema";
-import { AccessContext } from "../types/access-context";
-import { UserEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { UserEntity } from "../modules/entities";
 
 @injectable()
 export class UserRepository {

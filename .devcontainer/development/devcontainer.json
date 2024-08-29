@@ -29,7 +29,8 @@
         "ckolkman.vscode-postgres",
         "editorconfig.editorconfig",
         "bierner.markdown-mermaid",
-        "typespec.typespec-vscode"
+        "typespec.typespec-vscode",
+        "prisma.prisma"
       ]
     }
   }

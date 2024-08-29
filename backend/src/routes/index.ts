@@ -1,7 +1,7 @@
 import express from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../container/types';
-import { ApiVer1Router } from './api/v1';
+import { ApiVer1Router } from './apiVer1';
 
 @injectable()
 export class RootRouter {

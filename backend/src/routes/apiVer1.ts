@@ -1,13 +1,13 @@
 import express from 'express';
 import { Container, inject, injectable } from 'inversify';
 import z from 'zod';
-import { TYPES } from '../../../container/types';
-import { appError, EndpointNotFound } from '../../../modules/appErrors';
-import { HttpRouteBuilder } from '../../../modules/HttpRouteBuilder';
-import { PostService } from '../../../services/PostService';
-import { UserService } from '../../../services/UserService';
-import * as routeTypes from '../../../types/endpoints';
-import { corsApi } from '../../../modules/httpCors';
+import { TYPES } from '../container/types';
+import { appError, EndpointNotFound } from '../modules/appErrors';
+import { corsApi } from '../modules/httpRoute/cors';
+import { ApiRouteBuilder } from '../modules/httpRoute/ApiRouteBuilder';
+import { PostService } from '../services/PostService';
+import { UserService } from '../services/UserService';
+import * as routeTypes from '../modules/httpRoute/endpoints';
 
 @injectable()
 export class ApiVer1Router {
@@ -16,16 +16,14 @@ export class ApiVer1Router {
   ) {}
 
   public create() {
-    const router = express.Router();
-
-    router.use(corsApi());
-
-    const routeBuilder = new HttpRouteBuilder(router, this.container);
-
     const userService = this.container.get<UserService>(TYPES.UserService);
     const postService = this.container.get<PostService>(TYPES.PostService);
 
-    routeBuilder.build({
+    const builder = new ApiRouteBuilder(this.container);
+
+    builder.router.use(corsApi());
+
+    builder.register({
       method: 'GET',
       path: '/echo',
       async requestHandler(ctx): Promise<{ message: string }> {
@@ -38,7 +36,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'POST',
       path: '/echo',
       async requestHandler(ctx): Promise<{ message: string }> {
@@ -51,7 +49,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'POST',
       path: '/signup',
       scope: 'user.auth',
@@ -68,7 +66,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'POST',
       path: '/signin',
       scope: 'user.auth',
@@ -84,7 +82,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'GET',
       path: '/user',
       scope: 'user.read',
@@ -100,7 +98,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'DELETE',
       path: '/user',
       scope: 'user.delete',
@@ -113,7 +111,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'POST',
       path: '/post',
       scope: 'post.write',
@@ -128,7 +126,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'GET',
       path: '/post',
       scope: 'post.read',
@@ -143,7 +141,7 @@ export class ApiVer1Router {
       },
     });
 
-    routeBuilder.build({
+    builder.register({
       method: 'DELETE',
       path: '/post',
       scope: 'post.delete',
@@ -157,10 +155,10 @@ export class ApiVer1Router {
       },
     });
 
-    router.use((req, res, next) => {
+    builder.router.use((req, res, next) => {
       next(appError(new EndpointNotFound()));
     });
 
-    return router;
+    return builder.router;
   }
 }

@@ -1,4 +1,4 @@
-import { ConnectionLayers } from "../modules/database";
+import { ConnectionLayers } from "./database";
 
 export type AccessContext = {
   userId: string,

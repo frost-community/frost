@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
 import { AccessDenied, appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
 import { PostRepository } from "../repositories/PostRepository";
-import { AccessContext } from "../types/access-context";
-import { PostEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { PostEntity } from "../modules/entities";
 
 @injectable()
 export class PostService {

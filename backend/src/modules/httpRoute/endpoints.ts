@@ -1,4 +1,4 @@
-import { operations } from '../../generated/schema';
+import { operations } from '../../../generated/schema';
 
 // EchoGet
 export type EchoGetParams = NonNullable<operations['EchoGet']['parameters']['query']>;

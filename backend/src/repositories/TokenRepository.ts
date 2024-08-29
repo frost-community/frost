@@ -1,8 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { injectable } from "inversify";
 import { CreateTokenScopeParameters, tokenScopeTable, tokenTable } from "../database/schema";
-import { AccessContext } from "../types/access-context";
-import { TokenEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { TokenEntity } from "../modules/entities";
 
 export type TokenKind = "access_token" | "refresh_token";
 

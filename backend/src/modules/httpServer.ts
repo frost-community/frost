@@ -4,7 +4,7 @@ import { AppConfig } from "../app";
 import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
 import { AppError, ErrorObject, ServerError } from "./appErrors";
-import * as auth from "./httpAuthentication";
+import * as auth from "./httpRoute/authentication";
 
 /**
  * 任意のエラー情報を元にREST APIのエラーを組み立てます。

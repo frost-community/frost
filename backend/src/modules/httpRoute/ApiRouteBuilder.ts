@@ -1,66 +1,28 @@
 import express from "express";
 import { Container } from "inversify";
-import z from 'zod';
-import { TYPES } from "../container/types";
-import { UserEntity } from "../types/entities";
-import { appError, BadRequest } from "./appErrors";
-import { ConnectionLayers, ConnectionPool } from "./database";
-import { authenticate } from "./httpAuthentication";
+import { TYPES } from "../../container/types";
+import { UserEntity } from "../entities";
+import { ConnectionLayers, ConnectionPool } from "../database";
+import { authenticate } from "./authentication";
+import { ApiRouteContext } from "./ApiRouteContext";
 
-export class HandlerContext {
-  private _user: UserEntity | undefined;
-  private _scopes: string[] | undefined;
-  constructor(
-    public params: unknown,
-    public db: ConnectionLayers,
-    public req: express.Request,
-    public res: express.Response,
-    user: UserEntity | undefined,
-    scopes: string[] | undefined,
-  ) {
-    this._user = user;
-    this._scopes = scopes;
-  }
-  
-  public getUser(): UserEntity {
-    if (this._user == null) throw new Error('not authenticated');
-    return this._user;
-  }
-
-  public getScopes(): string[] {
-    if (this._scopes == null) throw new Error('not authenticated');
-    return this._scopes;
-  }
-
-  public validateParams<T>(schema: z.ZodType<T>): T {
-    const result = schema.safeParse(this.params);
-    if (!result.success) {
-      throw appError(new BadRequest(
-        result.error.issues.map(x => {
-          return { code: x.code, path: x.path, message: x.message };
-        })
-      ));
-    }
-    return result.data;
-  }
-};
-
-export class HttpRouteBuilder {
+export class ApiRouteBuilder {
   private connectionPool: ConnectionPool;
+  public router: express.Router;
 
   constructor(
-    private router: express.Router,
     container: Container,
   ) {
+    this.router = express.Router();
     this.connectionPool = container.get<ConnectionPool>(TYPES.ConnectionPool);
   }
 
-  public build<R>(
+  public register<R>(
     params: {
       method: 'GET' | 'POST' | 'DELETE'
       path: string,
       scope?: string | string[],
-      requestHandler: (ctx: HandlerContext) => Promise<R>,
+      requestHandler: (ctx: ApiRouteContext) => Promise<R>,
     },
   ) {
     const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.connectionPool, params.requestHandler);
@@ -85,7 +47,7 @@ function createMiddlewareStack<R>(
   method: 'POST' | 'DELETE' | 'GET',
   requiredScope: string | string[] | undefined,
   connectionPool: ConnectionPool,
-  handler: (ctx: HandlerContext) => Promise<R> | R
+  handler: (ctx: ApiRouteContext) => Promise<R> | R
 ): express.RequestHandler[] {
   const middlewares: express.RequestHandler[] = [];
 
@@ -127,11 +89,11 @@ function createMiddlewareStack<R>(
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
           returnValue = await db.execAction(async () => {
-            return await handler(new HandlerContext(params, db!, req, res, user, scopes));
+            return await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
-          returnValue = await handler(new HandlerContext(params, db!, req, res, user, scopes));
+          returnValue = await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
         }
       } finally {
         // DBのコネクションを解放

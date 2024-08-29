@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
 import { appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
 import { UserRepository } from "../repositories/UserRepository";
-import { AccessContext } from "../types/access-context";
-import { AuthResultEntity, UserEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { AuthResultEntity, UserEntity } from "../modules/entities";
 import { PasswordVerificationService } from "./PasswordVerificationService";
 import { TokenService } from "./TokenService";
 

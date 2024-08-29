@@ -2,12 +2,12 @@ import express from "express";
 import { Container } from "inversify";
 import passport from "passport";
 import { Strategy as BearerStrategy } from "passport-http-bearer";
-import { BACKEND_URSR_ID } from "../constants/specialUserId";
-import { TYPES } from "../container/types";
-import { TokenService } from "../services/TokenService";
-import { UserService } from "../services/UserService";
-import { AccessDenied, appError, Unauthenticated } from "./appErrors";
-import { ConnectionPool } from "./database";
+import { BACKEND_URSR_ID } from "../../constants/specialUserId";
+import { TYPES } from "../../container/types";
+import { TokenService } from "../../services/TokenService";
+import { UserService } from "../../services/UserService";
+import { AccessDenied, appError, Unauthenticated } from "../appErrors";
+import { ConnectionPool } from "../database";
 
 export function configureServer(container: Container) {
   const databaseService = container.get<ConnectionPool>(TYPES.ConnectionPool);
