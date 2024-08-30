@@ -18,16 +18,15 @@ export class UserRepository {
   }
 
   public async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity | undefined> {
-    if ([params.userId, params.name].every(x => x == null)) {
-      throw new Error("invalid condition");
-    }
     let rows;
     if (params.userId != null) {
       rows = await ctx.db.$queryRawTyped(sql.getUserById(params.userId));
     } else if (params.name != null) {
       rows = await ctx.db.$queryRawTyped(sql.getUserByName(params.name));
+    } else {
+      throw new Error('invalid condition');
     }
-    if (rows == null || rows.length == 0) {
+    if (rows.length == 0) {
       return undefined;
     }
     const row = rows[0]!;
