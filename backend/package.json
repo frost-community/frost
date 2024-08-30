@@ -9,7 +9,8 @@
     "clean": "rm -rf dist",
     "update-spec": "mkdir -p generated && cp -r ../spec/generated/* generated",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "migrate": "",
+    "migration:generate": "prisma migrate dev --create-only",
+    "migration:apply": "prisma migrate dev",
     "start": "node --enable-source-maps dist/main",
     "start:dev": "node --enable-source-maps --watch dist/main",
     "start:prod": "node dist/main",
@@ -21,10 +22,13 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@prisma/client": "^5.19.0",
     "express": "^4.17.0",
     "inversify": "^6.0.0",
+    "kysely": "^0.27.4",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
+    "prisma-kysely": "^1.8.0",
     "reflect-metadata": "^0.2.0",
     "threads": "^1.7.0",
     "zod": "^3.23.8"

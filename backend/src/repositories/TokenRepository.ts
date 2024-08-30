@@ -1,8 +1,6 @@
-import { eq, sql } from "drizzle-orm";
+import { token, token_scope } from "@prisma/client";
 import { injectable } from "inversify";
-import { CreateTokenScopeParameters, tokenScopeTable, tokenTable } from "../database/schema";
 import { AccessContext } from "../modules/AccessContext";
-import { TokenEntity } from "../modules/entities";
 
 export type TokenKind = "access_token" | "refresh_token";
 

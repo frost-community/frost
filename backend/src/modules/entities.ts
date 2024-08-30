@@ -1,4 +1,4 @@
-import { components } from '../../generated/schema';
+import { components } from '../../openapi/generated/schema';
 
 export type TokenEntity = components['schemas']['Api.v1.Token'];
 export type UserEntity = components['schemas']['Api.v1.User'];

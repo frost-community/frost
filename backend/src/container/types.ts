@@ -5,7 +5,7 @@ const TYPES = {
 
   // modules
   HttpRoute: Symbol.for('HttpRoute'),
-  ConnectionPool: Symbol.for('ConnectionPool'),
+  db: Symbol.for('db'),
 
   // services
   UserService: Symbol.for('UserService'),
