@@ -1,4 +1,5 @@
 import { user } from "@prisma/client";
+import * as sql from "@prisma/client/sql";
 import { injectable } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
 import { UserEntity } from "../modules/entities";
@@ -20,23 +21,13 @@ export class UserRepository {
     if ([params.userId, params.name].every(x => x == null)) {
       throw new Error("invalid condition");
     }
-    const conditions: SQL[] = [];
+    let rows;
     if (params.userId != null) {
-      conditions.push(eq(userTable.userId, params.userId));
+      rows = await ctx.db.$queryRawTyped(sql.getUserById(params.userId));
+    } else if (params.name != null) {
+      rows = await ctx.db.$queryRawTyped(sql.getUserByName(params.name));
     }
-    if (params.name != null) {
-      conditions.push(eq(userTable.name, params.name));
-    }
-    const rows = await ctx.db.getCurrent()
-      .select({
-        userId: userTable.userId,
-        name: userTable.name,
-        displayName: userTable.displayName,
-        passwordAuthEnabled: userTable.passwordAuthEnabled,
-      })
-      .from(userTable)
-      .where(and(...conditions));
-    if (rows.length == 0) {
+    if (rows == null || rows.length == 0) {
       return undefined;
     }
     const row = rows[0]!;
