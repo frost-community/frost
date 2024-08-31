@@ -1,5 +1,4 @@
 import { user } from "@prisma/client";
-import * as sql from "@prisma/client/sql";
 import { injectable } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
 import { UserEntity } from "../modules/entities";
@@ -18,18 +17,18 @@ export class UserRepository {
   }
 
   public async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity | undefined> {
-    let rows;
-    if (params.userId != null) {
-      rows = await ctx.db.$queryRawTyped(sql.getUserById(params.userId));
-    } else if (params.name != null) {
-      rows = await ctx.db.$queryRawTyped(sql.getUserByName(params.name));
-    } else {
-      throw new Error('invalid condition');
+    if ([params.userId, params.name].every(x => x == null)) {
+      throw new Error("invalid condition");
     }
-    if (rows.length == 0) {
+    const row = await ctx.db.user.findFirst({
+      where: {
+        user_id: params.userId,
+        name: params.name,
+      }
+    });
+    if (row == null) {
       return undefined;
     }
-    const row = rows[0]!;
     return this.mapEntity(row);
   }
 
