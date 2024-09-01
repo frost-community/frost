@@ -3,32 +3,45 @@ import { Container } from "inversify";
 import { AppConfig } from "../app";
 import { TYPES } from "../container/types";
 import { RootRouter } from "../routes";
-import * as openapi from "express-openapi-validator";
-import { buildRestApiError } from "./appErrors";
-import * as auth from "./httpAuthentication";
+import { AppError, ErrorObject, ServerError } from "./appErrors";
+import * as auth from "./httpRoute/authentication";
 
-export function createHttpServer(container: Container) {
+/**
+ * 任意のエラー情報を元にREST APIのエラーを組み立てます。
+*/
+function buildRestApiError(err: unknown): { error: ErrorObject } {
+  // app error
+  if (err instanceof AppError) {
+    return {
+      error: err.error,
+    };
+  }
+
+  // other errors
+  console.error(err);
+  return {
+    error: new ServerError(),
+  };
+}
+
+export async function createHttpServer(container: Container) {
   const config = container.get<AppConfig>(TYPES.AppConfig);
   const rootRouter = container.get<RootRouter>(TYPES.RootRouter);
 
   const app = express();
   app.disable("x-powered-by");
 
+  // security
+  app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "DENY");
+    next();
+  });
+
   auth.configureServer(container);
 
   app.use(express.json());
 
-  app.use(openapi.middleware({
-    apiSpec: "./generated/openapi.yaml",
-    validateRequests: true,
-    validateResponses: (config.env == "test"),
-  }));
-
   app.use(rootRouter.create());
-
-  app.use((req, res, next) => {
-    next(new Error("endpoint not implemented"));
-  });
 
   // @ts-ignore
   app.use((err, req, res, next) => {
@@ -37,7 +50,9 @@ export function createHttpServer(container: Container) {
     return;
   });
 
-  return new Promise<void>(resolve => {
+  await new Promise<void>(resolve => {
     app.listen(config.port, () => resolve());
   });
+
+  console.log('listen on port ' + config.port);
 }

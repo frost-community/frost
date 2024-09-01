@@ -5,7 +5,7 @@ import { TYPES } from '../container/types';
 import { ConnectionPool } from '../modules/database';
 import { UserRepository } from '../repositories/UserRepository';
 import { TokenService } from '../services/TokenService';
-import { AccessContext } from '../types/access-context';
+import { AccessContext } from '../modules/AccessContext';
 
 async function run() {
   // setup container

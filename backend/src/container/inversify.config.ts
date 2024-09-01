@@ -1,9 +1,7 @@
+import { PrismaClient } from '@prisma/client';
 import { Container } from 'inversify';
 import { App, AppConfig } from '../app';
 import { TYPES } from './types';
-
-// modules
-import { ConnectionPool } from '../modules/database';
 
 // repositories
 import { PasswordVerificationRepository } from '../repositories/PasswordVerificationRepository';
@@ -19,7 +17,7 @@ import { UserService } from '../services/UserService';
 
 // routers
 import { RootRouter } from '../routes';
-import { ApiVer1Router } from '../routes/api/v1';
+import { ApiVer1Router } from '../routes/apiVer1';
 
 export function setupContainer(container: Container) {
   container.bind<Container>(TYPES.Container).toConstantValue(container);
@@ -39,7 +37,7 @@ export function setupContainer(container: Container) {
   container.bind(TYPES.AppConfig).toConstantValue(appConfig);
 
   // modules
-  container.bind<ConnectionPool>(TYPES.ConnectionPool).toConstantValue(new ConnectionPool(appConfig));
+  container.bind<PrismaClient>(TYPES.db).toConstantValue(new PrismaClient());
 
   // repositories
   container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository);

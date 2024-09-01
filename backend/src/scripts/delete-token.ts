@@ -4,7 +4,7 @@ import { setupContainer } from '../container/inversify.config';
 import { TYPES } from '../container/types';
 import { ConnectionPool } from '../modules/database';
 import { TokenRepository } from '../repositories/TokenRepository';
-import { AccessContext } from '../types/access-context';
+import { AccessContext } from '../modules/AccessContext';
 
 async function run() {
   const token = process.argv[2];

@@ -1,41 +1,31 @@
 import express from "express";
-import { UserEntity } from "../types/entities";
-import { ConnectionLayers, ConnectionPool } from "./database";
 import { Container } from "inversify";
-import { TYPES } from "../container/types";
-import { authenticate } from "./httpAuthentication";
+import { TYPES } from "../../container/types";
+import { UserEntity } from "../entities";
+import { ConnectionLayers, ConnectionPool } from "../database";
+import { authenticate } from "./authentication";
+import { ApiRouteContext } from "./ApiRouteContext";
 
-export type HandlerContext<P> = {
-  params: P,
-  auth?: {
-    userId: string,
-    user?: UserEntity,
-    scope: string[],
-  },
-  db: ConnectionLayers,
-  req: express.Request,
-  res: express.Response,
-};
-
-export class HttpRouteBuilder {
+export class ApiRouteBuilder {
   private connectionPool: ConnectionPool;
+  public router: express.Router;
 
   constructor(
-    private router: express.Router,
     container: Container,
   ) {
+    this.router = express.Router();
     this.connectionPool = container.get<ConnectionPool>(TYPES.ConnectionPool);
   }
 
-  public build<P, R>(
+  public register<R>(
     params: {
       method: 'GET' | 'POST' | 'DELETE'
       path: string,
       scope?: string | string[],
-      requestHandler: (ctx: HandlerContext<P>) => Promise<R>,
+      requestHandler: (ctx: ApiRouteContext) => Promise<R>,
     },
   ) {
-    const middlewares = createMiddlewareStack<P, R>(params.method, params.scope, this.connectionPool, params.requestHandler);
+    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.connectionPool, params.requestHandler);
     switch (params.method) {
       case 'POST': {
         this.router.post(params.path, ...middlewares);
@@ -53,11 +43,11 @@ export class HttpRouteBuilder {
   }
 }
 
-function createMiddlewareStack<P, R>(
+function createMiddlewareStack<R>(
   method: 'POST' | 'DELETE' | 'GET',
   requiredScope: string | string[] | undefined,
   connectionPool: ConnectionPool,
-  handler: (ctx: HandlerContext<P>) => Promise<R> | R
+  handler: (ctx: ApiRouteContext) => Promise<R> | R
 ): express.RequestHandler[] {
   const middlewares: express.RequestHandler[] = [];
 
@@ -84,19 +74,11 @@ function createMiddlewareStack<P, R>(
     }
 
     // ハンドラ用の認証情報
-    let auth: {
-      userId: string,
-      user?: UserEntity,
-      scope: string[],
-    } | undefined;
+    let user: UserEntity | undefined;
+    let scopes: string[] | undefined;
     if (req.authInfo != null) {
-      const user = req.user as UserEntity;
-      const scope: string[] = (req.authInfo as any).scope;
-      auth = {
-        userId: user.userId,
-        user: user,
-        scope,
-      };
+      user = req.user as UserEntity;
+      scopes = (req.authInfo as { scope: string[] }).scope;
     }
 
     async function asyncHandler() {
@@ -107,23 +89,11 @@ function createMiddlewareStack<P, R>(
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
           returnValue = await db.execAction(async () => {
-            return await handler({
-              params,
-              auth,
-              db: db as ConnectionLayers,
-              req,
-              res,
-            });
+            return await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
-          returnValue = await handler({
-            params,
-            auth,
-            db,
-            req,
-            res,
-          });
+          returnValue = await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
         }
       } finally {
         // DBのコネクションを解放

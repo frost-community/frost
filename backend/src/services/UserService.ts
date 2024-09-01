@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../container/types";
-import { appError, InvalidParam, MissingParameter, UserNotFound } from "../modules/appErrors";
+import { appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
 import { UserRepository } from "../repositories/UserRepository";
-import { AccessContext } from "../types/access-context";
-import { AuthResultEntity, UserEntity } from "../types/entities";
+import { AccessContext } from "../modules/AccessContext";
+import { AuthResultEntity, UserEntity } from "../modules/entities";
 import { PasswordVerificationService } from "./PasswordVerificationService";
 import { TokenService } from "./TokenService";
 
@@ -15,9 +15,11 @@ export class UserService {
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
   ) {}
 
-  async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
+  public async signup(params: { name: string, displayName: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 5) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'name invalid.' },
+      ]));
     }
     if (params.password == null) {
       throw appError({
@@ -49,19 +51,23 @@ export class UserService {
     return { accessToken, refreshToken, user };
   }
 
-  async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
+  public async signin(params: { name: string, password?: string }, ctx: AccessContext): Promise<AuthResultEntity> {
     if (params.name.length < 1) {
-      throw appError(new InvalidParam([]));
+      throw appError(new BadRequest([
+        { message: 'name invalid.' },
+      ]));
     }
     const user = await this.userRepository.get({
       name: params.name,
     }, ctx);
     if (user == null) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
     if (user.passwordAuthEnabled) {
       if (params.password == null || params.password.length < 1) {
-        throw appError(new InvalidParam([]));
+        throw appError(new BadRequest([
+          { message: 'password invalid.' },
+        ]));
       }
       const verification = await this.passwordVerificationService.verifyPassword({
         userId: user.userId,
@@ -90,28 +96,30 @@ export class UserService {
     throw new Error("authentication method not exists: " + user.userId);
   }
 
-  async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
+  public async get(params: { userId?: string, name?: string }, ctx: AccessContext): Promise<UserEntity> {
     // either userId or name must be specified
     if ([params.userId, params.name].every(x => x == null)) {
-      throw appError(new MissingParameter());
+      throw appError(new BadRequest([
+        { message: "Please specify the userId or name." },
+      ]));
     }
     const userEntity = await this.userRepository.get({
       userId: params.userId,
       name: params.name,
     }, ctx);
     if (userEntity == null) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
     return userEntity;
   }
 
-  async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
+  public async delete(params: { userId: string }, ctx: AccessContext): Promise<void> {
     const success = await this.userRepository.delete({
       userId: params.userId,
     }, ctx);
 
     if (!success) {
-      throw appError(new UserNotFound());
+      throw appError(new ResourceNotFound("User"));
     }
   }
 }

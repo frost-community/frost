@@ -3,6 +3,7 @@ dist
 tsconfig.build.tsbuildinfo
 .pnpm-store
 .pnpm/
+.env
 
 logs
 *.log
