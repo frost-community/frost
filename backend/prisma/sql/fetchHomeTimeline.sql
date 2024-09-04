@@ -7,6 +7,7 @@ SELECT
   p.user_id,
   p.content
 FROM post AS p
-WHERE p.user_id = $1
+WHERE p.user_id = CAST($1 AS UUID)
 AND p.chat_room_id IS NULL
+--ORDER BY p.created_at DESC
 LIMIT $2
