@@ -1,13 +1,21 @@
-import { password_verification, Prisma } from "@prisma/client";
+import { password_verification } from "@prisma/client";
 import { injectable } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
+
+export type PasswordVerificationEntity = {
+  userId: string,
+  algorithm: string,
+  salt: string,
+  iteration: number,
+  hash: string,
+};
 
 /**
  * パスワード検証情報
 */
 @injectable()
 export class PasswordVerificationRepository {
-  public async create(params: { userId: string, algorithm: string, salt: string, iteration: number, hash: string }, ctx: AccessContext): Promise<password_verification> {
+  public async create(params: { userId: string, algorithm: string, salt: string, iteration: number, hash: string }, ctx: AccessContext): Promise<PasswordVerificationEntity> {
     const row = await ctx.db.password_verification.create({
       data: {
         user_id: params.userId,
@@ -17,10 +25,10 @@ export class PasswordVerificationRepository {
         hash: params.hash,
       },
     });
-    return row;
+    return this.mapEntity(row);
   }
 
-  public async get(params: { userId: string }, ctx: AccessContext): Promise<password_verification | undefined> {
+  public async get(params: { userId: string }, ctx: AccessContext): Promise<PasswordVerificationEntity | undefined> {
     const row = await ctx.db.password_verification.findFirst({
       where: {
         user_id: params.userId,
@@ -29,7 +37,7 @@ export class PasswordVerificationRepository {
     if (row == null) {
       return undefined;
     }
-    return row;
+    return this.mapEntity(row);
   }
 
   /**
@@ -42,5 +50,15 @@ export class PasswordVerificationRepository {
       },
     });
     return (result.count > 0);
+  }
+
+  private mapEntity(row: password_verification): PasswordVerificationEntity {
+    return {
+      userId: row.user_id,
+      algorithm: row.algorithm,
+      salt: row.salt,
+      iteration: row.iteration,
+      hash: row.hash,
+    };
   }
 }

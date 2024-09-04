@@ -1,4 +1,5 @@
 import { post } from "@prisma/client";
+import * as sql from "@prisma/client/sql";
 import { injectable } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
 import { PostEntity } from "../modules/entities";
@@ -26,6 +27,17 @@ export class PostRepository {
       return undefined;
     }
     return this.mapEntity(row);
+  }
+
+  public async fetchTimeline(params: { kind: 'home', cursor?: string, limit?: number }, ctx: AccessContext): Promise<PostEntity[]> {
+    const limit = params.limit ?? 50;
+    if (params.cursor != null) {
+      const rows = await ctx.db.$queryRawTyped(sql.fetchHomeTimelineCursor(ctx.userId, params.cursor, limit));
+      return rows.map(x => this.mapEntity(x));
+    } else {
+      const rows = await ctx.db.$queryRawTyped(sql.fetchHomeTimeline(ctx.userId, limit));
+      return rows.map(x => this.mapEntity(x));
+    }
   }
 
   /**

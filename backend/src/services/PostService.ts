@@ -39,6 +39,10 @@ export class PostService {
     return post;
   }
 
+  public async fetchTimeline(params: { kind: 'home', cursor?: string, limit?: number }, ctx: AccessContext): Promise<PostEntity[]> {
+    return this.postRepository.fetchTimeline(params, ctx);
+  }
+
   public async delete(params: { postId: string }, ctx: AccessContext): Promise<void> {
     if (params.postId.length < 1) {
       throw appError(new BadRequest([
