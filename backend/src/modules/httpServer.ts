@@ -25,7 +25,6 @@ function buildRestApiError(err: unknown): { error: ErrorObject } {
 }
 
 export async function createHttpServer(container: Container) {
-  const config = container.get<AppConfig>(TYPES.AppConfig);
   const rootRouter = container.get<RootRouter>(TYPES.RootRouter);
 
   const app = express();
@@ -50,9 +49,5 @@ export async function createHttpServer(container: Container) {
     return;
   });
 
-  await new Promise<void>(resolve => {
-    app.listen(config.port, () => resolve());
-  });
-
-  console.log('listen on port ' + config.port);
+  return app;
 }

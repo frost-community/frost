@@ -3,6 +3,7 @@ import { Container, inject, injectable } from 'inversify';
 import { TYPES } from './container/types';
 import { createHttpServer } from './modules/httpServer';
 import { readFileSync } from 'fs';
+import e from 'express';
 
 export type AppConfig = {
   port: number,
@@ -17,9 +18,10 @@ export type AppConfig = {
 export class App {
   constructor(
     @inject(TYPES.Container) private readonly container: Container,
+    @inject(TYPES.AppConfig) private readonly config: AppConfig,
   ) {}
 
-  public async run(): Promise<void> {
+  public async run(): Promise<e.Express> {
     console.log('+----------------------------------+');
     console.log('|          Frost *                 |');
     console.log('|          backend server          |');
@@ -29,6 +31,14 @@ export class App {
     console.log();
 
     // TODO: validate app config
-    await createHttpServer(this.container);
+    const server = await createHttpServer(this.container);
+
+    await new Promise<void>(resolve => {
+      server.listen(this.config.port, () => resolve());
+    });
+  
+    console.log('listen on port ' + this.config.port);
+
+    return server;
   }
 }
