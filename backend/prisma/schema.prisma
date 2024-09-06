@@ -8,8 +8,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model user {
+  user_id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  name                   String   @unique(map: "user_name_unique") @db.VarChar(64)
+  display_name           String   @default("frost user") @db.VarChar(64)
+  password_auth_enabled  Boolean
+}
+
 model password_verification {
   password_verification_id  String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
   user_id                   String @db.Uuid
   algorithm                 String @db.VarChar(16)
   salt                      String @db.VarChar(32)
@@ -17,15 +26,9 @@ model password_verification {
   hash                      String @db.VarChar(128)
 }
 
-model post {
-  post_id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  chat_room_id  String?  @db.Uuid
-  user_id       String   @db.Uuid
-  content       String   @db.VarChar(256)
-}
-
 model token {
   token_id    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
   token_kind  String     @db.VarChar(16)
   user_id     String     @db.Uuid
   token       String     @db.VarChar(32)
@@ -34,13 +37,15 @@ model token {
 
 model token_scope {
   token_scope_id String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
   token_id       String  @db.Uuid
   scope_name     String  @db.VarChar(32)
 }
 
-model user {
-  user_id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name                   String   @unique(map: "user_name_unique") @db.VarChar(64)
-  display_name           String   @default("frost user") @db.VarChar(64)
-  password_auth_enabled  Boolean
+model post {
+  post_id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  chat_room_id  String?  @db.Uuid
+  user_id       String   @db.Uuid
+  content       String   @db.VarChar(256)
 }
