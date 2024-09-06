@@ -8,44 +8,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  user_id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+// dbgeneratedを用いるとDB固有のデフォルト値を指定できます。
+// https://www.prisma.io/docs/orm/reference/prisma-schema-reference#dbgenerated
 
-  name                   String   @unique(map: "user_name_unique") @db.VarChar(64)
-  display_name           String   @default("frost user") @db.VarChar(64)
-  password_auth_enabled  Boolean
+// gen_random_uuid()はPostgreSQL固有の関数です。
+// https://www.postgresql.org/docs/13/functions-uuid.html
+
+// @uniqueはフィールドにユニーク制約を付与します。
+// https://www.prisma.io/docs/orm/reference/prisma-schema-reference#unique
+
+model user {
+  user_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
+
+  name                      String    @db.VarChar(64) @unique(map: "user_name_unique")
+  display_name              String    @db.VarChar(64) @default("frost user")
+  password_auth_enabled     Boolean
 }
 
 model password_verification {
-  password_verification_id  String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  password_verification_id  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
 
-  user_id                   String @db.Uuid
-  algorithm                 String @db.VarChar(16)
-  salt                      String @db.VarChar(32)
+  user_id                   String    @db.Uuid
+  algorithm                 String    @db.VarChar(16)
+  salt                      String    @db.VarChar(32)
   iteration                 Int
-  hash                      String @db.VarChar(128)
+  hash                      String    @db.VarChar(128)
 }
 
 model token {
-  token_id    String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token_id                  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
 
-  token_kind  String     @db.VarChar(16)
-  user_id     String     @db.Uuid
-  token       String     @db.VarChar(32)
-  expires     DateTime?  @db.Timestamp(6)
+  token_kind                String    @db.VarChar(16)
+  user_id                   String    @db.Uuid
+  token                     String    @db.VarChar(32)
+  expires                   DateTime? @db.Timestamp(6)
 }
 
 model token_scope {
-  token_scope_id String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  token_scope_id            String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
 
-  token_id       String  @db.Uuid
-  scope_name     String  @db.VarChar(32)
+  token_id                  String    @db.Uuid
+  scope_name                String    @db.VarChar(32)
 }
 
 model post {
-  post_id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
 
-  chat_room_id  String?  @db.Uuid
-  user_id       String   @db.Uuid
-  content       String   @db.VarChar(256)
+  chat_room_id              String?   @db.Uuid
+  user_id                   String    @db.Uuid
+  content                   String    @db.VarChar(256)
 }
