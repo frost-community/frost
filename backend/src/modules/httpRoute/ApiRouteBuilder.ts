@@ -2,19 +2,19 @@ import express from "express";
 import { Container } from "inversify";
 import { TYPES } from "../../container/types";
 import { UserEntity } from "../entities";
-import { ConnectionLayers, ConnectionPool } from "../database";
 import { authenticate } from "./authentication";
 import { ApiRouteContext } from "./ApiRouteContext";
+import { PrismaClient } from "@prisma/client";
 
 export class ApiRouteBuilder {
-  private connectionPool: ConnectionPool;
+  private db: PrismaClient;
   public router: express.Router;
 
   constructor(
     container: Container,
   ) {
     this.router = express.Router();
-    this.connectionPool = container.get<ConnectionPool>(TYPES.ConnectionPool);
+    this.db = container.get<PrismaClient>(TYPES.db);
   }
 
   public register<R>(
@@ -25,7 +25,7 @@ export class ApiRouteBuilder {
       requestHandler: (ctx: ApiRouteContext) => Promise<R>,
     },
   ) {
-    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.connectionPool, params.requestHandler);
+    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.db, params.requestHandler);
     switch (params.method) {
       case 'POST': {
         this.router.post(params.path, ...middlewares);
@@ -46,7 +46,7 @@ export class ApiRouteBuilder {
 function createMiddlewareStack<R>(
   method: 'POST' | 'DELETE' | 'GET',
   requiredScope: string | string[] | undefined,
-  connectionPool: ConnectionPool,
+  db: PrismaClient,
   handler: (ctx: ApiRouteContext) => Promise<R> | R
 ): express.RequestHandler[] {
   const middlewares: express.RequestHandler[] = [];
@@ -83,21 +83,17 @@ function createMiddlewareStack<R>(
 
     async function asyncHandler() {
       let returnValue;
-      let db: ConnectionLayers | undefined;
       try {
-        db = await connectionPool.acquire();
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
-          returnValue = await db.execAction(async () => {
-            return await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
+          returnValue = await db.$transaction(async (tx) => {
+            return await handler(new ApiRouteContext(params, tx, req, res, user, scopes));
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
-          returnValue = await handler(new ApiRouteContext(params, db!, req, res, user, scopes));
+          returnValue = await handler(new ApiRouteContext(params, db, req, res, user, scopes));
         }
       } finally {
-        // DBのコネクションを解放
-        if (db != null) db.dispose();
       }
       // ハンドラ内でレスポンスが設定されなければ、200 OKとしてレスポンスを生成する。
       if (res.statusCode == 0) {

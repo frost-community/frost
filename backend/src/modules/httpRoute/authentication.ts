@@ -7,17 +7,15 @@ import { TYPES } from "../../container/types";
 import { TokenService } from "../../services/TokenService";
 import { UserService } from "../../services/UserService";
 import { AccessDenied, appError, Unauthenticated } from "../appErrors";
-import { ConnectionPool } from "../database";
+import { PrismaClient } from "@prisma/client";
 
 export function configureServer(container: Container) {
-  const databaseService = container.get<ConnectionPool>(TYPES.ConnectionPool);
+  const db = container.get<PrismaClient>(TYPES.db);
   const tokenService = container.get<TokenService>(TYPES.TokenService);
   const userService = container.get<UserService>(TYPES.UserService);
 
   passport.use(new BearerStrategy(async (token, done) => {
-    let db;
     try {
-      db = await databaseService.acquire();
       const ctx = { userId: BACKEND_URSR_ID, db };
       const tokenInfo = await tokenService.getTokenInfo({
         token
@@ -32,7 +30,6 @@ export function configureServer(container: Container) {
     } catch (err) {
       return done(err);
     } finally {
-      if (db != null) db.dispose();
     }
   }));
 }
