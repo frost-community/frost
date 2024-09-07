@@ -2,14 +2,14 @@ import express from "express";
 import z from 'zod';
 import { UserEntity } from "../entities";
 import { appError, BadRequest } from "../appErrors";
-import { DB } from "../db";
+import { Container } from "inversify";
 
 export class ApiRouteContext {
   private _user: UserEntity | undefined;
   private _scopes: string[] | undefined;
   constructor(
     public params: unknown,
-    public db: DB,
+    public container: Container,
     public req: express.Request,
     public res: express.Response,
     user: UserEntity | undefined,

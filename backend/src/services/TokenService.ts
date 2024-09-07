@@ -1,7 +1,7 @@
+import { Container } from "inversify";
 import crypto from "node:crypto";
 import { AccessContext } from "../modules/AccessContext";
 import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
-import { DB } from "../modules/db";
 import { TokenEntity } from "../modules/entities";
 import * as TokenRepository from "../repositories/TokenRepository";
 
@@ -10,7 +10,7 @@ const asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 export async function create(
   params: { userId: string, tokenKind: TokenRepository.TokenKind, scopes: string[] },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<TokenEntity> {
   const tokenValue = await generateTokenValue(32);
 
@@ -19,7 +19,7 @@ export async function create(
     tokenKind: params.tokenKind,
     scopes: params.scopes,
     token: tokenValue,
-  }, ctx, db);
+  }, ctx, container);
 
   return tokenEntity;
 }
@@ -27,7 +27,7 @@ export async function create(
 export async function getTokenInfo(
   params: { token: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<{ tokenKind: TokenRepository.TokenKind, userId: string, scopes: string[] }> {
   if (params.token.length < 1) {
     throw appError(new BadRequest([
@@ -36,7 +36,7 @@ export async function getTokenInfo(
   }
   const info = await TokenRepository.get({
     token: params.token,
-  }, ctx, db);
+  }, ctx, container);
   if (info == null) {
     throw appError(new Unauthenticated());
   }

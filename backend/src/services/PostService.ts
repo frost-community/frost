@@ -1,13 +1,13 @@
+import { Container } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
 import { AccessDenied, appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
-import { DB } from "../modules/db";
 import { PostEntity } from "../modules/entities";
 import * as PostRepository from "../repositories/PostRepository";
 
 export async function createTimelinePost(
   params: { content: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<PostEntity> {
   if (params.content.length < 1) {
     throw appError(new BadRequest([
@@ -17,14 +17,14 @@ export async function createTimelinePost(
   const post = await PostRepository.create({
     userId: ctx.userId,
     content: params.content,
-  }, ctx, db);
+  }, ctx, container);
   return post;
 }
 
 export async function get(
   params: { postId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<PostEntity> {
   if (params.postId.length < 1) {
     throw appError(new BadRequest([
@@ -33,7 +33,7 @@ export async function get(
   }
   const post = await PostRepository.get({
     postId: params.postId
-  }, ctx, db);
+  }, ctx, container);
   if (post == null) {
     throw appError(new ResourceNotFound("Post"));
   }
@@ -43,7 +43,7 @@ export async function get(
 export async function remove(
   params: { postId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<void> {
   if (params.postId.length < 1) {
     throw appError(new BadRequest([
@@ -54,7 +54,7 @@ export async function remove(
   // 作成者以外は削除できない
   const post = await PostRepository.get({
     postId: params.postId
-  }, ctx, db);
+  }, ctx, container);
   if (post == null) {
     throw appError(new ResourceNotFound("Post"));
   }
@@ -64,7 +64,7 @@ export async function remove(
 
   const success = await PostRepository.remove({
     postId: params.postId,
-  }, ctx, db);
+  }, ctx, container);
   if (!success) {
     throw appError(new ResourceNotFound("Post"));
   }

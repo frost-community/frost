@@ -1,4 +1,6 @@
 import * as sql from "@prisma/client/sql";
+import { Container } from "inversify";
+import { TYPES } from "../container/types";
 import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 import { TokenEntity } from "../modules/entities";
@@ -11,8 +13,10 @@ export type TokenKind = "access_token" | "refresh_token";
 export async function create(
   params: { userId: string, tokenKind: TokenKind, scopes: string[], token: string, },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<TokenEntity> {
+  const db = container.get<DB>(TYPES.db);
+
   // トークンを登録
   const token = await db.token.create({
     data: {
@@ -50,8 +54,10 @@ export async function create(
 export async function get(
   params: { token: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] } | undefined> {
+  const db = container.get<DB>(TYPES.db);
+
   // トークン情報を取得
   const rows = await db.$queryRawTyped(sql.getTokenInfo(params.token));
   if (rows.length == 0) {
@@ -73,8 +79,10 @@ export async function get(
 export async function remove(
   params: { token: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<boolean> {
+  const db = container.get<DB>(TYPES.db);
+
   const tokenRecord = await db.token.findFirst({
     where: {
       token: params.token,

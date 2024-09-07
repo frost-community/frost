@@ -2,6 +2,8 @@ import { user } from "@prisma/client";
 import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 import { UserEntity } from "../modules/entities";
+import { Container } from "inversify";
+import { TYPES } from "../container/types";
 
 /**
  * ユーザーを追加する
@@ -9,8 +11,10 @@ import { UserEntity } from "../modules/entities";
 export async function create(
   params: { name: string, displayName: string, passwordAuthEnabled: boolean },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ) {
+  const db = container.get<DB>(TYPES.db);
+
   const row = await db.user.create({
     data: {
       name: params.name,
@@ -28,8 +32,10 @@ export async function create(
 export async function get(
   params: { userId?: string, name?: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<UserEntity | undefined> {
+  const db = container.get<DB>(TYPES.db);
+
   if ([params.userId, params.name].every(x => x == null)) {
     throw new Error("invalid condition");
   }
@@ -55,8 +61,10 @@ export async function get(
 export async function remove(
   params: { userId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<boolean> {
+  const db = container.get<DB>(TYPES.db);
+
   const result = await db.user.deleteMany({
     where: {
       user_id: params.userId,

@@ -24,7 +24,7 @@ async function run() {
 
   const success = await TokenRepository.remove({
     token,
-  }, ctx, db);
+  }, ctx, container);
   if (success) {
     console.log(`トークン'${token}'を削除しました`);
   } else {

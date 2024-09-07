@@ -1,7 +1,7 @@
+import { Container } from "inversify";
 import crypto from "node:crypto";
 import { AccessContext } from "../modules/AccessContext";
 import { appError, BadRequest } from "../modules/appErrors";
-import { DB } from "../modules/db";
 import * as PasswordVerificationRepository from "../repositories/PasswordVerificationRepository";
 
 type PasswordVerificationInfo = {
@@ -17,7 +17,7 @@ type PasswordVerificationInfo = {
 export async function create(
   params: { userId: string, password: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<void> {
   if (params.password.length < 8) {
     throw appError(new BadRequest([
@@ -29,7 +29,7 @@ export async function create(
     ...generateInfo({
       password: params.password,
     }),
-  }, ctx, db);
+  }, ctx, container);
 }
 
 /**
@@ -38,7 +38,7 @@ export async function create(
 export async function verifyPassword(
   params: { userId: string, password: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<boolean> {
   if (params.password.length < 1) {
     throw appError(new BadRequest([
@@ -47,7 +47,7 @@ export async function verifyPassword(
   }
   const info = await PasswordVerificationRepository.get({
     userId: params.userId,
-  }, ctx, db);
+  }, ctx, container);
   if (info == null) {
     throw new Error("PasswordVerification record not found");
   }

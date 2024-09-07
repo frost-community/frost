@@ -57,7 +57,7 @@ export class ApiVer1Router {
             displayName: z.string().min(1),
           })
         );
-        const result = await UserService.signup(params, { userId: ctx.getUser().userId }, ctx.db);
+        const result = await UserService.signup(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -73,7 +73,7 @@ export class ApiVer1Router {
             password: z.string().min(1).optional(),
           })
         );
-        const result = await UserService.signin(params, { userId: ctx.getUser().userId }, ctx.db);
+        const result = await UserService.signin(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -89,7 +89,7 @@ export class ApiVer1Router {
             name: z.string().min(1).optional(),
           })
         );
-        const result = await UserService.get(params, { userId: ctx.getUser().userId }, ctx.db);
+        const result = await UserService.get(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -100,9 +100,7 @@ export class ApiVer1Router {
       scope: 'user.delete',
       async requestHandler(ctx): Promise<routeTypes.GetUserResult> {
         throw new Error('not implemented');
-        // const accessUser = req.user as UserEntity;
-        // const params = req.query as DeleteUserQuery;
-        // await this.userService.delete(params, { accessUserId: accessUser.userId, db });
+        // await UserService.remove(params, { userId: ctx.getUser().userId }, ctx.container);
         // res.status(204).send();
       },
     });
@@ -117,7 +115,7 @@ export class ApiVer1Router {
             content: z.string().min(1),
           })
         );
-        const result = await PostService.createTimelinePost(params, { userId: ctx.getUser().userId }, ctx.db);
+        const result = await PostService.createTimelinePost(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -132,7 +130,7 @@ export class ApiVer1Router {
             postId: z.string().length(32),
           })
         );
-        const result = await PostService.get(params, { userId: ctx.getUser().userId }, ctx.db);
+        const result = await PostService.get(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -147,7 +145,7 @@ export class ApiVer1Router {
             postId: z.string().length(32),
           })
         );
-        await PostService.remove(params, { userId: ctx.getUser().userId }, ctx.db);
+        await PostService.remove(params, { userId: ctx.getUser().userId }, ctx.container);
       },
     });
 

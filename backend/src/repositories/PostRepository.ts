@@ -1,4 +1,6 @@
 import { post } from "@prisma/client";
+import { Container } from "inversify";
+import { TYPES } from "../container/types";
 import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 import { PostEntity } from "../modules/entities";
@@ -9,8 +11,9 @@ import { PostEntity } from "../modules/entities";
 export async function create(
   params: { chatRoomId?: string, userId: string, content: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<PostEntity> {
+  const db = container.get<DB>(TYPES.db);
   const row = await db.post.create({
     data: {
       chat_room_id: params.chatRoomId,
@@ -28,8 +31,9 @@ export async function create(
 export async function get(
   params: { postId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<PostEntity | undefined> {
+  const db = container.get<DB>(TYPES.db);
   const row = await db.post.findFirst({
     where: {
       post_id: params.postId,
@@ -50,8 +54,9 @@ export async function get(
 export async function remove(
   params: { postId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<boolean> {
+  const db = container.get<DB>(TYPES.db);
   const result = await db.post.deleteMany({
     where: {
       post_id: params.postId,

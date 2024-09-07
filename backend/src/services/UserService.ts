@@ -1,6 +1,6 @@
+import { Container } from "inversify";
 import { AccessContext } from "../modules/AccessContext";
 import { appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
-import { DB } from "../modules/db";
 import { AuthResultEntity, UserEntity } from "../modules/entities";
 import * as UserRepository from "../repositories/UserRepository";
 import * as PasswordVerificationService from "./PasswordVerificationService";
@@ -9,7 +9,7 @@ import * as TokenService from "./TokenService";
 export async function signup(
   params: { name: string, displayName: string, password?: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<AuthResultEntity> {
   if (params.name.length < 5) {
     throw appError(new BadRequest([
@@ -29,12 +29,12 @@ export async function signup(
     name: params.name,
     displayName: params.displayName,
     passwordAuthEnabled: true,
-  }, ctx, db);
+  }, ctx, container);
 
   await PasswordVerificationService.create({
     userId: user.userId,
     password: params.password,
-  }, ctx, db);
+  }, ctx, container);
 
   const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
 
@@ -42,13 +42,13 @@ export async function signup(
     userId: user.userId,
     tokenKind: "access_token",
     scopes: scopes,
-  }, ctx, db);
+  }, ctx, container);
 
   const refreshToken = await TokenService.create({
     userId: user.userId,
     tokenKind: "refresh_token",
     scopes: scopes,
-  }, ctx, db);
+  }, ctx, container);
 
   return { accessToken, refreshToken, user };
 }
@@ -56,7 +56,7 @@ export async function signup(
 export async function signin(
   params: { name: string, password?: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<AuthResultEntity> {
   if (params.name.length < 1) {
     throw appError(new BadRequest([
@@ -66,7 +66,7 @@ export async function signin(
 
   const user = await UserRepository.get({
     name: params.name,
-  }, ctx, db);
+  }, ctx, container);
 
   if (user == null) {
     throw appError(new ResourceNotFound("User"));
@@ -81,7 +81,7 @@ export async function signin(
     const verification = await PasswordVerificationService.verifyPassword({
       userId: user.userId,
       password: params.password,
-    }, ctx, db);
+    }, ctx, container);
     if (!verification) {
       throw appError({
         code: "incorrectCredential",
@@ -94,12 +94,12 @@ export async function signin(
       userId: user.userId,
       tokenKind: "access_token",
       scopes: scopes,
-    }, ctx, db);
+    }, ctx, container);
     const refreshToken = await TokenService.create({
       userId: user.userId,
       tokenKind: "refresh_token",
       scopes: scopes,
-    }, ctx, db);
+    }, ctx, container);
     return { accessToken, refreshToken, user };
   }
 
@@ -109,7 +109,7 @@ export async function signin(
 export async function get(
   params: { userId?: string, name?: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<UserEntity> {
   // either userId or name must be specified
   if ([params.userId, params.name].every(x => x == null)) {
@@ -121,7 +121,7 @@ export async function get(
   const userEntity = await UserRepository.get({
     userId: params.userId,
     name: params.name,
-  }, ctx, db);
+  }, ctx, container);
 
   if (userEntity == null) {
     throw appError(new ResourceNotFound("User"));
@@ -133,11 +133,11 @@ export async function get(
 export async function remove(
   params: { userId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<void> {
   const success = await UserRepository.remove({
     userId: params.userId,
-  }, ctx, db);
+  }, ctx, container);
 
   if (!success) {
     throw appError(new ResourceNotFound("User"));

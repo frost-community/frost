@@ -7,14 +7,12 @@ import { ApiRouteContext } from "./ApiRouteContext";
 import { PrismaClient } from "@prisma/client";
 
 export class ApiRouteBuilder {
-  private db: PrismaClient;
   public router: express.Router;
 
   constructor(
-    container: Container,
+    private container: Container,
   ) {
     this.router = express.Router();
-    this.db = container.get<PrismaClient>(TYPES.db);
   }
 
   public register<R>(
@@ -25,7 +23,7 @@ export class ApiRouteBuilder {
       requestHandler: (ctx: ApiRouteContext) => Promise<R>,
     },
   ) {
-    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.db, params.requestHandler);
+    const middlewares = createMiddlewareStack<R>(params.method, params.scope, this.container, params.requestHandler);
     switch (params.method) {
       case 'POST': {
         this.router.post(params.path, ...middlewares);
@@ -46,7 +44,7 @@ export class ApiRouteBuilder {
 function createMiddlewareStack<R>(
   method: 'POST' | 'DELETE' | 'GET',
   requiredScope: string | string[] | undefined,
-  db: PrismaClient,
+  container: Container,
   handler: (ctx: ApiRouteContext) => Promise<R> | R
 ): express.RequestHandler[] {
   const middlewares: express.RequestHandler[] = [];
@@ -83,17 +81,20 @@ function createMiddlewareStack<R>(
 
     async function asyncHandler() {
       let returnValue;
+      const db = container.get<PrismaClient>(TYPES.db);
       try {
         if (method == 'POST' || method == 'DELETE') {
           // 変更操作(POST, DELETE)の場合はトランザクションを開始
           returnValue = await db.$transaction(async (tx) => {
-            return await handler(new ApiRouteContext(params, tx, req, res, user, scopes));
+            container.rebind(TYPES.db).toConstantValue(tx);
+            return await handler(new ApiRouteContext(params, container, req, res, user, scopes));
           });
         } else {
           // 読み出し操作の場合はそのままハンドラを呼ぶ
-          returnValue = await handler(new ApiRouteContext(params, db, req, res, user, scopes));
+          returnValue = await handler(new ApiRouteContext(params, container, req, res, user, scopes));
         }
       } finally {
+        container.rebind(TYPES.db).toConstantValue(db);
       }
       // ハンドラ内でレスポンスが設定されなければ、200 OKとしてレスポンスを生成する。
       if (res.statusCode == 0) {

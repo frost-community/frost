@@ -1,4 +1,6 @@
 import { password_verification } from "@prisma/client";
+import { Container } from "inversify";
+import { TYPES } from "../container/types";
 import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 
@@ -8,8 +10,9 @@ import { DB } from "../modules/db";
 export async function create(
   params: { userId: string, algorithm: string, salt: string, iteration: number, hash: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<password_verification> {
+  const db = container.get<DB>(TYPES.db);
   const row = await db.password_verification.create({
     data: {
       user_id: params.userId,
@@ -29,8 +32,9 @@ export async function create(
 export async function get(
   params: { userId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<password_verification | undefined> {
+  const db = container.get<DB>(TYPES.db);
   const row = await db.password_verification.findFirst({
     where: {
       user_id: params.userId,
@@ -51,8 +55,9 @@ export async function get(
 export async function remove(
   params: { userId: string },
   ctx: AccessContext,
-  db: DB,
+  container: Container,
 ): Promise<boolean> {
+  const db = container.get<DB>(TYPES.db);
   const result = await db.password_verification.deleteMany({
     where: {
       user_id: params.userId,

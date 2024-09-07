@@ -21,7 +21,7 @@ async function run() {
     name: 'Public',
     displayName: 'Public',
     passwordAuthEnabled: false,
-  }, ctx, db);
+  }, ctx, container);
   console.log("ユーザー'Public'を作成しました");
   console.log(user);
 
@@ -30,7 +30,7 @@ async function run() {
     userId: user.userId,
     tokenKind: "access_token",
     scopes: scopes,
-  }, ctx, db);
+  }, ctx, container);
   console.log("ユーザー'Public'のアクセストークンを作成しました");
   console.log(accessToken);
 
