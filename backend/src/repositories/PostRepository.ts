@@ -6,7 +6,7 @@ import { PostEntity } from "../modules/entities";
 /**
  * 投稿を作成する
 */
-export async function createPost(
+export async function create(
   params: { chatRoomId?: string, userId: string, content: string },
   ctx: AccessContext,
   db: DB,
@@ -25,7 +25,7 @@ export async function createPost(
 /**
  * 投稿を取得する
 */
-export async function getPost(
+export async function get(
   params: { postId: string },
   ctx: AccessContext,
   db: DB,
@@ -47,7 +47,7 @@ export async function getPost(
  * 投稿を削除する
  * @returns 削除に成功したかどうか
 */
-export async function deletePost(
+export async function remove(
   params: { postId: string },
   ctx: AccessContext,
   db: DB,

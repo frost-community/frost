@@ -1,53 +1,55 @@
-import { inject, injectable } from "inversify";
 import crypto from "node:crypto";
-import { TYPES } from "../container/types";
-import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
-import { TokenKind, TokenRepository } from "../repositories/TokenRepository";
 import { AccessContext } from "../modules/AccessContext";
+import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
+import { DB } from "../modules/db";
 import { TokenEntity } from "../modules/entities";
+import * as TokenRepository from "../repositories/TokenRepository";
 
-@injectable()
-export class TokenService {
-  constructor(
-    @inject(TYPES.TokenRepository) private readonly tokenRepository: TokenRepository,
-  ) {}
+const asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  public async create(params: { userId: string, tokenKind: TokenKind, scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
-    const tokenValue = this.generateTokenValue(32);
-    const tokenEntity = await this.tokenRepository.create({
-      userId: params.userId,
-      tokenKind: params.tokenKind,
-      scopes: params.scopes,
-      token: tokenValue,
-    }, ctx);
-    return tokenEntity;
+export async function create(
+  params: { userId: string, tokenKind: TokenRepository.TokenKind, scopes: string[] },
+  ctx: AccessContext,
+  db: DB,
+): Promise<TokenEntity> {
+  const tokenValue = await generateTokenValue(32);
+
+  const tokenEntity = await TokenRepository.create({
+    userId: params.userId,
+    tokenKind: params.tokenKind,
+    scopes: params.scopes,
+    token: tokenValue,
+  }, ctx, db);
+
+  return tokenEntity;
+}
+
+export async function getTokenInfo(
+  params: { token: string },
+  ctx: AccessContext,
+  db: DB,
+): Promise<{ tokenKind: TokenRepository.TokenKind, userId: string, scopes: string[] }> {
+  if (params.token.length < 1) {
+    throw appError(new BadRequest([
+      { message: 'token invalid.' },
+    ]));
   }
-
-  public async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
-    if (params.token.length < 1) {
-      throw appError(new BadRequest([
-        { message: 'token invalid.' },
-      ]));
-    }
-    const info = await this.tokenRepository.get({
-      token: params.token,
-    }, ctx);
-    if (info == null) {
-      throw appError(new Unauthenticated());
-    }
-    return info;
+  const info = await TokenRepository.get({
+    token: params.token,
+  }, ctx, db);
+  if (info == null) {
+    throw appError(new Unauthenticated());
   }
+  return info;
+}
 
-  /**
-   * @internal
-  */
-  public generateTokenValue(length: number) {
-    let token = "";
-    for (const [_index, byte] of crypto.randomBytes(length).entries()) {
-      token += TokenService.asciiTable[byte % TokenService.asciiTable.length];
-    }
-    return token;
+/**
+ * @internal
+*/
+export async function generateTokenValue(length: number) {
+  let token = "";
+  for (const [_index, byte] of crypto.randomBytes(length).entries()) {
+    token += asciiTable[byte % asciiTable.length];
   }
-
-  private static asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return token;
 }

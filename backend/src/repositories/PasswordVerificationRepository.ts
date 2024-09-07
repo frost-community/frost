@@ -5,7 +5,7 @@ import { DB } from "../modules/db";
 /*
  * パスワード検証情報を追加する
 */
-export async function createPasswordVerification(
+export async function create(
   params: { userId: string, algorithm: string, salt: string, iteration: number, hash: string },
   ctx: AccessContext,
   db: DB,
@@ -26,7 +26,7 @@ export async function createPasswordVerification(
 /*
  * パスワード検証情報を取得する
 */
-export async function getPasswordVerification(
+export async function get(
   params: { userId: string },
   ctx: AccessContext,
   db: DB,
@@ -48,7 +48,7 @@ export async function getPasswordVerification(
  * パスワード検証情報を削除する
  * @returns 削除に成功したかどうか
 */
-export async function deletePasswordVerification(
+export async function remove(
   params: { userId: string },
   ctx: AccessContext,
   db: DB,

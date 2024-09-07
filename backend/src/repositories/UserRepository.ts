@@ -6,7 +6,7 @@ import { UserEntity } from "../modules/entities";
 /**
  * ユーザーを追加する
 */
-export async function createUser(
+export async function create(
   params: { name: string, displayName: string, passwordAuthEnabled: boolean },
   ctx: AccessContext,
   db: DB,
@@ -25,7 +25,7 @@ export async function createUser(
 /**
  * ユーザーを取得する
 */
-export async function getUser(
+export async function get(
   params: { userId?: string, name?: string },
   ctx: AccessContext,
   db: DB,
@@ -52,7 +52,7 @@ export async function getUser(
  * ユーザーを削除する
  * @returns 削除に成功したかどうか
 */
-export async function deleteUser(
+export async function remove(
   params: { userId: string },
   ctx: AccessContext,
   db: DB,

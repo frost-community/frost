@@ -8,7 +8,7 @@ export type TokenKind = "access_token" | "refresh_token";
 /**
  * トークン情報を追加する
 */
-export async function createTokenInfo(
+export async function create(
   params: { userId: string, tokenKind: TokenKind, scopes: string[], token: string, },
   ctx: AccessContext,
   db: DB,
@@ -47,7 +47,7 @@ export async function createTokenInfo(
 /**
  * トークン情報を取得する
 */
-export async function getTokenInfo(
+export async function get(
   params: { token: string },
   ctx: AccessContext,
   db: DB,
@@ -70,7 +70,7 @@ export async function getTokenInfo(
  * トークン情報を削除する
  * @returns 削除に成功したかどうか
 */
-export async function deleteTokenInfo(
+export async function remove(
   params: { token: string },
   ctx: AccessContext,
   db: DB,
