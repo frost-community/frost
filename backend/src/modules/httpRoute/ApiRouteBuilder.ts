@@ -5,13 +5,9 @@ import { UserEntity } from "../entities";
 import { ConnectionLayers, ConnectionPool } from "../database";
 import { authenticate } from "./authentication";
 import { ApiRouteContext } from "./ApiRouteContext";
-import { PrismaClient } from "@prisma/client";
-import type * as runtime from "@prisma/client/runtime/library";
-
-export type PrismaTransaction =  Omit<PrismaClient, runtime.ITXClientDenyList>;
 
 export class ApiRouteBuilder {
-  private db: PrismaClient;
+  private connectionPool: ConnectionPool;
   public router: express.Router;
 
   constructor(
