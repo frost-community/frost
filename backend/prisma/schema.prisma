@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["typedSql"]
+  previewFeatures = ["relationJoins", "typedSql"]
 }
 
 datasource db {
@@ -18,43 +18,56 @@ datasource db {
 // https://www.prisma.io/docs/orm/reference/prisma-schema-reference#unique
 
 model user {
-  user_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
-
+  user_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) // PK
   name                      String    @db.VarChar(64) @unique(map: "user_name_unique")
   display_name              String    @db.VarChar(64) @default("frost user")
   password_auth_enabled     Boolean
+
+  // relations
+  passwords                 password_verification[]
+  tokens                    token[]
+  posts                     post[]
 }
 
 model password_verification {
-  password_verification_id  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
-
-  user_id                   String    @db.Uuid
+  password_verification_id  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) // PK
+  user_id                   String    @db.Uuid // FK
   algorithm                 String    @db.VarChar(16)
   salt                      String    @db.VarChar(32)
   iteration                 Int
   hash                      String    @db.VarChar(128)
+
+  // relations
+  user                      user      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model token {
-  token_id                  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
-
+  token_id                  String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) // PK
   token_kind                String    @db.VarChar(16)
-  user_id                   String    @db.Uuid
+  user_id                   String    @db.Uuid // FK
   token                     String    @db.VarChar(32)
   expires                   DateTime? @db.Timestamp(6)
+
+  // relations
+  user                      user      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
+  scopes                    token_scope[]
 }
 
 model token_scope {
-  token_scope_id            String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
-
-  token_id                  String    @db.Uuid
+  token_scope_id            String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) // PK
+  token_id                  String    @db.Uuid // FK
   scope_name                String    @db.VarChar(32)
+
+  // relations
+  token                     token     @relation(fields: [token_id], references: [token_id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model post {
-  post_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()"))
-
-  chat_room_id              String?   @db.Uuid
-  user_id                   String    @db.Uuid
+  post_id                   String    @db.Uuid @id @default(dbgenerated("gen_random_uuid()")) // PK
+  chat_room_id              String?   @db.Uuid // FK
+  user_id                   String    @db.Uuid // FK
   content                   String    @db.VarChar(256)
+
+  // relations
+  user                      user      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
 }
