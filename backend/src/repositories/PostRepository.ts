@@ -3,6 +3,9 @@ import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 import { PostEntity } from "../modules/entities";
 
+/**
+ * 投稿を作成する
+*/
 export async function createPost(
   params: { chatRoomId?: string, userId: string, content: string },
   ctx: AccessContext,
@@ -19,6 +22,9 @@ export async function createPost(
   return mapEntity(row);
 }
 
+/**
+ * 投稿を取得する
+*/
 export async function getPost(
   params: { postId: string },
   ctx: AccessContext,
@@ -38,6 +44,7 @@ export async function getPost(
 }
 
 /**
+ * 投稿を削除する
  * @returns 削除に成功したかどうか
 */
 export async function deletePost(

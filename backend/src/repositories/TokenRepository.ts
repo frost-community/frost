@@ -5,7 +5,10 @@ import { TokenEntity } from "../modules/entities";
 
 export type TokenKind = "access_token" | "refresh_token";
 
-export async function createToken(
+/**
+ * トークン情報を追加する
+*/
+export async function createTokenInfo(
   params: { userId: string, tokenKind: TokenKind, scopes: string[], token: string, },
   ctx: AccessContext,
   db: DB,
@@ -41,6 +44,9 @@ export async function createToken(
   };
 }
 
+/**
+ * トークン情報を取得する
+*/
 export async function getTokenInfo(
   params: { token: string },
   ctx: AccessContext,
@@ -61,9 +67,10 @@ export async function getTokenInfo(
 }
 
 /**
+ * トークン情報を削除する
  * @returns 削除に成功したかどうか
 */
-export async function deleteToken(
+export async function deleteTokenInfo(
   params: { token: string },
   ctx: AccessContext,
   db: DB,

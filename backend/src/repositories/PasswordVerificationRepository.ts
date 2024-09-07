@@ -3,9 +3,8 @@ import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
 
 /*
- * パスワード検証情報
+ * パスワード検証情報を追加する
 */
-
 export async function createPasswordVerification(
   params: { userId: string, algorithm: string, salt: string, iteration: number, hash: string },
   ctx: AccessContext,
@@ -24,6 +23,9 @@ export async function createPasswordVerification(
   return row;
 }
 
+/*
+ * パスワード検証情報を取得する
+*/
 export async function getPasswordVerification(
   params: { userId: string },
   ctx: AccessContext,
@@ -43,6 +45,7 @@ export async function getPasswordVerification(
 }
 
 /**
+ * パスワード検証情報を削除する
  * @returns 削除に成功したかどうか
 */
 export async function deletePasswordVerification(
