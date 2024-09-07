@@ -1,11 +1,11 @@
+import { PrismaClient } from '@prisma/client';
 import { Container } from 'inversify';
 import { BACKEND_URSR_ID } from '../constants/specialUserId';
 import { setupContainer } from '../container/inversify.config';
 import { TYPES } from '../container/types';
-import { UserRepository } from '../repositories/UserRepository';
-import { TokenService } from '../services/TokenService';
 import { AccessContext } from '../modules/AccessContext';
-import { PrismaClient } from '@prisma/client';
+import * as UserRepository from '../repositories/UserRepository';
+import * as TokenService from '../services/TokenService';
 
 async function run() {
   // setup container
@@ -14,25 +14,23 @@ async function run() {
 
   // get instance
   const db = container.get<PrismaClient>(TYPES.db);
-  const userRepository = container.get<UserRepository>(TYPES.UserRepository);
-  const tokenService = container.get<TokenService>(TYPES.TokenService);
 
-  const ctx: AccessContext = { userId: BACKEND_URSR_ID, db };
+  const ctx: AccessContext = { userId: BACKEND_URSR_ID };
 
-  const user = await userRepository.create({
+  const user = await UserRepository.create({
     name: 'Public',
     displayName: 'Public',
     passwordAuthEnabled: false,
-  }, ctx);
+  }, ctx, db);
   console.log("ユーザー'Public'を作成しました");
   console.log(user);
 
   const scopes = ["user.auth"];
-  const accessToken = await tokenService.create({
+  const accessToken = await TokenService.create({
     userId: user.userId,
     tokenKind: "access_token",
     scopes: scopes,
-  }, ctx);
+  }, ctx, db);
   console.log("ユーザー'Public'のアクセストークンを作成しました");
   console.log(accessToken);
 

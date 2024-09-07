@@ -1,4 +1,4 @@
-import { AccessContext } from "../modules/AccessContextOld";
+import { AccessContext } from "../modules/AccessContext";
 import { AccessDenied, appError, BadRequest, ResourceNotFound } from "../modules/appErrors";
 import { DB } from "../modules/db";
 import { PostEntity } from "../modules/entities";

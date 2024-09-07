@@ -2,15 +2,14 @@ import express from "express";
 import z from 'zod';
 import { UserEntity } from "../entities";
 import { appError, BadRequest } from "../appErrors";
-import { PrismaClient } from "@prisma/client";
-import { PrismaTransaction } from "../AccessContext";
+import { DB } from "../db";
 
 export class ApiRouteContext {
   private _user: UserEntity | undefined;
   private _scopes: string[] | undefined;
   constructor(
     public params: unknown,
-    public db: PrismaClient | PrismaTransaction,
+    public db: DB,
     public req: express.Request,
     public res: express.Response,
     user: UserEntity | undefined,
