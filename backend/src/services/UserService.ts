@@ -6,6 +6,10 @@ import * as UserRepository from "../repositories/UserRepository";
 import * as PasswordVerificationService from "./PasswordVerificationService";
 import * as TokenService from "./TokenService";
 
+/**
+ * ユーザーを登録します。
+ * 登録に成功すると、そのユーザーのトークンと登録情報が返されます。
+*/
 export async function signup(
   params: { name: string, displayName: string, password?: string },
   ctx: AccessContext,
@@ -53,6 +57,10 @@ export async function signup(
   return { accessToken, refreshToken, user };
 }
 
+/**
+ * 指定された認証情報でユーザーを認証します。
+ * 認証に成功すると、そのユーザーのトークンと登録情報が返されます。
+*/
 export async function signin(
   params: { name: string, password?: string },
   ctx: AccessContext,
@@ -106,6 +114,9 @@ export async function signin(
   throw new Error("authentication method not exists: " + user.userId);
 }
 
+/**
+ * ユーザー情報を取得します。
+*/
 export async function get(
   params: { userId?: string, name?: string },
   ctx: AccessContext,
@@ -130,6 +141,9 @@ export async function get(
   return userEntity;
 }
 
+/**
+ * ユーザー情報を削除します。
+*/
 export async function remove(
   params: { userId: string },
   ctx: AccessContext,

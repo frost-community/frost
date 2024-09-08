@@ -1,18 +1,32 @@
 import { Container } from "inversify";
 import crypto from "node:crypto";
 import { AccessContext } from "../modules/AccessContext";
-import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
+import { appError, BadRequest, ResourceNotFound, Unauthenticated } from "../modules/appErrors";
 import { TokenEntity } from "../modules/entities";
 import * as TokenRepository from "../repositories/TokenRepository";
+import * as UserRepository from "../repositories/UserRepository";
 
 const asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+/**
+ * トークン情報を追加します。
+*/
 export async function create(
   params: { userId: string, tokenKind: TokenRepository.TokenKind, scopes: string[] },
   ctx: AccessContext,
   container: Container,
 ): Promise<TokenEntity> {
+  // ユーザーが存在しないトークンは作成できない
+  const userEntity = await UserRepository.get({
+    userId: params.userId,
+  }, ctx, container);
+  if (userEntity == null) {
+    throw appError(new ResourceNotFound('user'));
+  }
+
   const tokenValue = await generateTokenValue(32);
+
+  // TODO: 一応トークンの重複を確認
 
   const tokenEntity = await TokenRepository.create({
     userId: params.userId,
@@ -24,6 +38,9 @@ export async function create(
   return tokenEntity;
 }
 
+/**
+ * トークン情報を取得します。
+*/
 export async function getTokenInfo(
   params: { token: string },
   ctx: AccessContext,
@@ -44,6 +61,7 @@ export async function getTokenInfo(
 }
 
 /**
+ * トークンの値を生成します。
  * @internal
 */
 export async function generateTokenValue(length: number) {

@@ -4,6 +4,9 @@ import { AccessDenied, appError, BadRequest, ResourceNotFound } from "../modules
 import { PostEntity } from "../modules/entities";
 import * as PostRepository from "../repositories/PostRepository";
 
+/**
+ * 投稿を作成します。
+*/
 export async function createTimelinePost(
   params: { content: string },
   ctx: AccessContext,
@@ -21,6 +24,9 @@ export async function createTimelinePost(
   return post;
 }
 
+/**
+ * 投稿を取得します。
+*/
 export async function get(
   params: { postId: string },
   ctx: AccessContext,
@@ -40,6 +46,9 @@ export async function get(
   return post;
 }
 
+/**
+ * 投稿を削除します。
+*/
 export async function remove(
   params: { postId: string },
   ctx: AccessContext,
