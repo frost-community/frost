@@ -48,14 +48,19 @@ export async function get(
   return mapEntity(row);
 }
 
-public async fetchTimeline(params: { kind: 'home', cursor?: string, limit?: number }, ctx: AccessContext): Promise<PostEntity[]> {
+export async function fetchTimeline(
+  params: { kind: 'home', cursor?: string, limit?: number },
+  ctx: AccessContext,
+  container: Container,
+): Promise<PostEntity[]> {
+  const db = container.get<DB>(TYPES.db);
   const limit = params.limit ?? 50;
   if (params.cursor != null) {
-    const rows = await ctx.db.$queryRawTyped(sql.fetchHomeTimelineCursor(ctx.userId, params.cursor, limit));
-    return rows.map(x => this.mapEntity(x));
+    const rows = await db.$queryRawTyped(sql.fetchHomeTimelineCursor(ctx.userId, params.cursor, limit));
+    return rows.map(x => mapEntity(x));
   } else {
-    const rows = await ctx.db.$queryRawTyped(sql.fetchHomeTimeline(ctx.userId, limit));
-    return rows.map(x => this.mapEntity(x));
+    const rows = await db.$queryRawTyped(sql.fetchHomeTimeline(ctx.userId, limit));
+    return rows.map(x => mapEntity(x));
   }
 }
 
