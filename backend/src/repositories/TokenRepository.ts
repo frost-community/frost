@@ -95,6 +95,13 @@ export async function remove(
     return false;
   }
 
+  // トークンの権限を削除 (0件以上)
+  await db.token_scope.deleteMany({
+    where: {
+      token_id: tokenRecord.token_id,
+    },
+  });
+
   // トークンを削除
   const result = await db.token.deleteMany({
     where: {
@@ -104,13 +111,6 @@ export async function remove(
   if (result.count == 0) {
     return false;
   }
-
-  // トークンの権限を削除 (0件以上)
-  await db.token_scope.deleteMany({
-    where: {
-      token_id: tokenRecord.token_id,
-    },
-  });
 
   return true;
 }
