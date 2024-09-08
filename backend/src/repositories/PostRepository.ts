@@ -66,10 +66,15 @@ export async function remove(
 }
 
 function mapEntity(row: post): PostEntity {
-  return {
+  const post: PostEntity = {
     postId: row.post_id,
-    chatRoomId: row.chat_room_id ?? undefined,
     userId: row.user_id,
     content: row.content,
   };
+
+  if (row.chat_room_id != null) {
+    post.chatRoomId = row.chat_room_id;
+  }
+
+  return post;
 }
