@@ -1,13 +1,12 @@
-import express from 'express';
 import { Container, inject, injectable } from 'inversify';
 import z from 'zod';
 import { TYPES } from '../container/types';
 import { appError, EndpointNotFound } from '../modules/appErrors';
-import { corsApi } from '../modules/httpRoute/cors';
 import { ApiRouteBuilder } from '../modules/httpRoute/ApiRouteBuilder';
-import { PostService } from '../services/PostService';
-import { UserService } from '../services/UserService';
+import { corsApi } from '../modules/httpRoute/cors';
 import * as routeTypes from '../modules/httpRoute/endpoints';
+import * as PostService from '../services/PostService';
+import * as UserService from '../services/UserService';
 
 @injectable()
 export class ApiVer1Router {
@@ -16,9 +15,6 @@ export class ApiVer1Router {
   ) {}
 
   public create() {
-    const userService = this.container.get<UserService>(TYPES.UserService);
-    const postService = this.container.get<PostService>(TYPES.PostService);
-
     const builder = new ApiRouteBuilder(this.container);
 
     builder.router.use(corsApi());
@@ -61,7 +57,7 @@ export class ApiVer1Router {
             displayName: z.string().min(1),
           })
         );
-        const result = await userService.signup(params, { userId: ctx.getUser().userId, db: ctx.db });
+        const result = await UserService.signup(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -77,7 +73,7 @@ export class ApiVer1Router {
             password: z.string().min(1).optional(),
           })
         );
-        const result = await userService.signin(params, { userId: ctx.getUser().userId, db: ctx.db });
+        const result = await UserService.signin(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -93,7 +89,7 @@ export class ApiVer1Router {
             name: z.string().min(1).optional(),
           })
         );
-        const result = await userService.get(params, { userId: ctx.getUser().userId, db: ctx.db });
+        const result = await UserService.get(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -104,9 +100,7 @@ export class ApiVer1Router {
       scope: 'user.delete',
       async requestHandler(ctx): Promise<routeTypes.GetUserResult> {
         throw new Error('not implemented');
-        // const accessUser = req.user as UserEntity;
-        // const params = req.query as DeleteUserQuery;
-        // await this.userService.delete(params, { accessUserId: accessUser.userId, db });
+        // await UserService.remove(params, { userId: ctx.getUser().userId }, ctx.container);
         // res.status(204).send();
       },
     });
@@ -121,7 +115,7 @@ export class ApiVer1Router {
             content: z.string().min(1),
           })
         );
-        const result = await postService.createTimelinePost(params, { userId: ctx.getUser().userId, db: ctx.db });
+        const result = await PostService.createTimelinePost(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -136,7 +130,7 @@ export class ApiVer1Router {
             postId: z.string().length(32),
           })
         );
-        const result = await postService.get(params, { userId: ctx.getUser().userId, db: ctx.db });
+        const result = await PostService.get(params, { userId: ctx.getUser().userId }, ctx.container);
         return result;
       },
     });
@@ -151,7 +145,7 @@ export class ApiVer1Router {
             postId: z.string().length(32),
           })
         );
-        await postService.delete(params, { userId: ctx.getUser().userId, db: ctx.db });
+        await PostService.remove(params, { userId: ctx.getUser().userId }, ctx.container);
       },
     });
 

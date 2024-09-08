@@ -3,29 +3,23 @@ import { Container } from "inversify";
 import passport from "passport";
 import { Strategy as BearerStrategy } from "passport-http-bearer";
 import { BACKEND_URSR_ID } from "../../constants/specialUserId";
-import { TYPES } from "../../container/types";
-import { TokenService } from "../../services/TokenService";
-import { UserService } from "../../services/UserService";
+import * as TokenService from "../../services/TokenService";
+import * as UserService from "../../services/UserService";
 import { AccessDenied, appError, Unauthenticated } from "../appErrors";
-import { PrismaClient } from "@prisma/client";
 
 export function configureServer(container: Container) {
-  const db = container.get<PrismaClient>(TYPES.db);
-  const tokenService = container.get<TokenService>(TYPES.TokenService);
-  const userService = container.get<UserService>(TYPES.UserService);
-
   passport.use(new BearerStrategy(async (token, done) => {
     try {
-      const ctx = { userId: BACKEND_URSR_ID, db };
-      const tokenInfo = await tokenService.getTokenInfo({
+      const ctx = { userId: BACKEND_URSR_ID };
+      const tokenInfo = await TokenService.getTokenInfo({
         token
-      }, ctx);
+      }, ctx, container);
       if (tokenInfo.tokenKind != "access_token") {
         return done(appError(new Unauthenticated()));
       }
-      const user = await userService.get({
+      const user = await UserService.get({
         userId: tokenInfo.userId
-      }, ctx);
+      }, ctx, container);
       return done(null, user, { scope: tokenInfo.scopes });
     } catch (err) {
       return done(err);
