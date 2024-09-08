@@ -22,6 +22,7 @@ model user {
   name                      String    @db.VarChar(64) @unique(map: "user_name_unique")
   display_name              String    @db.VarChar(64) @default("frost user")
   password_auth_enabled     Boolean
+  created_at                DateTime  @db.Timestamp(3) @default(now())
 
   // relations
   passwords                 password_verification[]
@@ -47,6 +48,7 @@ model token {
   user_id                   String    @db.Uuid // FK
   token                     String    @db.VarChar(32)
   expires                   DateTime? @db.Timestamp(6)
+  created_at                DateTime  @db.Timestamp(3) @default(now())
 
   // relations
   user                      user      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
@@ -67,6 +69,7 @@ model post {
   chat_room_id              String?   @db.Uuid // FK
   user_id                   String    @db.Uuid // FK
   content                   String    @db.VarChar(256)
+  created_at                DateTime  @db.Timestamp(3) @default(now())
 
   // relations
   user                      user      @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict)
