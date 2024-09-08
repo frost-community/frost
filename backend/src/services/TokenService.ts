@@ -1,53 +1,73 @@
-import { inject, injectable } from "inversify";
+import { Container } from "inversify";
 import crypto from "node:crypto";
-import { TYPES } from "../container/types";
-import { appError, BadRequest, Unauthenticated } from "../modules/appErrors";
-import { TokenKind, TokenRepository } from "../repositories/TokenRepository";
 import { AccessContext } from "../modules/AccessContext";
+import { appError, BadRequest, ResourceNotFound, Unauthenticated } from "../modules/appErrors";
 import { TokenEntity } from "../modules/entities";
+import * as TokenRepository from "../repositories/TokenRepository";
+import * as UserRepository from "../repositories/UserRepository";
 
-@injectable()
-export class TokenService {
-  constructor(
-    @inject(TYPES.TokenRepository) private readonly tokenRepository: TokenRepository,
-  ) {}
+const asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  public async create(params: { userId: string, tokenKind: TokenKind, scopes: string[] }, ctx: AccessContext): Promise<TokenEntity> {
-    const tokenValue = this.generateTokenValue(32);
-    const tokenEntity = await this.tokenRepository.create({
-      userId: params.userId,
-      tokenKind: params.tokenKind,
-      scopes: params.scopes,
-      token: tokenValue,
-    }, ctx);
-    return tokenEntity;
+/**
+ * トークン情報を追加します。
+*/
+export async function create(
+  params: { userId: string, tokenKind: TokenRepository.TokenKind, scopes: string[] },
+  ctx: AccessContext,
+  container: Container,
+): Promise<TokenEntity> {
+  // ユーザーが存在しないトークンは作成できない
+  const userEntity = await UserRepository.get({
+    userId: params.userId,
+  }, ctx, container);
+  if (userEntity == null) {
+    throw appError(new ResourceNotFound('user'));
   }
 
-  public async getTokenInfo(params: { token: string }, ctx: AccessContext): Promise<{ tokenKind: TokenKind, userId: string, scopes: string[] }> {
-    if (params.token.length < 1) {
-      throw appError(new BadRequest([
-        { message: 'token invalid.' },
-      ]));
-    }
-    const info = await this.tokenRepository.get({
-      token: params.token,
-    }, ctx);
-    if (info == null) {
-      throw appError(new Unauthenticated());
-    }
-    return info;
-  }
+  const tokenValue = await generateTokenValue(32);
 
-  /**
-   * @internal
-  */
-  public generateTokenValue(length: number) {
-    let token = "";
-    for (const [_index, byte] of crypto.randomBytes(length).entries()) {
-      token += TokenService.asciiTable[byte % TokenService.asciiTable.length];
-    }
-    return token;
-  }
+  // TODO: 一応トークンの重複を確認
 
-  private static asciiTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const tokenEntity = await TokenRepository.create({
+    userId: params.userId,
+    tokenKind: params.tokenKind,
+    scopes: params.scopes,
+    token: tokenValue,
+  }, ctx, container);
+
+  return tokenEntity;
+}
+
+/**
+ * トークン情報を取得します。
+*/
+export async function getTokenInfo(
+  params: { token: string },
+  ctx: AccessContext,
+  container: Container,
+): Promise<{ tokenKind: TokenRepository.TokenKind, userId: string, scopes: string[] }> {
+  if (params.token.length < 1) {
+    throw appError(new BadRequest([
+      { message: 'token invalid.' },
+    ]));
+  }
+  const info = await TokenRepository.get({
+    token: params.token,
+  }, ctx, container);
+  if (info == null) {
+    throw appError(new Unauthenticated());
+  }
+  return info;
+}
+
+/**
+ * トークンの値を生成します。
+ * @internal
+*/
+export async function generateTokenValue(length: number) {
+  let token = "";
+  for (const [_index, byte] of crypto.randomBytes(length).entries()) {
+    token += asciiTable[byte % asciiTable.length];
+  }
+  return token;
 }
