@@ -60,6 +60,7 @@ export async function fetchTimeline(
     return rows.map(x => mapEntity(x));
   } else {
     const rows = await db.$queryRawTyped(sql.fetchHomeTimeline(ctx.userId, limit));
+    rows.reverse();
     return rows.map(x => mapEntity(x));
   }
 }

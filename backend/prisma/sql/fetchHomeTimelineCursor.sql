@@ -8,9 +8,12 @@ SELECT
   p.user_id,
   p.content,
   p.created_at
-FROM post AS p
-WHERE p.user_id = CAST($1 AS UUID)
-  AND p.chat_room_id IS NULL
-  AND CAST($2 AS UUID) = CAST($2 AS UUID)
-ORDER BY p.created_at ASC
+FROM post AS p,
+  (SELECT x.post_id, x.created_at FROM post AS x WHERE x.post_id = CAST($2 AS UUID)) AS cur
+WHERE p.chat_room_id IS NULL
+  AND CAST($1 AS UUID) = CAST($1 AS UUID)
+  -- カーソルより新しいリソースを取得
+  AND p.created_at > cur.created_at
+  OR (p.created_at = cur.created_at AND p.post_id > cur.post_id)
+ORDER BY p.created_at ASC, p.post_id ASC
 LIMIT $3
