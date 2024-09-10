@@ -10,5 +10,5 @@ SELECT
 FROM post AS p
 WHERE p.chat_room_id IS NULL
   AND CAST($1 AS UUID) = CAST($1 AS UUID)
-ORDER BY p.created_at DESC, p.post_id DESC
+ORDER BY p.created_at ASC, p.post_id ASC
 LIMIT $2
