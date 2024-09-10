@@ -63,8 +63,7 @@ export async function fetchTimeline(
     const rows = await db.$queryRawTyped(sql.fetchHomeTimelinePrevCursor(ctx.userId, params.prevCursor, limit));
     return rows.map(x => mapEntity(x));
   } else {
-    const rows = await db.$queryRawTyped(sql.fetchHomeTimeline(ctx.userId, limit));
-    rows.reverse();
+    const rows = await db.$queryRawTyped(sql.fetchHomeTimelineLatest(ctx.userId, limit));
     return rows.map(x => mapEntity(x));
   }
 }
