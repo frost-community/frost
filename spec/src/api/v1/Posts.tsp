@@ -21,6 +21,11 @@ interface Posts {
   @get
   getPost(@query postId: string): Post;
 
+  @tag("Timeline")
+  @operationId("FetchTimeline")
+  @route("/timeline")
+  @get
+  fetchTimeline(@query kind: string, @query prevCursor?: string, @query nextCursor?: string): Post[];
 
   @tag("Timeline")
   @tag("ChatRoom")

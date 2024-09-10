@@ -16,6 +16,10 @@ export type GetPostResult = operations['GetPost']['responses']['200']['content']
 export type CreateTimelinePostParams = NonNullable<operations['CreateTimelinePost']['requestBody']['content']['application/json']>;
 export type CreateTimelinePostResult = operations['CreateTimelinePost']['responses']['200']['content']['application/json'];
 
+// FetchTimeline
+export type FetchTimelineParams = NonNullable<operations['FetchTimeline']['parameters']['query']>;
+export type FetchTimelineResult = operations['FetchTimeline']['responses']['200']['content']['application/json'];
+
 // DeletePost
 export type DeletePostParams = NonNullable<operations['DeletePost']['parameters']['query']>;
 

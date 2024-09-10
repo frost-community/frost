@@ -50,7 +50,7 @@ export async function get(
  * タイムライン取得
 */
 export async function fetchTimeline(
-  params: { kind: 'home', cursor?: string, limit?: number },
+  params: { kind: 'home', prevCursor?: string, nextCursor?: string, limit?: number },
   ctx: AccessContext,
   container: Container,
 ): Promise<PostEntity[]> {
