@@ -49,7 +49,7 @@ export async function get(
 }
 
 export async function fetchTimeline(
-  params: { kind: 'home', prevCursor?: string, nextCursor?: string, limit?: number },
+  params: { kind: string, prevCursor?: string, nextCursor?: string, limit?: number },
   ctx: AccessContext,
   container: Container,
 ): Promise<PostEntity[]> {

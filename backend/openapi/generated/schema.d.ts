@@ -504,6 +504,7 @@ export interface operations {
                 kind: string;
                 prevCursor?: string;
                 nextCursor?: string;
+                limit?: string;
             };
             header?: never;
             path?: never;

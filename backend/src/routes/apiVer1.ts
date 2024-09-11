@@ -136,6 +136,28 @@ export class ApiVer1Router {
     });
 
     builder.register({
+      method: 'GET',
+      path: '/post/timeline',
+      scope: 'post.read',
+      async requestHandler(ctx): Promise<routeTypes.FetchTimelineResult> {
+        const params: routeTypes.FetchTimelineParams = ctx.validateParams(
+          z.object({
+            kind: z.string(),
+            nextCursor: z.string().length(36).optional(),
+            prevCursor: z.string().length(36).optional(),
+            limit: z.string().regex(/^[+-]?\d*\.?\d+$/, { message: 'invalid numeric string' }).optional(),
+          })
+        );
+        const params2 = {
+          ...params,
+          limit: Number(params.limit),
+        };
+        const result = await PostService.fetchTimeline(params2, { userId: ctx.getUser().userId }, ctx.container);
+        return result;
+      },
+    });
+
+    builder.register({
       method: 'DELETE',
       path: '/post',
       scope: 'post.delete',
