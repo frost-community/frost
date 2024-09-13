@@ -2,134 +2,148 @@
 
 ```mermaid
 erDiagram
-  Account {
-    string id
-  }
-
-  User {
-    string id
-    string accountId
+  user {
+    string user_id
     string name
-    string displayName
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
   }
 
-  UserFollowing {
-    string sourceUserId
-    string targetUserId
+  password_verification {
+    string password_verification_id
+    string user_id
+    string algorithm
+    string salt
+    number iteration
+    string hash
   }
 
-  UserTag {
-    string id
-    string userId
-    string tagName
+  token {
+    string token_id
+    string token_kind
+    string user_id
+    string token
+    datetime expires
+    datetime created_at
   }
 
-  Article {
-    string id
-    string userId
-    string chatRoomId
-    string visibility
+  token_scope {
+    string token_scope_id
+    string token_id
+    string scope_name
   }
 ```
 
 ```mermaid
 erDiagram
-  ArticleTag {
-    string postId
-    string tagName
+  user_following {
+    string source_user_id
+    string target_user_id
   }
 
-  ChatRoom {
-    string id
+  user_tag {
+    string user_tag_id
+    string user_id
+    string tag_name
+  }
+
+  article {
+    string article_id
+    string chat_room_id
+    string user_id
+    string visibility
+    string content
+    datetime created_at
+  }
+
+  article_tag {
+    string article_tag_id
+    string article_id
+    string tag_name
+  }
+```
+
+```mermaid
+erDiagram
+  chat_room {
+    string chat_room_id
     string title
   }
 
-  ChatRoomEnter {
-    string chatRoomId
-    string userId
+  chat_room_member {
+    string chat_room_id
+    string user_id
   }
 ```
 
 # ER図
 
 ## パスワード認証
-
+ユーザーには基本的に1つのパスワードが設定される。
+他の認証方法がある場合やサインインできない特殊なユーザーでは設定されない可能性がある。
 ```mermaid
 erDiagram
-  Account {
-    string id
+  user {
+    string user_id
     string name
-    boolean passwordAuthEnabled
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
   }
 
-  Account ||--o{ PasswordAuth : ""
+  user ||--o| password_verification : ""
 
-  PasswordAuth {
-    string id
-    string accountId
+  password_verification {
+    string password_verification_id
+    string user_id
     string algorithm
-    integer salt
+    string salt
+    number iteration
     string hash
   }
 ```
 
-## ユーザープロファイル
-アカウントは複数のユーザープロファイルを作成できる。
-```mermaid
-erDiagram
-  Account {
-    string id
-  }
-
-  Account ||--o{ User : ""
-
-  User {
-    string id
-    string accountId
-    string name
-    string displayName
-  }
-```
-
 ## ユーザーのフォロー
-ユーザーは他のユーザーをフォローできる。
+ユーザーは他のユーザーをフォローできる。\
+多対多の関係を中間テーブルで保持する。
 ```mermaid
 erDiagram
-  User {
-    string id
+  user {
+    string user_id
+    string name
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
   }
 
-  UserFollowing {
-    string id
-    string sourceUserId
-    string targetUserId
-  }
+  user ||--o{ user_following : ""
+  user_following }o--|| user : ""
 
-  User ||--o{ UserFollowing : ""
-  UserFollowing }o--|| User : ""
+  user_following {
+    string source_user_id
+    string target_user_id
+  }
 ```
 
 ## ユーザータグ
 ユーザーには関心のある物事をタグとして設定できる。
 ```mermaid
 erDiagram
-  User {
-    string id
-  }
-
-  User ||--o{ UserTag : ""
-
-  UserTag {
-    string id
-    string userId
-    string tagId
-  }
-
-  UserTag }o--|| Tag : ""
-
-  Tag {
-    string id
+  user {
+    string user_id
     string name
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
+  }
+
+  user ||--o{ user_tag : ""
+
+  user_tag {
+    string user_tag_id
+    string user_id
+    string tag_name
   }
 ```
 
@@ -138,31 +152,30 @@ erDiagram
 記事には公開範囲を設定することができる。
 ```mermaid
 erDiagram
-  User {
-    string id
-  }
-
-  User ||--o{ Article : ""
-
-  Article {
-    string id
-    string userId
-    string visibility
-  }
-
-  Article ||--o{ ArticleTag : ""
-
-  ArticleTag {
-    string id
-    string articleId
-    string tagId
-  }
-
-  ArticleTag }o--|| Tag : ""
-
-  Tag {
-    string id
+  user {
+    string user_id
     string name
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
+  }
+
+  user ||--o{ article : ""
+
+  article {
+    string article_id
+    string user_id
+    string visibility
+    string content
+    datetime created_at
+  }
+
+  article ||--o{ article_tag : ""
+
+  article_tag {
+    string article_tag_id
+    string article_id
+    string tag_name
   }
 ```
 
@@ -171,29 +184,37 @@ erDiagram
 投稿自体はタイムラインの物と共通ですが、こちらはcharRoomIdが入ります。
 ```mermaid
 erDiagram
-  User {
-    string id
+  user {
+    string user_id
+    string name
+    string display_name
+    bool password_auth_enabled
+    datetime created_at
   }
 
-  User ||--o{ ChatRoomEnter : ""
+  user ||--o{ chat_room_member : ""
 
-  ChatRoomEnter {
-    string id
-    string userId
+  chat_room_member {
+    string chat_room_id
+    string user_id
   }
 
-  ChatRoomEnter }|--|| ChatRoom : ""
+  chat_room_member }o--|| chat_room : ""
 
-  ChatRoom {
-    string id
+  chat_room {
+    string chat_room_id
+    string title
   }
 
-  User ||--o{ Article : ""
-  ChatRoom |o--o{ Article : ""
+  user ||--o{ article : ""
+  chat_room ||--o{ article : ""
 
-  Article {
-    string id
-    string userId
-    string chatRoomId
+  article {
+    string article_id
+    string chat_room_id
+    string user_id
+    string visibility
+    string content
+    datetime created_at
   }
 ```
