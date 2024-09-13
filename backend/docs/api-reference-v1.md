@@ -25,32 +25,32 @@
 ## GET /api/v1/user/:userId/user-timeline
 ユーザーのタイムラインを取得する。
 ### タグ
-`user` `post`
+`user` `leaf`
 
 ## GET /api/v1/user/:userId/home-timeline
 ユーザーのホームタイムラインを取得する。
 ### タグ
-`user` `post`
+`user` `leaf`
 
-## POST /api/v1/post
+## POST /api/v1/leaf
 タイムラインへ投稿する。
 ### タグ
-`post`
+`leaf`
 
-## GET /api/v1/post/:postId
+## GET /api/v1/leaf/:leafId
 投稿データを取得する。
 ### タグ
-`post`
+`leaf`
 
-## DELETE /api/v1/post/:postId
+## DELETE /api/v1/leaf/:leafId
 投稿データを削除する。
 ### タグ
-`post`
+`leaf`
 
-## POST /api/v1/post/search
+## POST /api/v1/leaf/search
 投稿データを検索する。
 ### タグ
-`post`
+`leaf`
 
 ## POST /api/v1/chatroom
 チャットルームを作成する。
@@ -82,13 +82,13 @@
 ### タグ
 `chatroom` `user`
 
-## POST /api/v1/chatroom/:chatroomId/post
+## POST /api/v1/chatroom/:chatroomId/leaf
 チャットルームへ投稿する。\
 投稿の取得や削除、検索に関しては投稿APIを利用する。
 ### タグ
-`chatroom` `post`
+`chatroom` `leaf`
 
 ## GET /api/v1/chatroom/:chatroomId/timeline
 チャットルームのタイムラインを取得する。
 ### タグ
-`chatroom` `post`
+`chatroom` `leaf`
