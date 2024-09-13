@@ -48,8 +48,8 @@ erDiagram
     string tag_name
   }
 
-  article {
-    string article_id
+  leaf {
+    string leaf_id
     string chat_room_id
     string user_id
     string visibility
@@ -57,9 +57,9 @@ erDiagram
     datetime created_at
   }
 
-  article_tag {
-    string article_tag_id
-    string article_id
+  leaf_tag {
+    string leaf_tag_id
+    string leaf_id
     string tag_name
   }
 ```
@@ -160,21 +160,21 @@ erDiagram
     datetime created_at
   }
 
-  user ||--o{ article : ""
+  user ||--o{ leaf : ""
 
-  article {
-    string article_id
+  leaf {
+    string leaf_id
     string user_id
     string visibility
     string content
     datetime created_at
   }
 
-  article ||--o{ article_tag : ""
+  leaf ||--o{ leaf_tag : ""
 
-  article_tag {
-    string article_tag_id
-    string article_id
+  leaf_tag {
+    string leaf_tag_id
+    string leaf_id
     string tag_name
   }
 ```
@@ -206,11 +206,11 @@ erDiagram
     string title
   }
 
-  user ||--o{ article : ""
-  chat_room ||--o{ article : ""
+  user ||--o{ leaf : ""
+  chat_room ||--o{ leaf : ""
 
-  article {
-    string article_id
+  leaf {
+    string leaf_id
     string chat_room_id
     string user_id
     string visibility
