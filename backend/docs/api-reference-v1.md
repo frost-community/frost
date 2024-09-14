@@ -22,15 +22,40 @@
 ### タグ
 `user`
 
-## GET /api/v1/users/:userId/timeline
-ユーザーのタイムラインを取得する。
+## GET /api/v1/users/:userId/setting/notification
+ユーザーの通知設定を取得する
 ### タグ
-`user` `leaf`
+`user`
 
-## GET /api/v1/users/:userId/home/timeline
-ユーザーのホームタイムラインを取得する。
+## PATCH /api/v1/users/:userId/setting/notification
+ユーザーの通知設定を変更します。
 ### タグ
-`user` `leaf`
+`user`
+
+## POST /api/v1/users/:userId/userFollowings
+ユーザーをフォローする。
+### タグ
+`user`
+
+## GET /api/v1/users/:userId/userFollowings
+フォローしてるユーザーの一覧を取得する。
+### タグ
+`user`
+
+## GET /api/v1/users/:userId/timelines/home
+ホームタイムラインを取得する。
+### タグ
+`user` `timeline`
+
+## GET /api/v1/users/:userId/notifications
+通知をリストで取得する。
+### タグ
+`user` `notification`
+
+## POST /api/v1/users/:userId/notifications/markRead
+指定された通知を既読にする。
+### タグ
+`user` `notification`
 
 ## POST /api/v1/leafs
 タイムラインへ投稿する。
@@ -72,18 +97,23 @@
 ### タグ
 `chatroom`
 
-## POST /api/v1/chatrooms/:chatroomId/enter
-チャットルームに入室する。
+## POST /api/v1/chatrooms/:chatroomId/requestJoin
+チャットルームに参加申請する。
 ### タグ
 `chatroom` `user`
 
-## POST /api/v1/chatrooms/:chatroomId/leave
-チャットルームから退出する。
+## POST /api/v1/chatrooms/:chatroomId/members
+チャットルームの参加者を追加する。
 ### タグ
 `chatroom` `user`
 
 ## GET /api/v1/chatrooms/:chatroomId/members
 チャットルームの参加者を検索する。
+### タグ
+`chatroom` `user`
+
+## DELETE /api/v1/chatrooms/:chatroomId/members/:userId
+チャットルームの参加者を除名する。
 ### タグ
 `chatroom` `user`
 
