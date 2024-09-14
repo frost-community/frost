@@ -27,7 +27,7 @@
 ### タグ
 `user` `leaf`
 
-## GET /api/v1/users/:userId/home-timeline
+## GET /api/v1/users/:userId/home/timeline
 ユーザーのホームタイムラインを取得する。
 ### タグ
 `user` `leaf`
@@ -54,6 +54,11 @@
 
 ## POST /api/v1/chatrooms
 チャットルームを作成する。
+### タグ
+`chatroom`
+
+## GET /api/v1/chatrooms
+チャットルームを検索する。
 ### タグ
 `chatroom`
 
