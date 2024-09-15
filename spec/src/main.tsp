@@ -3,7 +3,7 @@ import "@typespec/rest";
 import "@typespec/openapi";
 import "@typespec/openapi3";
 
-import "./api/v0.2";
+import "./api/v1";
 
 using TypeSpec.Http;
 using TypeSpec.Rest;

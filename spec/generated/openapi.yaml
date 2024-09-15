@@ -151,6 +151,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Api.v1.ChatRoom'
+  /api/v1/echo:
+    get:
+      operationId: RootApi_GetEcho
+      parameters:
+        - name: message
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+    post:
+      operationId: RootApi_PostEcho
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+              required:
+                - message
   /api/v1/leaf/createLeaf:
     post:
       tags:
