@@ -1,3 +1,5 @@
+using TypeSpec.Http;
+using TypeSpec.Rest;
 using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
@@ -9,8 +11,13 @@ model User {
   passwordAuthEnabled: boolean;
 }
 
-model Post {
-  postId: string;
+model Token {
+  token: string;
+  scopes: string[];
+}
+
+model Leaf {
+  leafId: string;
   chatRoomId?: string;
   userId: string;
   content: string;
@@ -24,4 +31,16 @@ model ChatRoom {
 model ChatRoomMember {
   userId: string;
   chatRoomId: string;
+}
+
+model UserId {
+  @path
+  @segment("user")
+  userId: string;
+}
+
+model LeafId {
+  @path
+  @segment("leaf")
+  leafId: string;
 }

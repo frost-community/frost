@@ -1,7 +1,14 @@
+import "./models.tsp";
+import "./Echo.tsp";
+import "./Users.tsp";
+import "./Leaf.tsp";
+import "./ChatRooms.tsp";
+
 using TypeSpec.Http;
 using TypeSpec.Rest;
 using TypeSpec.OpenAPI;
 
+@route("/api/v1")
 namespace Frost.Api.v1;
 
 model SignupBody {
@@ -15,24 +22,13 @@ model SigninBody {
   password?: string;
 }
 
-model Token {
-  token: string;
-  scopes: string[];
-}
-
 model AuthResult {
   accessToken: Token;
   refreshToken: Token;
   user: User;
 }
 
-model CreateUserBody {
-  name: string;
-  displayName: string;
-}
-
-@tag("User")
-interface UserApi {
+interface RootApi {
   @tag("Auth")
   @operationId("Signup")
   @route("/signup")
@@ -43,15 +39,5 @@ interface UserApi {
   @operationId("Signin")
   @route("/signin")
   @post
-  signin(@body body: SigninBody): AuthResult;  
-
-  @operationId("GetUser")
-  @route("/user")
-  @get
-  getUser(@query userId?: string, @query name?: string): User;
-
-  @operationId("DeleteUser")
-  @route("/user")
-  @delete
-  deleteUser(@query userId: string): void;
+  signin(@body body: SigninBody): AuthResult;
 }

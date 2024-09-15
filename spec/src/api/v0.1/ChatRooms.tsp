@@ -45,5 +45,5 @@ interface ChatRoomMembers {
 interface ChatRoomPosts {
   @operationId("CreateChatRoomPost")
   @post
-  createChatRoomPost(@path chatRoomId: string, @body post: NewChatRoomPost): Post;
+  createChatRoomPost(@path chatRoomId: string, @body post: NewChatRoomPost): Leaf;
 }

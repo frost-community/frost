@@ -217,7 +217,7 @@ POST /api/v1/chatroom/createLeaf
 ```
 GET /api/v1/chatroom/getTimeline
 ```
-ホームタイムラインを取得する。\
+チャットルームのタイムラインを取得する。\
 リーフの取得や削除、検索に関してはleafネームスペースのAPIを利用する。
 
 ### query string
