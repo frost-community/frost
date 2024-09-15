@@ -1,6 +1,6 @@
+using TypeSpec.OpenAPI;
 using TypeSpec.Http;
 using TypeSpec.Rest;
-using TypeSpec.OpenAPI;
 
 namespace Frost.Api.v1;
 

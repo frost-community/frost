@@ -1,8 +1,8 @@
 import "./models.tsp";
 
+using TypeSpec.OpenAPI;
 using TypeSpec.Http;
 using TypeSpec.Rest;
-using TypeSpec.OpenAPI;
 
 @route("/api/v1")
 namespace Frost.Api.v1;
