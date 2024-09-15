@@ -123,8 +123,9 @@ paths:
         - Leaf
       operationId: ChatRoomApi_GetTimeline
       parameters:
-        - $ref: '#/components/parameters/Api.v1.GetChatRoomTimelineQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.GetChatRoomTimelineQueryString.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -140,8 +141,8 @@ paths:
         - ChatRoom
       operationId: ChatRoomApi_SearchChatRooms
       parameters:
-        - $ref: '#/components/parameters/Api.v1.SearchChatRoomsQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.SearchChatRoomsQueryString.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -252,8 +253,8 @@ paths:
         - Leaf
       operationId: LeafApi_SearchLeafs
       parameters:
-        - $ref: '#/components/parameters/Api.v1.SearchLeafsQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.SearchLeafsQueryString.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -299,9 +300,9 @@ paths:
         - User
       operationId: UserApi_GetFollowings
       parameters:
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
         - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.userId'
-        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -318,8 +319,9 @@ paths:
         - Leaf
       operationId: UserApi_GetHomeTimeline
       parameters:
-        - $ref: '#/components/parameters/Api.v1.GetHomeTimelineQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.GetHomeTimelineQueryString.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -350,8 +352,8 @@ paths:
         - User
       operationId: UserApi_SearchUsers
       parameters:
-        - $ref: '#/components/parameters/Api.v1.SearchUsersQueryString.nextCursor'
-        - $ref: '#/components/parameters/Api.v1.SearchUsersQueryString.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -378,52 +380,34 @@ paths:
               $ref: '#/components/schemas/Api.v1.UnfollowUserBody'
 components:
   parameters:
+    Api.v1.CursorControl.limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.CursorControl.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.CursorControl.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
     Api.v1.GetChatRoomQueryString:
       name: chatRoomId
       in: query
       required: true
       schema:
         type: string
-    Api.v1.GetChatRoomTimelineQueryString.nextCursor:
-      name: nextCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.GetChatRoomTimelineQueryString.prevCursor:
-      name: prevCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.GetFollowingsQueryString.nextCursor:
-      name: nextCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.GetFollowingsQueryString.prevCursor:
-      name: prevCursor
-      in: query
-      required: false
-      schema:
-        type: string
     Api.v1.GetFollowingsQueryString.userId:
       name: userId
       in: query
       required: true
-      schema:
-        type: string
-    Api.v1.GetHomeTimelineQueryString.nextCursor:
-      name: nextCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.GetHomeTimelineQueryString.prevCursor:
-      name: prevCursor
-      in: query
-      required: false
       schema:
         type: string
     Api.v1.GetLeafQueryString:
@@ -444,38 +428,14 @@ components:
       required: false
       schema:
         type: string
-    Api.v1.SearchChatRoomsQueryString.nextCursor:
-      name: nextCursor
+    Api.v1.OffsetControl.limit:
+      name: limit
       in: query
       required: false
       schema:
         type: string
-    Api.v1.SearchChatRoomsQueryString.prevCursor:
-      name: prevCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.SearchLeafsQueryString.nextCursor:
-      name: nextCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.SearchLeafsQueryString.prevCursor:
-      name: prevCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.SearchUsersQueryString.nextCursor:
-      name: nextCursor
-      in: query
-      required: false
-      schema:
-        type: string
-    Api.v1.SearchUsersQueryString.prevCursor:
-      name: prevCursor
+    Api.v1.OffsetControl.offset:
+      name: offset
       in: query
       required: false
       schema:
@@ -562,6 +522,24 @@ components:
       properties:
         userId:
           type: string
+    Api.v1.GetChatRoomTimelineQueryString:
+      type: object
+      properties:
+        nextCursor:
+          type: string
+        prevCursor:
+          type: string
+        limit:
+          type: string
+    Api.v1.GetHomeTimelineQueryString:
+      type: object
+      properties:
+        nextCursor:
+          type: string
+        prevCursor:
+          type: string
+        limit:
+          type: string
     Api.v1.Leaf:
       type: object
       required:
@@ -576,6 +554,27 @@ components:
         userId:
           type: string
         content:
+          type: string
+    Api.v1.SearchChatRoomsQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
+          type: string
+    Api.v1.SearchLeafsQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
+          type: string
+    Api.v1.SearchUsersQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
           type: string
     Api.v1.SigninBody:
       type: object

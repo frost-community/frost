@@ -37,6 +37,19 @@ model ChatRoom {
   description: string;
 }
 
+// utility
+
+model OffsetControl {
+  @query offset?: string;
+  @query limit?: string;
+}
+
+model CursorControl {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+  @query limit?: string;
+}
+
 // Auth parameters
 
 model SignupBody {
@@ -57,19 +70,15 @@ model GetUserQueryString {
   @query username?: string;
 }
 
-model SearchUsersQueryString {
-  @query nextCursor?: string;
-  @query prevCursor?: string;
+model SearchUsersQueryString is OffsetControl {
 }
 
 model DeleteUserBody {
   userId: string;
 }
 
-model GetFollowingsQueryString {
+model GetFollowingsQueryString is OffsetControl {
   @query userId: string;
-  @query nextCursor?: string;
-  @query prevCursor?: string;
 }
 
 model FollowUserBody {
@@ -80,9 +89,7 @@ model UnfollowUserBody {
   userId: string;
 }
 
-model GetHomeTimelineQueryString {
-  @query nextCursor?: string;
-  @query prevCursor?: string;
+model GetHomeTimelineQueryString is CursorControl {
 }
 
 // Leaf parameters
@@ -95,9 +102,7 @@ model GetLeafQueryString {
   @query leafId: string;
 }
 
-model SearchLeafsQueryString {
-  @query nextCursor?: string;
-  @query prevCursor?: string;
+model SearchLeafsQueryString is OffsetControl {
 }
 
 model DeleteLeafBody {
@@ -115,9 +120,7 @@ model GetChatRoomQueryString {
   @query chatRoomId: string;
 }
 
-model SearchChatRoomsQueryString {
-  @query nextCursor?: string;
-  @query prevCursor?: string;
+model SearchChatRoomsQueryString is OffsetControl {
 }
 
 model DeleteChatRoomBody {
@@ -129,7 +132,5 @@ model CreateChatRoomLeafBody {
   content: string;
 }
 
-model GetChatRoomTimelineQueryString {
-  @query nextCursor?: string;
-  @query prevCursor?: string;
+model GetChatRoomTimelineQueryString is CursorControl {
 }

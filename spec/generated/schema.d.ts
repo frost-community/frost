@@ -361,11 +361,33 @@ export interface components {
         "Api.v1.FollowUserBody": {
             userId: string;
         };
+        "Api.v1.GetChatRoomTimelineQueryString": {
+            nextCursor?: string;
+            prevCursor?: string;
+            limit?: string;
+        };
+        "Api.v1.GetHomeTimelineQueryString": {
+            nextCursor?: string;
+            prevCursor?: string;
+            limit?: string;
+        };
         "Api.v1.Leaf": {
             leafId: string;
             chatRoomId?: string;
             userId: string;
             content: string;
+        };
+        "Api.v1.SearchChatRoomsQueryString": {
+            offset?: string;
+            limit?: string;
+        };
+        "Api.v1.SearchLeafsQueryString": {
+            offset?: string;
+            limit?: string;
+        };
+        "Api.v1.SearchUsersQueryString": {
+            offset?: string;
+            limit?: string;
         };
         "Api.v1.SigninBody": {
             name: string;
@@ -392,23 +414,16 @@ export interface components {
     };
     responses: never;
     parameters: {
+        "Api.v1.CursorControl.limit": string;
+        "Api.v1.CursorControl.nextCursor": string;
+        "Api.v1.CursorControl.prevCursor": string;
         "Api.v1.GetChatRoomQueryString": string;
-        "Api.v1.GetChatRoomTimelineQueryString.nextCursor": string;
-        "Api.v1.GetChatRoomTimelineQueryString.prevCursor": string;
-        "Api.v1.GetFollowingsQueryString.nextCursor": string;
-        "Api.v1.GetFollowingsQueryString.prevCursor": string;
         "Api.v1.GetFollowingsQueryString.userId": string;
-        "Api.v1.GetHomeTimelineQueryString.nextCursor": string;
-        "Api.v1.GetHomeTimelineQueryString.prevCursor": string;
         "Api.v1.GetLeafQueryString": string;
         "Api.v1.GetUserQueryString.userId": string;
         "Api.v1.GetUserQueryString.username": string;
-        "Api.v1.SearchChatRoomsQueryString.nextCursor": string;
-        "Api.v1.SearchChatRoomsQueryString.prevCursor": string;
-        "Api.v1.SearchLeafsQueryString.nextCursor": string;
-        "Api.v1.SearchLeafsQueryString.prevCursor": string;
-        "Api.v1.SearchUsersQueryString.nextCursor": string;
-        "Api.v1.SearchUsersQueryString.prevCursor": string;
+        "Api.v1.OffsetControl.limit": string;
+        "Api.v1.OffsetControl.offset": string;
     };
     requestBodies: never;
     headers: never;
@@ -559,8 +574,9 @@ export interface operations {
     ChatRoomApi_GetTimeline: {
         parameters: {
             query?: {
-                nextCursor?: components["parameters"]["Api.v1.GetChatRoomTimelineQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.GetChatRoomTimelineQueryString.prevCursor"];
+                nextCursor?: components["parameters"]["Api.v1.CursorControl.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.CursorControl.prevCursor"];
+                limit?: components["parameters"]["Api.v1.CursorControl.limit"];
             };
             header?: never;
             path?: never;
@@ -582,8 +598,8 @@ export interface operations {
     ChatRoomApi_SearchChatRooms: {
         parameters: {
             query?: {
-                nextCursor?: components["parameters"]["Api.v1.SearchChatRoomsQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.SearchChatRoomsQueryString.prevCursor"];
+                offset?: components["parameters"]["Api.v1.OffsetControl.offset"];
+                limit?: components["parameters"]["Api.v1.OffsetControl.limit"];
             };
             header?: never;
             path?: never;
@@ -725,8 +741,8 @@ export interface operations {
     LeafApi_SearchLeafs: {
         parameters: {
             query?: {
-                nextCursor?: components["parameters"]["Api.v1.SearchLeafsQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.SearchLeafsQueryString.prevCursor"];
+                offset?: components["parameters"]["Api.v1.OffsetControl.offset"];
+                limit?: components["parameters"]["Api.v1.OffsetControl.limit"];
             };
             header?: never;
             path?: never;
@@ -792,9 +808,9 @@ export interface operations {
     UserApi_GetFollowings: {
         parameters: {
             query: {
+                offset?: components["parameters"]["Api.v1.OffsetControl.offset"];
+                limit?: components["parameters"]["Api.v1.OffsetControl.limit"];
                 userId: components["parameters"]["Api.v1.GetFollowingsQueryString.userId"];
-                nextCursor?: components["parameters"]["Api.v1.GetFollowingsQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.GetFollowingsQueryString.prevCursor"];
             };
             header?: never;
             path?: never;
@@ -816,8 +832,9 @@ export interface operations {
     UserApi_GetHomeTimeline: {
         parameters: {
             query?: {
-                nextCursor?: components["parameters"]["Api.v1.GetHomeTimelineQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.GetHomeTimelineQueryString.prevCursor"];
+                nextCursor?: components["parameters"]["Api.v1.CursorControl.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.CursorControl.prevCursor"];
+                limit?: components["parameters"]["Api.v1.CursorControl.limit"];
             };
             header?: never;
             path?: never;
@@ -862,8 +879,8 @@ export interface operations {
     UserApi_SearchUsers: {
         parameters: {
             query?: {
-                nextCursor?: components["parameters"]["Api.v1.SearchUsersQueryString.nextCursor"];
-                prevCursor?: components["parameters"]["Api.v1.SearchUsersQueryString.prevCursor"];
+                offset?: components["parameters"]["Api.v1.OffsetControl.offset"];
+                limit?: components["parameters"]["Api.v1.OffsetControl.limit"];
             };
             header?: never;
             path?: never;

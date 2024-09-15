@@ -48,11 +48,11 @@ GET /api/v1/user/getUser
 GET /api/v1/user/searchUsers
 ```
 ユーザー情報を検索する。\
-レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Offset`が付加される。
 
 ### query string
-- nextCursor (optional)
-- prevCursor (optional)
+- offset (optional)
+- limit (optional)
 
 
 
@@ -72,12 +72,12 @@ POST /api/v1/user/deleteUser
 GET /api/v1/user/getFollowings
 ```
 指定したユーザーのフォロー一覧を取得する。\
-レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Offset`が付加される。
 
 ### query string
 - userId
-- nextCursor (optional)
-- prevCursor (optional)
+- offset (optional)
+- limit (optional)
 
 
 
@@ -108,12 +108,12 @@ POST /api/v1/user/unfollowUser
 GET /api/v1/user/getHomeTimeline
 ```
 ホームタイムラインを取得する。\
-レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Next-Cursor`と`X-Prev-Cursor`が付加される。
 
 ### query string
 - nextCursor (optional)
 - prevCursor (optional)
-
+- limit (optional)
 
 
 # leaf ネームスペース
@@ -145,11 +145,11 @@ GET /api/v1/leaf/getLeaf
 GET /api/v1/leaf/searchLeafs
 ```
 リーフを検索する。\
-レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Offset`が付加される。
 
 ### query string
-- nextCursor (optional)
-- prevCursor (optional)
+- offset (optional)
+- limit (optional)
 
 
 
@@ -194,11 +194,11 @@ GET /api/v1/chatroom/getChatroom
 GET /api/v1/chatroom/searchChatrooms
 ```
 チャットルームを検索する。\
-レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Offset`が付加される。
 
 ### query string
-- nextCursor (optional)
-- prevCursor (optional)
+- offset (optional)
+- limit (optional)
 
 
 
@@ -231,9 +231,10 @@ GET /api/v1/chatroom/getTimeline
 ```
 チャットルームのタイムラインを取得する。\
 リーフの取得や削除、検索に関してはleafネームスペースのAPIを利用する。\
-レスポンスヘッダーでnextCursorとprevCursorが返される。
+レスポンスヘッダーに結果の続きを取得するための`X-Next-Cursor`と`X-Prev-Cursor`が付加される。
 
 ### query string
 - chatroomId
 - nextCursor (optional)
 - prevCursor (optional)
+- limit (optional)
