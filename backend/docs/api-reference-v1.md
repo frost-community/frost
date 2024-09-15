@@ -33,7 +33,7 @@
 `user`
 
 ## POST /api/v1/users/:userId/userFollowings
-ユーザーをフォローする。
+指定されたユーザーをフォローする。
 ### タグ
 `user`
 
@@ -78,7 +78,8 @@
 `leaf`
 
 ## POST /api/v1/chatrooms
-チャットルームを作成する。
+チャットルームを作成する。\
+作成したユーザーはそのチャットルームのownerになる。
 ### タグ
 `chatroom`
 
@@ -93,29 +94,10 @@
 `chatroom`
 
 ## DELETE /api/v1/chatrooms/:chatroomId
-チャットルームを削除する。
+チャットルームを削除する。\
+この操作はownerのみ可能。
 ### タグ
 `chatroom`
-
-## POST /api/v1/chatrooms/:chatroomId/requestJoin
-チャットルームに参加申請する。
-### タグ
-`chatroom` `user`
-
-## POST /api/v1/chatrooms/:chatroomId/members
-チャットルームの参加者を追加する。
-### タグ
-`chatroom` `user`
-
-## GET /api/v1/chatrooms/:chatroomId/members
-チャットルームの参加者を検索する。
-### タグ
-`chatroom` `user`
-
-## DELETE /api/v1/chatrooms/:chatroomId/members/:userId
-チャットルームの参加者を除名する。
-### タグ
-`chatroom` `user`
 
 ## POST /api/v1/chatrooms/:chatroomId/leafs
 チャットルームへ投稿する。\
