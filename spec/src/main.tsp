@@ -5,6 +5,7 @@ import "@typespec/openapi3";
 
 import "./api/v1";
 
+using TypeSpec.OpenAPI;
 using TypeSpec.Http;
 using TypeSpec.Rest;
 
