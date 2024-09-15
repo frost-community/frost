@@ -10,7 +10,9 @@ POST /api/v1/auth/signup
 この操作はアクセストークンを発行する。
 
 ### body
-TODO
+- name
+- password (optional)
+- displayName
 
 
 
@@ -22,7 +24,8 @@ POST /api/v1/auth/signin
 この操作はアクセストークンを発行する。
 
 ### body
-TODO
+- name
+- password (optional)
 
 
 
@@ -44,10 +47,12 @@ GET /api/v1/user/getUser
 ```
 GET /api/v1/user/searchUsers
 ```
-ユーザー情報を検索する。
+ユーザー情報を検索する。\
+レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
 
 ### query string
-TODO
+- nextCursor (optional)
+- prevCursor (optional)
 
 
 
@@ -66,11 +71,13 @@ POST /api/v1/user/deleteUser
 ```
 GET /api/v1/user/getFollowings
 ```
-指定したユーザーのフォロー一覧を取得する。
+指定したユーザーのフォロー一覧を取得する。\
+レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
 
 ### query string
 - userId
 - nextCursor (optional)
+- prevCursor (optional)
 
 
 
@@ -101,7 +108,7 @@ POST /api/v1/user/unfollowUser
 GET /api/v1/user/getHomeTimeline
 ```
 ホームタイムラインを取得する。\
-レスポンスヘッダーでnextCursorとprevCursorが返される。
+レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
 
 ### query string
 - nextCursor (optional)
@@ -137,10 +144,12 @@ GET /api/v1/leaf/getLeaf
 ```
 GET /api/v1/leaf/searchLeafs
 ```
-リーフを検索する。
+リーフを検索する。\
+レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
 
 ### query string
-TODO
+- nextCursor (optional)
+- prevCursor (optional)
 
 
 
@@ -184,10 +193,12 @@ GET /api/v1/chatroom/getChatroom
 ```
 GET /api/v1/chatroom/searchChatrooms
 ```
-チャットルームを検索する。
+チャットルームを検索する。\
+レスポンスヘッダーから結果の続きを取得するためのX-Next-CursorとX-Prev-Cursorが返される。
 
 ### query string
-TODO
+- nextCursor (optional)
+- prevCursor (optional)
 
 
 
