@@ -13,7 +13,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthApi_signin"];
+        post: operations["AuthApi_Signin"];
         delete?: never;
         options?: never;
         head?: never;
@@ -29,7 +29,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["AuthApi_signup"];
+        post: operations["AuthApi_Signup"];
         delete?: never;
         options?: never;
         head?: never;
@@ -45,7 +45,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["ChatRoomApi_createChatRoom"];
+        post: operations["ChatRoomApi_CreateChatRoom"];
         delete?: never;
         options?: never;
         head?: never;
@@ -61,7 +61,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["ChatRoomApi_createLeaf"];
+        post: operations["ChatRoomApi_CreateLeaf"];
         delete?: never;
         options?: never;
         head?: never;
@@ -77,7 +77,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["ChatRoomApi_deleteChatRoom"];
+        post: operations["ChatRoomApi_DeleteChatRoom"];
         delete?: never;
         options?: never;
         head?: never;
@@ -91,7 +91,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatRoomApi_getChatRoom"];
+        get: operations["ChatRoomApi_GetChatRoom"];
         put?: never;
         post?: never;
         delete?: never;
@@ -107,7 +107,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatRoomApi_getTimeline"];
+        get: operations["ChatRoomApi_GetTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -123,7 +123,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatRoomApi_searchChatRooms"];
+        get: operations["ChatRoomApi_SearchChatRooms"];
         put?: never;
         post?: never;
         delete?: never;
@@ -141,7 +141,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["LeafApi_createLeaf"];
+        post: operations["LeafApi_CreateLeaf"];
         delete?: never;
         options?: never;
         head?: never;
@@ -157,7 +157,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["LeafApi_deleteLeaf"];
+        post: operations["LeafApi_DeleteLeaf"];
         delete?: never;
         options?: never;
         head?: never;
@@ -171,7 +171,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["LeafApi_getLeaf"];
+        get: operations["LeafApi_GetLeaf"];
         put?: never;
         post?: never;
         delete?: never;
@@ -187,7 +187,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["LeafApi_searchLeafs"];
+        get: operations["LeafApi_SearchLeafs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -205,7 +205,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["UserApi_deleteUser"];
+        post: operations["UserApi_DeleteUser"];
         delete?: never;
         options?: never;
         head?: never;
@@ -221,7 +221,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["UserApi_followUser"];
+        post: operations["UserApi_FollowUser"];
         delete?: never;
         options?: never;
         head?: never;
@@ -235,7 +235,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["UserApi_getFollowings"];
+        get: operations["UserApi_GetFollowings"];
         put?: never;
         post?: never;
         delete?: never;
@@ -251,7 +251,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["UserApi_getHomeTimeline"];
+        get: operations["UserApi_GetHomeTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -267,7 +267,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["UserApi_getUser"];
+        get: operations["UserApi_GetUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -283,7 +283,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["UserApi_searchUsers"];
+        get: operations["UserApi_SearchUsers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -301,7 +301,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["UserApi_unfollowUser"];
+        post: operations["UserApi_UnfollowUser"];
         delete?: never;
         options?: never;
         head?: never;
@@ -312,7 +312,7 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        "Api.v1.AuthResult": {
+        "Api.v1.AuthInfo": {
             accessToken: components["schemas"]["Api.v1.Token"];
             refreshToken: components["schemas"]["Api.v1.Token"];
             user: components["schemas"]["Api.v1.User"];
@@ -322,12 +322,27 @@ export interface components {
             title: string;
             description: string;
         };
+        "Api.v1.CreateChatRoomBody": Record<string, never>;
+        "Api.v1.CreateChatRoomLeafBody": Record<string, never>;
+        "Api.v1.CreateLeafBody": Record<string, never>;
+        "Api.v1.DeleteChatRoomBody": Record<string, never>;
+        "Api.v1.DeleteLeafBody": Record<string, never>;
+        "Api.v1.DeleteUserBody": Record<string, never>;
+        "Api.v1.FollowUserBody": Record<string, never>;
+        "Api.v1.GetChatRoomQueryString": Record<string, never>;
+        "Api.v1.GetChatRoomTimelineQueryString": Record<string, never>;
+        "Api.v1.GetFollowingsQueryString": Record<string, never>;
+        "Api.v1.GetHomeTimelineQueryString": Record<string, never>;
+        "Api.v1.GetLeafQueryString": Record<string, never>;
         "Api.v1.Leaf": {
             leafId: string;
             chatRoomId?: string;
             userId: string;
             content: string;
         };
+        "Api.v1.SearchChatRoomsQueryString": Record<string, never>;
+        "Api.v1.SearchLeafsQueryString": Record<string, never>;
+        "Api.v1.SearchUsersQueryString": Record<string, never>;
         "Api.v1.SigninBody": {
             name: string;
             password?: string;
@@ -341,6 +356,7 @@ export interface components {
             token: string;
             scopes: string[];
         };
+        "Api.v1.UnfollowUserBody": Record<string, never>;
         "Api.v1.User": {
             userId: string;
             name: string;
@@ -349,14 +365,17 @@ export interface components {
         };
     };
     responses: never;
-    parameters: never;
+    parameters: {
+        "Api.v1.GetUserQueryString.userId": string;
+        "Api.v1.GetUserQueryString.username": string;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    AuthApi_signin: {
+    AuthApi_Signin: {
         parameters: {
             query?: never;
             header?: never;
@@ -375,12 +394,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                    "application/json": components["schemas"]["Api.v1.AuthInfo"];
                 };
             };
         };
     };
-    AuthApi_signup: {
+    AuthApi_Signup: {
         parameters: {
             query?: never;
             header?: never;
@@ -399,19 +418,23 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Api.v1.AuthResult"];
+                    "application/json": components["schemas"]["Api.v1.AuthInfo"];
                 };
             };
         };
     };
-    ChatRoomApi_createChatRoom: {
+    ChatRoomApi_CreateChatRoom: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.CreateChatRoomBody"];
+            };
+        };
         responses: {
             /** @description The request has succeeded. */
             200: {
@@ -424,14 +447,18 @@ export interface operations {
             };
         };
     };
-    ChatRoomApi_createLeaf: {
+    ChatRoomApi_CreateLeaf: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.CreateChatRoomLeafBody"];
+            };
+        };
         responses: {
             /** @description The request has succeeded. */
             200: {
@@ -444,14 +471,18 @@ export interface operations {
             };
         };
     };
-    ChatRoomApi_deleteChatRoom: {
+    ChatRoomApi_DeleteChatRoom: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.DeleteChatRoomBody"];
+            };
+        };
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful.  */
             204: {
@@ -462,7 +493,7 @@ export interface operations {
             };
         };
     };
-    ChatRoomApi_getChatRoom: {
+    ChatRoomApi_GetChatRoom: {
         parameters: {
             query?: never;
             header?: never;
@@ -482,7 +513,7 @@ export interface operations {
             };
         };
     };
-    ChatRoomApi_getTimeline: {
+    ChatRoomApi_GetTimeline: {
         parameters: {
             query?: never;
             header?: never;
@@ -502,7 +533,7 @@ export interface operations {
             };
         };
     };
-    ChatRoomApi_searchChatRooms: {
+    ChatRoomApi_SearchChatRooms: {
         parameters: {
             query?: never;
             header?: never;
@@ -522,14 +553,18 @@ export interface operations {
             };
         };
     };
-    LeafApi_createLeaf: {
+    LeafApi_CreateLeaf: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.CreateLeafBody"];
+            };
+        };
         responses: {
             /** @description The request has succeeded. */
             200: {
@@ -542,14 +577,18 @@ export interface operations {
             };
         };
     };
-    LeafApi_deleteLeaf: {
+    LeafApi_DeleteLeaf: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.DeleteLeafBody"];
+            };
+        };
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful.  */
             204: {
@@ -560,7 +599,7 @@ export interface operations {
             };
         };
     };
-    LeafApi_getLeaf: {
+    LeafApi_GetLeaf: {
         parameters: {
             query?: never;
             header?: never;
@@ -580,7 +619,7 @@ export interface operations {
             };
         };
     };
-    LeafApi_searchLeafs: {
+    LeafApi_SearchLeafs: {
         parameters: {
             query?: never;
             header?: never;
@@ -600,14 +639,18 @@ export interface operations {
             };
         };
     };
-    UserApi_deleteUser: {
+    UserApi_DeleteUser: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.DeleteUserBody"];
+            };
+        };
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful.  */
             204: {
@@ -618,14 +661,18 @@ export interface operations {
             };
         };
     };
-    UserApi_followUser: {
+    UserApi_FollowUser: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.FollowUserBody"];
+            };
+        };
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful.  */
             204: {
@@ -636,7 +683,7 @@ export interface operations {
             };
         };
     };
-    UserApi_getFollowings: {
+    UserApi_GetFollowings: {
         parameters: {
             query?: never;
             header?: never;
@@ -656,7 +703,7 @@ export interface operations {
             };
         };
     };
-    UserApi_getHomeTimeline: {
+    UserApi_GetHomeTimeline: {
         parameters: {
             query?: never;
             header?: never;
@@ -671,14 +718,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Api.v1.User"][];
+                    "application/json": components["schemas"]["Api.v1.Leaf"][];
                 };
             };
         };
     };
-    UserApi_getUser: {
+    UserApi_GetUser: {
         parameters: {
-            query?: never;
+            query?: {
+                userId?: components["parameters"]["Api.v1.GetUserQueryString.userId"];
+                username?: components["parameters"]["Api.v1.GetUserQueryString.username"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -696,7 +746,7 @@ export interface operations {
             };
         };
     };
-    UserApi_searchUsers: {
+    UserApi_SearchUsers: {
         parameters: {
             query?: never;
             header?: never;
@@ -716,14 +766,18 @@ export interface operations {
             };
         };
     };
-    UserApi_unfollowUser: {
+    UserApi_UnfollowUser: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Api.v1.UnfollowUserBody"];
+            };
+        };
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful.  */
             204: {

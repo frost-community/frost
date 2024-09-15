@@ -100,7 +100,8 @@ POST /api/v1/user/unfollowUser
 ```
 GET /api/v1/user/getHomeTimeline
 ```
-ホームタイムラインを取得する。
+ホームタイムラインを取得する。\
+レスポンスヘッダーでnextCursorとprevCursorが返される。
 
 ### query string
 - nextCursor (optional)
@@ -218,7 +219,8 @@ POST /api/v1/chatroom/createLeaf
 GET /api/v1/chatroom/getTimeline
 ```
 チャットルームのタイムラインを取得する。\
-リーフの取得や削除、検索に関してはleafネームスペースのAPIを利用する。
+リーフの取得や削除、検索に関してはleafネームスペースのAPIを利用する。\
+レスポンスヘッダーでnextCursorとprevCursorが返される。
 
 ### query string
 - chatroomId

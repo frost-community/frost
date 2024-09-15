@@ -8,71 +8,77 @@ using TypeSpec.OpenAPI;
 namespace Frost.Api.v1;
 
 @route("/auth")
-@tag("Auth")
+@tag("Auth") @tag("User")
 interface AuthApi {
   @route("/signup")
-  @post signup(@body body: SignupBody): AuthResult;
+  @post Signup(@body body: SignupBody): AuthInfo;
 
   @route("/signin")
-  @post signin(@body body: SigninBody): AuthResult;
+  @post Signin(@body body: SigninBody): AuthInfo;
 }
 
 @route("/user")
+@tag("User")
 interface UserApi {
   @route("/getUser")
-  @get getUser(): User;
+  @get GetUser(...GetUserQueryString): User;
 
   @route("/searchUsers")
-  @get searchUsers(): User[];
+  @get SearchUsers(...SearchUsersQueryString): User[];
 
   @route("/deleteUser")
-  @post deleteUser(): void;
+  @post DeleteUser(@body body: DeleteUserBody): void;
 
   @route("/getFollowings")
-  @get getFollowings(): User[];
+  @get GetFollowings(...GetFollowingsQueryString): User[];
 
   @route("/followUser")
-  @post followUser(): void;
+  @post FollowUser(@body body: FollowUserBody): void;
 
   @route("/unfollowUser")
-  @post unfollowUser(): void;
+  @post UnfollowUser(@body body: UnfollowUserBody): void;
 
   @route("/getHomeTimeline")
-  @get getHomeTimeline(): User[];
+  @tag("Leaf")
+  @get GetHomeTimeline(...GetHomeTimelineQueryString): Leaf[];
 }
 
 @route("/leaf")
+@tag("Leaf")
 interface LeafApi {
   @route("/createLeaf")
-  @post createLeaf(): Leaf;
+  @post CreateLeaf(@body body: CreateLeafBody): Leaf;
 
   @route("/getLeaf")
-  @get getLeaf(): Leaf;
+  @get GetLeaf(...GetLeafQueryString): Leaf;
 
   @route("/searchLeafs")
-  @get searchLeafs(): Leaf[];
+  @get SearchLeafs(...SearchLeafsQueryString): Leaf[];
 
   @route("/deleteLeaf")
-  @post deleteLeaf(): void;
+  @post DeleteLeaf(@body body: DeleteLeafBody): void;
 }
 
 @route("/chatRoom")
+@tag("ChatRoom")
 interface ChatRoomApi {
   @route("/createChatRoom")
-  @post createChatRoom(): ChatRoom;
+  @post CreateChatRoom(@body body: CreateChatRoomBody): ChatRoom;
 
   @route("/getChatRoom")
-  @get getChatRoom(): ChatRoom;
+  @get GetChatRoom(...GetChatRoomQueryString): ChatRoom;
 
   @route("/searchChatRooms")
-  @get searchChatRooms(): ChatRoom[];
+  @get SearchChatRooms(...SearchChatRoomsQueryString): ChatRoom[];
 
   @route("/deleteChatRoom")
-  @post deleteChatRoom(): void;
+  @post DeleteChatRoom(@body body: DeleteChatRoomBody): void;
 
   @route("/createLeaf")
-  @post createLeaf(): Leaf;
+  @tag("Leaf")
+  @post CreateLeaf(@body body: CreateChatRoomLeafBody): Leaf;
 
   @route("/getTimeline")
-  @get getTimeline(): Leaf[];
+  @tag("Leaf")
+  @get GetTimeline(...GetChatRoomTimelineQueryString): Leaf[];
 }
