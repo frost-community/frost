@@ -7,6 +7,15 @@ using TypeSpec.OpenAPI;
 @route("/api/v1")
 namespace Frost.Api.v1;
 
+@route("/")
+interface RootApi {
+  @route("/echo")
+  @get GetEcho(@query message: string): { message: string };
+
+  @route("/echo")
+  @post PostEcho(@body body: { message: string }): { message: string };
+}
+
 @route("/auth")
 @tag("Auth") @tag("User")
 interface AuthApi {
