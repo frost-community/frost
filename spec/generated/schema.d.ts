@@ -322,27 +322,35 @@ export interface components {
             title: string;
             description: string;
         };
-        "Api.v1.CreateChatRoomBody": Record<string, never>;
-        "Api.v1.CreateChatRoomLeafBody": Record<string, never>;
-        "Api.v1.CreateLeafBody": Record<string, never>;
-        "Api.v1.DeleteChatRoomBody": Record<string, never>;
-        "Api.v1.DeleteLeafBody": Record<string, never>;
-        "Api.v1.DeleteUserBody": Record<string, never>;
-        "Api.v1.FollowUserBody": Record<string, never>;
-        "Api.v1.GetChatRoomQueryString": Record<string, never>;
-        "Api.v1.GetChatRoomTimelineQueryString": Record<string, never>;
-        "Api.v1.GetFollowingsQueryString": Record<string, never>;
-        "Api.v1.GetHomeTimelineQueryString": Record<string, never>;
-        "Api.v1.GetLeafQueryString": Record<string, never>;
+        "Api.v1.CreateChatRoomBody": {
+            title: string;
+            description: string;
+        };
+        "Api.v1.CreateChatRoomLeafBody": {
+            chatRoomId: string;
+            content: string;
+        };
+        "Api.v1.CreateLeafBody": {
+            content: string;
+        };
+        "Api.v1.DeleteChatRoomBody": {
+            chatRoomId: string;
+        };
+        "Api.v1.DeleteLeafBody": {
+            leafId: string;
+        };
+        "Api.v1.DeleteUserBody": {
+            userId: string;
+        };
+        "Api.v1.FollowUserBody": {
+            userId: string;
+        };
         "Api.v1.Leaf": {
             leafId: string;
             chatRoomId?: string;
             userId: string;
             content: string;
         };
-        "Api.v1.SearchChatRoomsQueryString": Record<string, never>;
-        "Api.v1.SearchLeafsQueryString": Record<string, never>;
-        "Api.v1.SearchUsersQueryString": Record<string, never>;
         "Api.v1.SigninBody": {
             name: string;
             password?: string;
@@ -356,7 +364,9 @@ export interface components {
             token: string;
             scopes: string[];
         };
-        "Api.v1.UnfollowUserBody": Record<string, never>;
+        "Api.v1.UnfollowUserBody": {
+            userId: string;
+        };
         "Api.v1.User": {
             userId: string;
             name: string;
@@ -366,8 +376,23 @@ export interface components {
     };
     responses: never;
     parameters: {
+        "Api.v1.GetChatRoomQueryString": string;
+        "Api.v1.GetChatRoomTimelineQueryString.nextCursor": string;
+        "Api.v1.GetChatRoomTimelineQueryString.prevCursor": string;
+        "Api.v1.GetFollowingsQueryString.nextCursor": string;
+        "Api.v1.GetFollowingsQueryString.prevCursor": string;
+        "Api.v1.GetFollowingsQueryString.userId": string;
+        "Api.v1.GetHomeTimelineQueryString.nextCursor": string;
+        "Api.v1.GetHomeTimelineQueryString.prevCursor": string;
+        "Api.v1.GetLeafQueryString": string;
         "Api.v1.GetUserQueryString.userId": string;
         "Api.v1.GetUserQueryString.username": string;
+        "Api.v1.SearchChatRoomsQueryString.nextCursor": string;
+        "Api.v1.SearchChatRoomsQueryString.prevCursor": string;
+        "Api.v1.SearchLeafsQueryString.nextCursor": string;
+        "Api.v1.SearchLeafsQueryString.prevCursor": string;
+        "Api.v1.SearchUsersQueryString.nextCursor": string;
+        "Api.v1.SearchUsersQueryString.prevCursor": string;
     };
     requestBodies: never;
     headers: never;
@@ -495,7 +520,9 @@ export interface operations {
     };
     ChatRoomApi_GetChatRoom: {
         parameters: {
-            query?: never;
+            query: {
+                chatRoomId: components["parameters"]["Api.v1.GetChatRoomQueryString"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -515,7 +542,10 @@ export interface operations {
     };
     ChatRoomApi_GetTimeline: {
         parameters: {
-            query?: never;
+            query?: {
+                nextCursor?: components["parameters"]["Api.v1.GetChatRoomTimelineQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.GetChatRoomTimelineQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -535,7 +565,10 @@ export interface operations {
     };
     ChatRoomApi_SearchChatRooms: {
         parameters: {
-            query?: never;
+            query?: {
+                nextCursor?: components["parameters"]["Api.v1.SearchChatRoomsQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.SearchChatRoomsQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -601,7 +634,9 @@ export interface operations {
     };
     LeafApi_GetLeaf: {
         parameters: {
-            query?: never;
+            query: {
+                leafId: components["parameters"]["Api.v1.GetLeafQueryString"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -621,7 +656,10 @@ export interface operations {
     };
     LeafApi_SearchLeafs: {
         parameters: {
-            query?: never;
+            query?: {
+                nextCursor?: components["parameters"]["Api.v1.SearchLeafsQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.SearchLeafsQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -685,7 +723,11 @@ export interface operations {
     };
     UserApi_GetFollowings: {
         parameters: {
-            query?: never;
+            query: {
+                userId: components["parameters"]["Api.v1.GetFollowingsQueryString.userId"];
+                nextCursor?: components["parameters"]["Api.v1.GetFollowingsQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.GetFollowingsQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -705,7 +747,10 @@ export interface operations {
     };
     UserApi_GetHomeTimeline: {
         parameters: {
-            query?: never;
+            query?: {
+                nextCursor?: components["parameters"]["Api.v1.GetHomeTimelineQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.GetHomeTimelineQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -748,7 +793,10 @@ export interface operations {
     };
     UserApi_SearchUsers: {
         parameters: {
-            query?: never;
+            query?: {
+                nextCursor?: components["parameters"]["Api.v1.SearchUsersQueryString.nextCursor"];
+                prevCursor?: components["parameters"]["Api.v1.SearchUsersQueryString.prevCursor"];
+            };
             header?: never;
             path?: never;
             cookie?: never;

@@ -57,38 +57,79 @@ model GetUserQueryString {
   @query username?: string;
 }
 
-model SearchUsersQueryString {}
+model SearchUsersQueryString {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}
 
-model DeleteUserBody {}
+model DeleteUserBody {
+  userId: string;
+}
 
-model GetFollowingsQueryString {}
+model GetFollowingsQueryString {
+  @query userId: string;
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}
 
-model FollowUserBody {}
+model FollowUserBody {
+  userId: string;
+}
 
-model UnfollowUserBody {}
+model UnfollowUserBody {
+  userId: string;
+}
 
-model GetHomeTimelineQueryString {}
+model GetHomeTimelineQueryString {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}
 
 // Leaf parameters
 
-model CreateLeafBody {}
+model CreateLeafBody {
+  content: string;
+}
 
-model GetLeafQueryString {}
+model GetLeafQueryString {
+  @query leafId: string;
+}
 
-model SearchLeafsQueryString {}
+model SearchLeafsQueryString {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}
 
-model DeleteLeafBody {}
+model DeleteLeafBody {
+  leafId: string;
+}
 
 // ChatRoom parameters
 
-model CreateChatRoomBody {}
+model CreateChatRoomBody {
+  title: string;
+  description: string;
+}
 
-model GetChatRoomQueryString {}
+model GetChatRoomQueryString {
+  @query chatRoomId: string;
+}
 
-model SearchChatRoomsQueryString {}
+model SearchChatRoomsQueryString {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}
 
-model DeleteChatRoomBody {}
+model DeleteChatRoomBody {
+  chatRoomId: string;
+}
 
-model CreateChatRoomLeafBody {}
+model CreateChatRoomLeafBody {
+  chatRoomId: string;
+  content: string;
+}
 
-model GetChatRoomTimelineQueryString {}
+model GetChatRoomTimelineQueryString {
+  @query nextCursor?: string;
+  @query prevCursor?: string;
+}

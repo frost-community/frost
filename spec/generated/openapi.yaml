@@ -107,7 +107,8 @@ paths:
       tags:
         - ChatRoom
       operationId: ChatRoomApi_GetChatRoom
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetChatRoomQueryString'
       responses:
         '200':
           description: The request has succeeded.
@@ -121,7 +122,9 @@ paths:
         - ChatRoom
         - Leaf
       operationId: ChatRoomApi_GetTimeline
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetChatRoomTimelineQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.GetChatRoomTimelineQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -136,7 +139,9 @@ paths:
       tags:
         - ChatRoom
       operationId: ChatRoomApi_SearchChatRooms
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.SearchChatRoomsQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.SearchChatRoomsQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -185,7 +190,8 @@ paths:
       tags:
         - Leaf
       operationId: LeafApi_GetLeaf
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetLeafQueryString'
       responses:
         '200':
           description: The request has succeeded.
@@ -198,7 +204,9 @@ paths:
       tags:
         - Leaf
       operationId: LeafApi_SearchLeafs
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.SearchLeafsQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.SearchLeafsQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -243,7 +251,10 @@ paths:
       tags:
         - User
       operationId: UserApi_GetFollowings
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.userId'
+        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -259,7 +270,9 @@ paths:
         - User
         - Leaf
       operationId: UserApi_GetHomeTimeline
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetHomeTimelineQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.GetHomeTimelineQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -289,7 +302,9 @@ paths:
       tags:
         - User
       operationId: UserApi_SearchUsers
-      parameters: []
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.SearchUsersQueryString.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.SearchUsersQueryString.prevCursor'
       responses:
         '200':
           description: The request has succeeded.
@@ -316,6 +331,60 @@ paths:
               $ref: '#/components/schemas/Api.v1.UnfollowUserBody'
 components:
   parameters:
+    Api.v1.GetChatRoomQueryString:
+      name: chatRoomId
+      in: query
+      required: true
+      schema:
+        type: string
+    Api.v1.GetChatRoomTimelineQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetChatRoomTimelineQueryString.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetFollowingsQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetFollowingsQueryString.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetFollowingsQueryString.userId:
+      name: userId
+      in: query
+      required: true
+      schema:
+        type: string
+    Api.v1.GetHomeTimelineQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetHomeTimelineQueryString.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetLeafQueryString:
+      name: leafId
+      in: query
+      required: true
+      schema:
+        type: string
     Api.v1.GetUserQueryString.userId:
       name: userId
       in: query
@@ -324,6 +393,42 @@ components:
         type: string
     Api.v1.GetUserQueryString.username:
       name: username
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchChatRoomsQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchChatRoomsQueryString.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchLeafsQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchLeafsQueryString.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchUsersQueryString.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.SearchUsersQueryString.prevCursor:
+      name: prevCursor
       in: query
       required: false
       schema:
@@ -357,28 +462,59 @@ components:
           type: string
     Api.v1.CreateChatRoomBody:
       type: object
+      required:
+        - title
+        - description
+      properties:
+        title:
+          type: string
+        description:
+          type: string
     Api.v1.CreateChatRoomLeafBody:
       type: object
+      required:
+        - chatRoomId
+        - content
+      properties:
+        chatRoomId:
+          type: string
+        content:
+          type: string
     Api.v1.CreateLeafBody:
       type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
     Api.v1.DeleteChatRoomBody:
       type: object
+      required:
+        - chatRoomId
+      properties:
+        chatRoomId:
+          type: string
     Api.v1.DeleteLeafBody:
       type: object
+      required:
+        - leafId
+      properties:
+        leafId:
+          type: string
     Api.v1.DeleteUserBody:
       type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     Api.v1.FollowUserBody:
       type: object
-    Api.v1.GetChatRoomQueryString:
-      type: object
-    Api.v1.GetChatRoomTimelineQueryString:
-      type: object
-    Api.v1.GetFollowingsQueryString:
-      type: object
-    Api.v1.GetHomeTimelineQueryString:
-      type: object
-    Api.v1.GetLeafQueryString:
-      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     Api.v1.Leaf:
       type: object
       required:
@@ -394,12 +530,6 @@ components:
           type: string
         content:
           type: string
-    Api.v1.SearchChatRoomsQueryString:
-      type: object
-    Api.v1.SearchLeafsQueryString:
-      type: object
-    Api.v1.SearchUsersQueryString:
-      type: object
     Api.v1.SigninBody:
       type: object
       required:
@@ -435,6 +565,11 @@ components:
             type: string
     Api.v1.UnfollowUserBody:
       type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     Api.v1.User:
       type: object
       required:
