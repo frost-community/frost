@@ -1,35 +1,90 @@
-import { operations } from '../../../openapi/generated/schema';
+import { operations, paths } from '../../../openapi/generated/schema';
 
-// EchoGet
-export type EchoGetParams = NonNullable<operations['EchoGet']['parameters']['query']>;
-export type EchoGetResult = operations['EchoGet']['responses']['200']['content']['application/json'];
-
-// EchoPost
-export type EchoPostParams = NonNullable<operations['EchoPost']['requestBody']['content']['application/json']>;
-export type EchoPostResult = operations['EchoPost']['responses']['200']['content']['application/json'];
-
-// GetPost
-export type GetPostParams = NonNullable<operations['GetPost']['parameters']['query']>;
-export type GetPostResult = operations['GetPost']['responses']['200']['content']['application/json'];
-
-// CreateTimelinePost
-export type CreateTimelinePostParams = NonNullable<operations['CreateTimelinePost']['requestBody']['content']['application/json']>;
-export type CreateTimelinePostResult = operations['CreateTimelinePost']['responses']['200']['content']['application/json'];
-
-// DeletePost
-export type DeletePostParams = NonNullable<operations['DeletePost']['parameters']['query']>;
-
-// Signin
-export type SigninParams = NonNullable<operations['Signin']['requestBody']['content']['application/json']>;
-export type SigninResult = operations['Signin']['responses']['200']['content']['application/json'];
-
-// Signup
-export type SignupParams = NonNullable<operations['Signup']['requestBody']['content']['application/json']>;
-export type SignupResult = operations['Signup']['responses']['200']['content']['application/json'];
-
-// GetUser
-export type GetUserParams = NonNullable<operations['GetUser']['parameters']['query']>;
-export type GetUserResult = operations['GetUser']['responses']['200']['content']['application/json'];
-
-// DeleteUser
-export type DeleteUserParams = NonNullable<operations['DeleteUser']['parameters']['query']>;
+export type Endpoints = {
+  '/api/v1/auth/signin': {
+    body: paths['/api/v1/auth/signin']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/auth/signin']['post']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/auth/signup': {
+    body: paths['/api/v1/auth/signup']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/auth/signup']['post']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/chatRoom/createChatRoom': {
+    body: paths['/api/v1/chatRoom/createChatRoom']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/chatRoom/createChatRoom']['post']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/chatRoom/createLeaf': {
+    body: paths['/api/v1/chatRoom/createLeaf']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/chatRoom/createLeaf']['post']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/chatRoom/deleteChatRoom': {
+    body: paths['/api/v1/chatRoom/deleteChatRoom']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/chatRoom/deleteChatRoom']['post']['responses']['204']['content'],
+  },
+  '/api/v1/chatRoom/getChatRoom': {
+    query: paths['/api/v1/chatRoom/getChatRoom']['get']['parameters']['query'],
+    result: paths['/api/v1/chatRoom/getChatRoom']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/chatRoom/getTimeline': {
+    query: paths['/api/v1/chatRoom/getTimeline']['get']['parameters']['query'],
+    result: paths['/api/v1/chatRoom/getTimeline']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/chatRoom/searchChatRooms': {
+    query: paths['/api/v1/chatRoom/searchChatRooms']['get']['parameters']['query'],
+    result: paths['/api/v1/chatRoom/searchChatRooms']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/echo': {
+    get: {
+      query: paths['/api/v1/echo']['get']['parameters']['query'],
+      result: paths['/api/v1/echo']['get']['responses']['200']['content']['application/json'],
+    },
+    post: {
+      body: paths['/api/v1/echo']['post']['requestBody']['content']['application/json'],
+      result: paths['/api/v1/echo']['post']['responses']['200']['content']['application/json'],
+    },
+  },
+  '/api/v1/leaf/createLeaf': {
+    body: paths['/api/v1/leaf/createLeaf']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/leaf/createLeaf']['post']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/leaf/deleteLeaf': {
+    body: paths['/api/v1/leaf/deleteLeaf']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/leaf/deleteLeaf']['post']['responses']['204']['content'],
+  },
+  '/api/v1/leaf/getLeaf': {
+    query: paths['/api/v1/leaf/getLeaf']['get']['parameters']['query'],
+    result: paths['/api/v1/leaf/getLeaf']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/leaf/searchLeafs': {
+    query: paths['/api/v1/leaf/searchLeafs']['get']['parameters']['query'],
+    result: paths['/api/v1/leaf/searchLeafs']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/user/deleteUser': {
+    body: paths['/api/v1/user/deleteUser']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/user/deleteUser']['post']['responses']['204']['content'],
+  },
+  '/api/v1/user/followUser': {
+    body: paths['/api/v1/user/followUser']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/user/followUser']['post']['responses']['204']['content'],
+  },
+  '/api/v1/user/getFollowings': {
+    query: paths['/api/v1/user/getFollowings']['get']['parameters']['query'],
+    result: paths['/api/v1/user/getFollowings']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/user/getHomeTimeline': {
+    query: paths['/api/v1/user/getHomeTimeline']['get']['parameters']['query'],
+    result: paths['/api/v1/user/getHomeTimeline']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/user/getUser': {
+    query: paths['/api/v1/user/getUser']['get']['parameters']['query'],
+    result: paths['/api/v1/user/getUser']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/user/searchUsers': {
+    query: paths['/api/v1/user/searchUsers']['get']['parameters']['query'],
+    result: paths['/api/v1/user/searchUsers']['get']['responses']['200']['content']['application/json'],
+  },
+  '/api/v1/user/unfollowUser': {
+    body: paths['/api/v1/user/unfollowUser']['post']['requestBody']['content']['application/json'],
+    result: paths['/api/v1/user/unfollowUser']['post']['responses']['204']['content'],
+  },
+};

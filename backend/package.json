@@ -7,7 +7,7 @@
     "build": "tsc --project tsconfig.build.json",
     "rebuild": "pnpm clean && pnpm build",
     "clean": "rm -rf dist",
-    "update-spec": "mkdir -p generated && cp -r ../spec/generated/* generated",
+    "update-spec": "mkdir -p openapi/generated && cp -r ../spec/generated/* openapi/generated",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prisma:migrate-create": "prisma migrate dev --create-only",
     "prisma:migrate": "prisma migrate dev",

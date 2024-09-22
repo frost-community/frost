@@ -390,11 +390,11 @@ export interface components {
             limit?: string;
         };
         "Api.v1.SigninBody": {
-            name: string;
+            userName: string;
             password?: string;
         };
         "Api.v1.SignupBody": {
-            name: string;
+            userName: string;
             password?: string;
             displayName: string;
         };
@@ -407,7 +407,7 @@ export interface components {
         };
         "Api.v1.User": {
             userId: string;
-            name: string;
+            userName: string;
             displayName: string;
             passwordAuthEnabled: boolean;
         };
@@ -421,7 +421,7 @@ export interface components {
         "Api.v1.GetFollowingsQueryString.userId": string;
         "Api.v1.GetLeafQueryString": string;
         "Api.v1.GetUserQueryString.userId": string;
-        "Api.v1.GetUserQueryString.username": string;
+        "Api.v1.GetUserQueryString.userName": string;
         "Api.v1.OffsetControl.limit": string;
         "Api.v1.OffsetControl.offset": string;
     };
@@ -857,7 +857,7 @@ export interface operations {
         parameters: {
             query?: {
                 userId?: components["parameters"]["Api.v1.GetUserQueryString.userId"];
-                username?: components["parameters"]["Api.v1.GetUserQueryString.username"];
+                userName?: components["parameters"]["Api.v1.GetUserQueryString.userName"];
             };
             header?: never;
             path?: never;
