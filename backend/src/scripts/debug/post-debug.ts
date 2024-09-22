@@ -6,7 +6,7 @@ import { AccessContext } from '../../modules/AccessContext';
 import { PrismaClient } from '@prisma/client';
 import { inspect } from 'util';
 import * as UserRepository from '../../repositories/UserRepository';
-import * as PostRepository from '../../repositories/PostRepository';
+import * as LeafRepository from '../../repositories/LeafRepository';
 
 async function run() {
   const container = new Container();
@@ -28,21 +28,21 @@ async function run() {
   ctx.userId = user.userId;
 
   console.log('create');
-  const createResult = await PostRepository.create({
+  const createResult = await LeafRepository.create({
     userId: ctx.userId,
     content: 'This is a post content.',
   }, ctx, container);
   console.log(inspect(createResult, { depth: 10 }));
 
   console.log('get');
-  const getResult = await PostRepository.get({
-    postId: createResult.postId,
+  const getResult = await LeafRepository.get({
+    leafId: createResult.leafId,
   }, ctx, container);
   console.log(inspect(getResult, { depth: 10 }));
 
   console.log('remove');
-  const removeResult = await PostRepository.remove({
-    postId: createResult.postId,
+  const removeResult = await LeafRepository.remove({
+    leafId: createResult.leafId,
   }, ctx, container);
   console.log(inspect(removeResult, { depth: 10 }));
 

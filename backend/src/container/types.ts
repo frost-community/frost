@@ -11,13 +11,13 @@ const TYPES = {
   UserService: Symbol.for('UserService'),
   PasswordVerificationService: Symbol.for('PasswordVerificationService'),
   TokenService: Symbol.for('TokenService'),
-  PostService: Symbol.for('PostService'),
+  LeafService: Symbol.for('LeafService'),
 
   // repositories
   UserRepository: Symbol.for('UserRepository'),
   PasswordVerificationRepository: Symbol.for('PasswordVerificationRepository'),
   TokenRepository: Symbol.for('TokenRepository'),
-  PostRepository: Symbol.for('PostRepository'),
+  LeafRepository: Symbol.for('LeafRepository'),
 
   // routers
   RootRouter: Symbol.for('RootRouter'),

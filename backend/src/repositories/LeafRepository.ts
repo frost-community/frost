@@ -3,7 +3,7 @@ import { Container } from "inversify";
 import { TYPES } from "../container/types";
 import { AccessContext } from "../modules/AccessContext";
 import { DB } from "../modules/db";
-import { PostEntity } from "../modules/entities";
+import { LeafEntity } from "../modules/entities";
 
 /**
  * 投稿を作成する
@@ -12,7 +12,7 @@ export async function create(
   params: { chatRoomId?: string, userId: string, content: string },
   ctx: AccessContext,
   container: Container,
-): Promise<PostEntity> {
+): Promise<LeafEntity> {
   const db = container.get<DB>(TYPES.db);
   const row = await db.post.create({
     data: {
@@ -29,14 +29,14 @@ export async function create(
  * 投稿を取得する
 */
 export async function get(
-  params: { postId: string },
+  params: { leafId: string },
   ctx: AccessContext,
   container: Container,
-): Promise<PostEntity | undefined> {
+): Promise<LeafEntity | undefined> {
   const db = container.get<DB>(TYPES.db);
   const row = await db.post.findFirst({
     where: {
-      post_id: params.postId,
+      post_id: params.leafId,
     },
   });
 
@@ -52,22 +52,22 @@ export async function get(
  * @returns 削除に成功したかどうか
 */
 export async function remove(
-  params: { postId: string },
+  params: { leafId: string },
   ctx: AccessContext,
   container: Container,
 ): Promise<boolean> {
   const db = container.get<DB>(TYPES.db);
   const result = await db.post.deleteMany({
     where: {
-      post_id: params.postId,
+      post_id: params.leafId,
     },
   });
   return (result.count > 0);
 }
 
-function mapEntity(row: post): PostEntity {
-  const post: PostEntity = {
-    postId: row.post_id,
+function mapEntity(row: post): LeafEntity {
+  const post: LeafEntity = {
+    leafId: row.post_id,
     userId: row.user_id,
     content: row.content,
   };

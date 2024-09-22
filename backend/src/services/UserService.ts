@@ -117,7 +117,7 @@ export async function signin(
 /**
  * ユーザー情報を取得します。
 */
-export async function get(
+export async function getUser(
   params: { userId?: string, name?: string },
   ctx: AccessContext,
   container: Container,
@@ -144,7 +144,7 @@ export async function get(
 /**
  * ユーザー情報を削除します。
 */
-export async function remove(
+export async function deleteUser(
   params: { userId: string },
   ctx: AccessContext,
   container: Container,

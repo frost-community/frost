@@ -3,17 +3,56 @@ info:
   title: Frost
   version: 0.1.0
 tags:
-  - name: ChatRoom
-  - name: Echo
-  - name: Timeline
-  - name: User
   - name: Auth
+  - name: User
+  - name: Leaf
+  - name: ChatRoom
 paths:
-  /api/v1/chatrooms:
+  /api/v1/auth/signin:
+    post:
+      tags:
+        - Auth
+        - User
+      operationId: AuthApi_Signin
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthInfo'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SigninBody'
+  /api/v1/auth/signup:
+    post:
+      tags:
+        - Auth
+        - User
+      operationId: AuthApi_Signup
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.AuthInfo'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.SignupBody'
+  /api/v1/chatRoom/createChatRoom:
     post:
       tags:
         - ChatRoom
-      operationId: CreateChatRoom
+      operationId: ChatRoomApi_CreateChatRoom
       parameters: []
       responses:
         '200':
@@ -27,32 +66,66 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Api.v1.NewChatRoom'
-  /api/v1/chatrooms/{chatRoomId}:
-    delete:
+              $ref: '#/components/schemas/Api.v1.CreateChatRoomBody'
+  /api/v1/chatRoom/createLeaf:
+    post:
       tags:
         - ChatRoom
-      operationId: DeleteChatRoom
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
+        - Leaf
+      operationId: ChatRoomApi_CreateLeaf
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.Leaf'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.CreateChatRoomLeafBody'
+  /api/v1/chatRoom/deleteChatRoom:
+    post:
+      tags:
+        - ChatRoom
+      operationId: ChatRoomApi_DeleteChatRoom
+      parameters: []
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/chatrooms/{chatRoomId}/members:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.DeleteChatRoomBody'
+  /api/v1/chatRoom/getChatRoom:
     get:
       tags:
         - ChatRoom
-      operationId: ListChatRoomMember
+      operationId: ChatRoomApi_GetChatRoom
       parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Api.v1.GetChatRoomQueryString'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Api.v1.ChatRoom'
+  /api/v1/chatRoom/getTimeline:
+    get:
+      tags:
+        - ChatRoom
+        - Leaf
+      operationId: ChatRoomApi_GetTimeline
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.CursorControl.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.limit'
       responses:
         '200':
           description: The request has succeeded.
@@ -61,77 +134,27 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Api.v1.ChatRoomMember'
-  /api/v1/chatrooms/{chatRoomId}/members/{userId}:
-    post:
-      tags:
-        - ChatRoom
-      operationId: CreateChatRoomMember
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.ChatRoomMember'
-    delete:
-      tags:
-        - ChatRoom
-      operationId: DeleteChatRoomMember
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/chatrooms/{chatRoomId}/posts:
-    post:
-      tags:
-        - ChatRoom
-      operationId: CreateChatRoomPost
-      parameters:
-        - name: chatRoomId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Post'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.NewChatRoomPost'
-  /api/v1/echo:
+                  $ref: '#/components/schemas/Api.v1.Leaf'
+  /api/v1/chatRoom/searchChatRooms:
     get:
       tags:
-        - Echo
-      operationId: EchoGet
+        - ChatRoom
+      operationId: ChatRoomApi_SearchChatRooms
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.ChatRoom'
+  /api/v1/echo:
+    get:
+      operationId: RootApi_GetEcho
       parameters:
         - name: message
           in: query
@@ -151,9 +174,7 @@ paths:
                 required:
                   - message
     post:
-      tags:
-        - Echo
-      operationId: EchoPost
+      operationId: RootApi_PostEcho
       parameters: []
       responses:
         '200':
@@ -178,11 +199,11 @@ paths:
                   type: string
               required:
                 - message
-  /api/v1/post:
+  /api/v1/leaf/createLeaf:
     post:
       tags:
-        - Timeline
-      operationId: CreateTimelinePost
+        - Leaf
+      operationId: LeafApi_CreateLeaf
       parameters: []
       responses:
         '200':
@@ -190,101 +211,134 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.Post'
+                $ref: '#/components/schemas/Api.v1.Leaf'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Api.v1.NewTimelinePost'
-    get:
+              $ref: '#/components/schemas/Api.v1.CreateLeafBody'
+  /api/v1/leaf/deleteLeaf:
+    post:
       tags:
-        - Timeline
-        - ChatRoom
-      operationId: GetPost
-      parameters:
-        - name: postId
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Api.v1.Post'
-    delete:
-      tags:
-        - Timeline
-        - ChatRoom
-      operationId: DeletePost
-      parameters:
-        - name: postId
-          in: query
-          required: true
-          schema:
-            type: string
+        - Leaf
+      operationId: LeafApi_DeleteLeaf
+      parameters: []
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
-  /api/v1/signin:
-    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.DeleteLeafBody'
+  /api/v1/leaf/getLeaf:
+    get:
       tags:
-        - User
-        - Auth
-      operationId: Signin
-      parameters: []
+        - Leaf
+      operationId: LeafApi_GetLeaf
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetLeafQueryString'
       responses:
         '200':
           description: The request has succeeded.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.AuthResult'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Api.v1.SigninBody'
-  /api/v1/signup:
-    post:
+                $ref: '#/components/schemas/Api.v1.Leaf'
+  /api/v1/leaf/searchLeafs:
+    get:
       tags:
-        - User
-        - Auth
-      operationId: Signup
-      parameters: []
+        - Leaf
+      operationId: LeafApi_SearchLeafs
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
       responses:
         '200':
           description: The request has succeeded.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Api.v1.AuthResult'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.Leaf'
+  /api/v1/user/deleteUser:
+    post:
+      tags:
+        - User
+      operationId: UserApi_DeleteUser
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Api.v1.SignupBody'
-  /api/v1/user:
+              $ref: '#/components/schemas/Api.v1.DeleteUserBody'
+  /api/v1/user/followUser:
+    post:
+      tags:
+        - User
+      operationId: UserApi_FollowUser
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.FollowUserBody'
+  /api/v1/user/getFollowings:
     get:
       tags:
         - User
-      operationId: GetUser
+      operationId: UserApi_GetFollowings
       parameters:
-        - name: userId
-          in: query
-          required: false
-          schema:
-            type: string
-        - name: name
-          in: query
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
+        - $ref: '#/components/parameters/Api.v1.GetFollowingsQueryString.userId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.User'
+  /api/v1/user/getHomeTimeline:
+    get:
+      tags:
+        - User
+        - Leaf
+      operationId: UserApi_GetHomeTimeline
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.CursorControl.nextCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.prevCursor'
+        - $ref: '#/components/parameters/Api.v1.CursorControl.limit'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.Leaf'
+  /api/v1/user/getUser:
+    get:
+      tags:
+        - User
+      operationId: UserApi_GetUser
+      parameters:
+        - $ref: '#/components/parameters/Api.v1.GetUserQueryString.userId'
+        - $ref: '#/components/parameters/Api.v1.GetUserQueryString.username'
       responses:
         '200':
           description: The request has succeeded.
@@ -292,22 +346,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Api.v1.User'
-    delete:
+  /api/v1/user/searchUsers:
+    get:
       tags:
         - User
-      operationId: DeleteUser
+      operationId: UserApi_SearchUsers
       parameters:
-        - name: userId
-          in: query
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.offset'
+        - $ref: '#/components/parameters/Api.v1.OffsetControl.limit'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Api.v1.User'
+  /api/v1/user/unfollowUser:
+    post:
+      tags:
+        - User
+      operationId: UserApi_UnfollowUser
+      parameters: []
       responses:
         '204':
           description: 'There is no content to send for this request, but the headers may be useful. '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Api.v1.UnfollowUserBody'
 components:
+  parameters:
+    Api.v1.CursorControl.limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.CursorControl.nextCursor:
+      name: nextCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.CursorControl.prevCursor:
+      name: prevCursor
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetChatRoomQueryString:
+      name: chatRoomId
+      in: query
+      required: true
+      schema:
+        type: string
+    Api.v1.GetFollowingsQueryString.userId:
+      name: userId
+      in: query
+      required: true
+      schema:
+        type: string
+    Api.v1.GetLeafQueryString:
+      name: leafId
+      in: query
+      required: true
+      schema:
+        type: string
+    Api.v1.GetUserQueryString.userId:
+      name: userId
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.GetUserQueryString.username:
+      name: username
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.OffsetControl.limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: string
+    Api.v1.OffsetControl.offset:
+      name: offset
+      in: query
+      required: false
+      schema:
+        type: string
   schemas:
-    Api.v1.AuthResult:
+    Api.v1.AuthInfo:
       type: object
       required:
         - accessToken
@@ -325,66 +459,122 @@ components:
       required:
         - chatRoomId
         - title
+        - description
       properties:
         chatRoomId:
           type: string
         title:
           type: string
-    Api.v1.ChatRoomMember:
-      type: object
-      required:
-        - userId
-        - chatRoomId
-      properties:
-        userId:
+        description:
           type: string
-        chatRoomId:
-          type: string
-    Api.v1.CreateUserBody:
-      type: object
-      required:
-        - name
-        - displayName
-      properties:
-        name:
-          type: string
-        displayName:
-          type: string
-    Api.v1.NewChatRoom:
+    Api.v1.CreateChatRoomBody:
       type: object
       required:
         - title
+        - description
       properties:
         title:
           type: string
-    Api.v1.NewChatRoomPost:
+        description:
+          type: string
+    Api.v1.CreateChatRoomLeafBody:
+      type: object
+      required:
+        - chatRoomId
+        - content
+      properties:
+        chatRoomId:
+          type: string
+        content:
+          type: string
+    Api.v1.CreateLeafBody:
       type: object
       required:
         - content
       properties:
         content:
           type: string
-    Api.v1.NewTimelinePost:
+    Api.v1.DeleteChatRoomBody:
       type: object
       required:
-        - content
+        - chatRoomId
       properties:
-        content:
+        chatRoomId:
           type: string
-    Api.v1.Post:
+    Api.v1.DeleteLeafBody:
       type: object
       required:
-        - postId
+        - leafId
+      properties:
+        leafId:
+          type: string
+    Api.v1.DeleteUserBody:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
+    Api.v1.FollowUserBody:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
+    Api.v1.GetChatRoomTimelineQueryString:
+      type: object
+      properties:
+        nextCursor:
+          type: string
+        prevCursor:
+          type: string
+        limit:
+          type: string
+    Api.v1.GetHomeTimelineQueryString:
+      type: object
+      properties:
+        nextCursor:
+          type: string
+        prevCursor:
+          type: string
+        limit:
+          type: string
+    Api.v1.Leaf:
+      type: object
+      required:
+        - leafId
         - userId
         - content
       properties:
-        postId:
+        leafId:
           type: string
         chatRoomId:
           type: string
         userId:
           type: string
         content:
+          type: string
+    Api.v1.SearchChatRoomsQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
+          type: string
+    Api.v1.SearchLeafsQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
+          type: string
+    Api.v1.SearchUsersQueryString:
+      type: object
+      properties:
+        offset:
+          type: string
+        limit:
           type: string
     Api.v1.SigninBody:
       type: object
@@ -419,6 +609,13 @@ components:
           type: array
           items:
             type: string
+    Api.v1.UnfollowUserBody:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     Api.v1.User:
       type: object
       required:

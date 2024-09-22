@@ -96,9 +96,13 @@ function createMiddlewareStack<R>(
       } finally {
         container.rebind(TYPES.db).toConstantValue(db);
       }
-      // ハンドラ内でレスポンスが設定されなければ、200 OKとしてレスポンスを生成する。
+      // ハンドラ内でレスポンスが設定されなければレスポンスを生成する。
       if (res.statusCode == 0) {
-        res.status(200).json(returnValue);
+        if (returnValue != null) {
+          res.status(200).json(returnValue);
+        } else {
+          res.status(204).send();
+        }
       }
     }
     asyncHandler().catch(err => {
