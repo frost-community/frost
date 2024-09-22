@@ -53,8 +53,8 @@ export async function fetchTimeline(
   params: { kind: string, prevCursor?: string, nextCursor?: string, limit?: number },
   ctx: AccessContext,
   container: Container,
-): Promise<PostEntity[]> {
-  return PostRepository.fetchTimeline(params, ctx, container);
+): Promise<LeafEntity[]> {
+  return LeafRepository.fetchTimeline(params, ctx, container);
 }
 
 /**

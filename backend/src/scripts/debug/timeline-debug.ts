@@ -5,7 +5,7 @@ import { AccessContext } from '../../modules/AccessContext';
 import { PrismaClient } from '@prisma/client';
 import { inspect } from 'util';
 import * as UserRepository from '../../repositories/UserRepository';
-import * as PostRepository from '../../repositories/PostRepository';
+import * as LeafRepository from '../../repositories/LeafRepository';
 
 async function run() {
   const container = new Container();
@@ -15,11 +15,11 @@ async function run() {
 
   // debugユーザーを取得。無ければ作る。
   console.log('get debug user');
-  let user = await UserRepository.get({ name: 'debug' }, ctx, container);
+  let user = await UserRepository.get({ userName: 'debug' }, ctx, container);
   if (user == null) {
     console.log('create debug user');
     user = await UserRepository.create({
-      name: 'debug',
+      userName: 'debug',
       displayName: 'Debug',
       passwordAuthEnabled: false,
     }, ctx, container);
@@ -33,7 +33,7 @@ async function run() {
       container.rebind(TYPES.db).toConstantValue(tx);
       // create 10 posts
       for (let i = 0; i < 10; i++) {
-        const createResult = await PostRepository.create({
+        const createResult = await LeafRepository.create({
           userId: ctx.userId,
           content: `This is a post content ${i}.`,
         }, ctx, container);
@@ -42,7 +42,7 @@ async function run() {
 
       // fetch posts
       console.log('タイムライン取得');
-      const posts = await PostRepository.fetchTimeline({
+      const posts = await LeafRepository.fetchTimeline({
         kind: 'home',
         limit: 8,
       }, ctx, container);

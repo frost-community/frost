@@ -52,7 +52,7 @@ export async function fetchTimeline(
   params: { kind: string, prevCursor?: string, nextCursor?: string, limit?: number },
   ctx: AccessContext,
   container: Container,
-): Promise<PostEntity[]> {
+): Promise<LeafEntity[]> {
   const db = container.get<DB>(TYPES.db);
   const limit = params.limit ?? 50;
   if (params.nextCursor != null) {
