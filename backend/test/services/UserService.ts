@@ -24,7 +24,7 @@ describe('signup', () => {
     UserRepositoryMock.create
       .mockResolvedValue({
         userId: '00000000-0000-0000-0000-000000000000',
-        name: 'frost123',
+        userName: 'frost123',
         displayName: 'frost 123',
         passwordAuthEnabled: true,
       });
@@ -37,7 +37,7 @@ describe('signup', () => {
     });
 
     const result = await UserService.signup({
-      name: 'frost123',
+      userName: 'frost123',
       password: 'strongpasswordhere',
       displayName: 'frost 123',
     }, { userId: '' }, new Container());
@@ -48,7 +48,7 @@ describe('signup', () => {
 
     assert.deepStrictEqual(result.user, {
       userId: '00000000-0000-0000-0000-000000000000',
-      name: 'frost123',
+      userName: 'frost123',
       displayName: 'frost 123',
       passwordAuthEnabled: true,
     });
@@ -58,7 +58,7 @@ describe('signup', () => {
     let appError;
     try {
       const user = await UserService.signup({
-        name: 'frost123',
+        userName: 'frost123',
         displayName: 'frost 123',
       }, { userId: '' }, new Container());
       console.log(user);

@@ -15,11 +15,11 @@ async function run() {
 
   // debugユーザーを取得。無ければ作る。
   console.log('get debug user');
-  let user = await UserRepository.get({ name: 'debug' }, ctx, container);
+  let user = await UserRepository.get({ userName: 'debug' }, ctx, container);
   if (user == null) {
     console.log('create debug user');
     user = await UserRepository.create({
-      name: 'debug',
+      userName: 'debug',
       displayName: 'Debug',
       passwordAuthEnabled: false,
     }, ctx, container);
@@ -28,7 +28,7 @@ async function run() {
 
   console.log('create');
   const userResult = await UserRepository.create({
-    name: 'debuguser',
+    userName: 'debuguser',
     displayName: 'debug user',
     passwordAuthEnabled: true,
   }, ctx, container);
@@ -45,9 +45,9 @@ async function run() {
   }, ctx, container);
   console.log(inspect(getResult1, { depth: 10 }));
 
-  console.log('get (name)');
+  console.log('get (userName)');
   const getResult2 = await UserRepository.get({
-    name: userResult.name,
+    userName: userResult.userName,
   }, ctx, container);
   console.log(inspect(getResult2, { depth: 10 }));
 

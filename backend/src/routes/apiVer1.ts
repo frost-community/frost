@@ -8,6 +8,8 @@ import type { Endpoints } from '../modules/httpRoute/endpoints';
 import * as LeafService from '../services/LeafService';
 import * as UserService from '../services/UserService';
 
+const zUuid = z.string().length(36);
+
 @injectable()
 export class ApiVer1Router {
   constructor(
@@ -26,7 +28,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/auth/signin']['result']> {
         const params: Endpoints['/api/v1/auth/signin']['body'] = ctx.validateParams(
           z.object({
-            name: z.string().min(1),
+            userName: z.string().min(1),
             password: z.string().min(1).optional(),
           })
         );
@@ -42,7 +44,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/auth/signup']['result']> {
         const params: Endpoints['/api/v1/auth/signup']['body'] = ctx.validateParams(
           z.object({
-            name: z.string().min(1),
+            userName: z.string().min(1),
             password: z.string().min(1).optional(),
             displayName: z.string().min(1),
           })
@@ -72,8 +74,8 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/user/getUser']['result']> {
         const params: Endpoints['/api/v1/user/getUser']['query'] = ctx.validateParams(
           z.object({
-            userId: z.string().length(32).optional(),
-            name: z.string().min(1).optional(),
+            userId: zUuid.optional(),
+            userName: z.string().min(1).optional(),
           })
         );
         const result = await UserService.getUser(params, { userId: ctx.getUser().userId }, ctx.container);
@@ -116,7 +118,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/leaf/deleteLeaf']['result']> {
         const params: Endpoints['/api/v1/leaf/deleteLeaf']['body'] = ctx.validateParams(
           z.object({
-            leafId: z.string().length(32),
+            leafId: zUuid,
           })
         );
         await LeafService.deleteLeaf(params, { userId: ctx.getUser().userId }, ctx.container);
@@ -130,7 +132,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/leaf/getLeaf']['result']> {
         const params: Endpoints['/api/v1/leaf/getLeaf']['query'] = ctx.validateParams(
           z.object({
-            leafId: z.string().length(32),
+            leafId: zUuid,
           })
         );
         const result = await LeafService.getLeaf(params, { userId: ctx.getUser().userId }, ctx.container);
@@ -190,7 +192,7 @@ export class ApiVer1Router {
       async requestHandler(ctx): Promise<Endpoints['/api/v1/user/getUser']['result']> {
         const params: Endpoints['/api/v1/user/getUser']['query'] = ctx.validateParams(
           z.object({
-            userId: z.string().length(32).optional(),
+            userId: zUuid.optional(),
             username: z.string().min(1).optional(),
           })
         );

@@ -16,11 +16,11 @@ async function run() {
 
   // debugユーザーを取得。無ければ作る。
   console.log('get debug user');
-  let user = await UserRepository.get({ name: 'debug' }, ctx, container);
+  let user = await UserRepository.get({ userName: 'debug' }, ctx, container);
   if (user == null) {
     console.log('create debug user');
     user = await UserRepository.create({
-      name: 'debug',
+      userName: 'debug',
       displayName: 'Debug',
       passwordAuthEnabled: false,
     }, ctx, container);

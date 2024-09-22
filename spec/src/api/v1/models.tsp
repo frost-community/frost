@@ -14,7 +14,7 @@ model AuthInfo {
 
 model User {
   userId: string;
-  name: string;
+  userName: string;
   displayName: string;
   passwordAuthEnabled: boolean;
 }
@@ -53,13 +53,13 @@ model CursorControl {
 // Auth parameters
 
 model SignupBody {
-  name: string;
+  userName: string;
   password?: string;
   displayName: string;
 }
 
 model SigninBody {
-  name: string;
+  userName: string;
   password?: string;
 }
 
@@ -67,7 +67,7 @@ model SigninBody {
 
 model GetUserQueryString {
   @query userId?: string;
-  @query username?: string;
+  @query userName?: string;
 }
 
 model SearchUsersQueryString is OffsetControl {

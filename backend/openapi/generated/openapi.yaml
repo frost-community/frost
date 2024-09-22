@@ -338,7 +338,7 @@ paths:
       operationId: UserApi_GetUser
       parameters:
         - $ref: '#/components/parameters/Api.v1.GetUserQueryString.userId'
-        - $ref: '#/components/parameters/Api.v1.GetUserQueryString.username'
+        - $ref: '#/components/parameters/Api.v1.GetUserQueryString.userName'
       responses:
         '200':
           description: The request has succeeded.
@@ -422,8 +422,8 @@ components:
       required: false
       schema:
         type: string
-    Api.v1.GetUserQueryString.username:
-      name: username
+    Api.v1.GetUserQueryString.userName:
+      name: userName
       in: query
       required: false
       schema:
@@ -579,19 +579,19 @@ components:
     Api.v1.SigninBody:
       type: object
       required:
-        - name
+        - userName
       properties:
-        name:
+        userName:
           type: string
         password:
           type: string
     Api.v1.SignupBody:
       type: object
       required:
-        - name
+        - userName
         - displayName
       properties:
-        name:
+        userName:
           type: string
         password:
           type: string
@@ -620,13 +620,13 @@ components:
       type: object
       required:
         - userId
-        - name
+        - userName
         - displayName
         - passwordAuthEnabled
       properties:
         userId:
           type: string
-        name:
+        userName:
           type: string
         displayName:
           type: string

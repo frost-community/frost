@@ -18,7 +18,7 @@ async function run() {
   const ctx: AccessContext = { userId: BACKEND_URSR_ID };
 
   const user = await UserRepository.create({
-    name: 'Public',
+    userName: 'Public',
     displayName: 'Public',
     passwordAuthEnabled: false,
   }, ctx, container);
