@@ -68,22 +68,6 @@ export class ApiVer1Router {
     });
 
     builder.register({
-      method: 'GET',
-      path: '/user/getUser',
-      scope: 'user.read',
-      async requestHandler(ctx): Promise<Endpoints['/api/v1/user/getUser']['result']> {
-        const params: Endpoints['/api/v1/user/getUser']['query'] = ctx.validateParams(
-          z.object({
-            userId: zUuid.optional(),
-            userName: z.string().min(1).optional(),
-          })
-        );
-        const result = await UserService.getUser(params, { userId: ctx.getUser().userId }, ctx.container);
-        return result;
-      },
-    });
-
-    builder.register({
       method: 'POST',
       path: '/echo',
       async requestHandler(ctx): Promise<Endpoints['/api/v1/echo']['post']['result']> {
