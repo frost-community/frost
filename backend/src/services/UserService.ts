@@ -40,7 +40,7 @@ export async function signup(
     password: params.password,
   }, ctx, container);
 
-  const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
+  const scopes = ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"];
 
   const accessToken = await TokenService.create({
     userId: user.userId,
@@ -97,7 +97,7 @@ export async function signin(
         status: 401,
       });
     }
-    const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
+    const scopes = ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"];
     const accessToken = await TokenService.create({
       userId: user.userId,
       tokenKind: "access_token",

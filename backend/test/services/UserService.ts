@@ -33,7 +33,7 @@ describe('signup', () => {
 
     TokenServiceMock.create.mockResolvedValue({
       token: 'abcd',
-      scopes: ["user.read", "user.write", "post.read", "post.write", "post.delete"],
+      scopes: ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"],
     });
 
     const result = await UserService.signup({
@@ -42,9 +42,9 @@ describe('signup', () => {
       displayName: 'frost 123',
     }, { userId: '' }, new Container());
 
-    assert.deepStrictEqual(result.accessToken, { token: 'abcd', scopes: ["user.read", "user.write", "post.read", "post.write", "post.delete"] });
+    assert.deepStrictEqual(result.accessToken, { token: 'abcd', scopes: ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"] });
 
-    assert.deepStrictEqual(result.refreshToken, { token: 'abcd', scopes: ["user.read", "user.write", "post.read", "post.write", "post.delete"] });
+    assert.deepStrictEqual(result.refreshToken, { token: 'abcd', scopes: ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"] });
 
     assert.deepStrictEqual(result.user, {
       userId: '00000000-0000-0000-0000-000000000000',
