@@ -11,11 +11,11 @@ import * as TokenService from "./TokenService";
  * 登録に成功すると、そのユーザーのトークンと登録情報が返されます。
 */
 export async function signup(
-  params: { name: string, displayName: string, password?: string },
+  params: { userName: string, displayName: string, password?: string },
   ctx: AccessContext,
   container: Container,
 ): Promise<AuthResultEntity> {
-  if (params.name.length < 5) {
+  if (params.userName.length < 5) {
     throw appError(new BadRequest([
       { message: 'name invalid.' },
     ]));
@@ -30,7 +30,7 @@ export async function signup(
   }
 
   const user = await UserRepository.create({
-    name: params.name,
+    userName: params.userName,
     displayName: params.displayName,
     passwordAuthEnabled: true,
   }, ctx, container);
@@ -40,7 +40,7 @@ export async function signup(
     password: params.password,
   }, ctx, container);
 
-  const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
+  const scopes = ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"];
 
   const accessToken = await TokenService.create({
     userId: user.userId,
@@ -62,18 +62,18 @@ export async function signup(
  * 認証に成功すると、そのユーザーのトークンと登録情報が返されます。
 */
 export async function signin(
-  params: { name: string, password?: string },
+  params: { userName: string, password?: string },
   ctx: AccessContext,
   container: Container,
 ): Promise<AuthResultEntity> {
-  if (params.name.length < 1) {
+  if (params.userName.length < 1) {
     throw appError(new BadRequest([
       { message: 'name invalid.' },
     ]));
   }
 
   const user = await UserRepository.get({
-    name: params.name,
+    userName: params.userName,
   }, ctx, container);
 
   if (user == null) {
@@ -97,7 +97,7 @@ export async function signin(
         status: 401,
       });
     }
-    const scopes = ["user.read", "user.write", "post.read", "post.write", "post.delete"];
+    const scopes = ["user.read", "user.write", "leaf.read", "leaf.write", "leaf.delete"];
     const accessToken = await TokenService.create({
       userId: user.userId,
       tokenKind: "access_token",
@@ -117,13 +117,13 @@ export async function signin(
 /**
  * ユーザー情報を取得します。
 */
-export async function get(
-  params: { userId?: string, name?: string },
+export async function getUser(
+  params: { userId?: string, userName?: string },
   ctx: AccessContext,
   container: Container,
 ): Promise<UserEntity> {
   // either userId or name must be specified
-  if ([params.userId, params.name].every(x => x == null)) {
+  if ([params.userId, params.userName].every(x => x == null)) {
     throw appError(new BadRequest([
       { message: "Please specify the userId or name." },
     ]));
@@ -131,7 +131,7 @@ export async function get(
 
   const userEntity = await UserRepository.get({
     userId: params.userId,
-    name: params.name,
+    userName: params.userName,
   }, ctx, container);
 
   if (userEntity == null) {
@@ -144,7 +144,7 @@ export async function get(
 /**
  * ユーザー情報を削除します。
 */
-export async function remove(
+export async function deleteUser(
   params: { userId: string },
   ctx: AccessContext,
   container: Container,

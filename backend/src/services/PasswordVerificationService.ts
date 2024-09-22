@@ -25,7 +25,7 @@ export async function create(
     ]));
   }
   await PasswordVerificationRepository.create({
-    userId: ctx.userId,
+    userId: params.userId,
     ...generateInfo({
       password: params.password,
     }),

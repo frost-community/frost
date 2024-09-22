@@ -17,7 +17,7 @@ export function configureServer(container: Container) {
       if (tokenInfo.tokenKind != "access_token") {
         return done(appError(new Unauthenticated()));
       }
-      const user = await UserService.get({
+      const user = await UserService.getUser({
         userId: tokenInfo.userId
       }, ctx, container);
       return done(null, user, { scope: tokenInfo.scopes });

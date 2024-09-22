@@ -9,7 +9,7 @@ import { TYPES } from "../container/types";
  * ユーザーを追加する
 */
 export async function create(
-  params: { name: string, displayName: string, passwordAuthEnabled: boolean },
+  params: { userName: string, displayName: string, passwordAuthEnabled: boolean },
   ctx: AccessContext,
   container: Container,
 ) {
@@ -17,7 +17,7 @@ export async function create(
 
   const row = await db.user.create({
     data: {
-      name: params.name,
+      name: params.userName,
       display_name: params.displayName,
       password_auth_enabled: params.passwordAuthEnabled,
     },
@@ -30,20 +30,20 @@ export async function create(
  * ユーザーを取得する
 */
 export async function get(
-  params: { userId?: string, name?: string },
+  params: { userId?: string, userName?: string },
   ctx: AccessContext,
   container: Container,
 ): Promise<UserEntity | undefined> {
   const db = container.get<DB>(TYPES.db);
 
-  if ([params.userId, params.name].every(x => x == null)) {
+  if ([params.userId, params.userName].every(x => x == null)) {
     throw new Error("invalid condition");
   }
 
   const row = await db.user.findFirst({
     where: {
       user_id: params.userId,
-      name: params.name,
+      name: params.userName,
     }
   });
 
@@ -77,7 +77,7 @@ export async function remove(
 function mapEntity(row: user): UserEntity {
   return {
     userId: row.user_id,
-    name: row.name,
+    userName: row.name,
     displayName: row.display_name,
     passwordAuthEnabled: row.password_auth_enabled,
   };
