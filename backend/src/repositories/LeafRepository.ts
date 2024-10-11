@@ -87,15 +87,15 @@ export async function remove(
 }
 
 function mapEntity(row: post): LeafEntity {
-  const post: LeafEntity = {
+  const leaf: LeafEntity = {
     leafId: row.post_id,
     userId: row.user_id,
     content: row.content,
   };
 
   if (row.chat_room_id != null) {
-    post.chatRoomId = row.chat_room_id;
+    leaf.chatRoomId = row.chat_room_id;
   }
 
-  return post;
+  return leaf;
 }
