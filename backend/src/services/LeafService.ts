@@ -17,11 +17,11 @@ export async function createLeaf(
       { message: 'content invalid.' },
     ]));
   }
-  const post = await LeafRepository.create({
+  const leaf = await LeafRepository.create({
     userId: ctx.userId,
     content: params.content,
   }, ctx, container);
-  return post;
+  return leaf;
 }
 
 /**
@@ -34,16 +34,16 @@ export async function getLeaf(
 ): Promise<LeafEntity> {
   if (params.leafId.length < 1) {
     throw appError(new BadRequest([
-      { message: 'postId invalid.' },
+      { message: 'leafId invalid.' },
     ]));
   }
-  const post = await LeafRepository.get({
+  const leaf = await LeafRepository.get({
     leafId: params.leafId
   }, ctx, container);
-  if (post == null) {
+  if (leaf == null) {
     throw appError(new ResourceNotFound("Leaf"));
   }
-  return post;
+  return leaf;
 }
 
 /**
@@ -56,18 +56,18 @@ export async function deleteLeaf(
 ): Promise<void> {
   if (params.leafId.length < 1) {
     throw appError(new BadRequest([
-      { message: 'postId invalid.' },
+      { message: 'leafId invalid.' },
     ]));
   }
 
   // 作成者以外は削除できない
-  const post = await LeafRepository.get({
+  const leaf = await LeafRepository.get({
     leafId: params.leafId
   }, ctx, container);
-  if (post == null) {
+  if (leaf == null) {
     throw appError(new ResourceNotFound("Leaf"));
   }
-  if (post.userId != ctx.userId) {
+  if (leaf.userId != ctx.userId) {
     throw appError(new AccessDenied());
   }
 

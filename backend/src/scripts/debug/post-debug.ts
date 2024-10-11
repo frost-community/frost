@@ -30,7 +30,7 @@ async function run() {
   console.log('create');
   const createResult = await LeafRepository.create({
     userId: ctx.userId,
-    content: 'This is a post content.',
+    content: 'This is a leaf content.',
   }, ctx, container);
   console.log(inspect(createResult, { depth: 10 }));
 
