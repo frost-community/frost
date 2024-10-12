@@ -165,7 +165,20 @@ export class ApiVer1Router {
       path: '/user/getHomeTimeline',
       scope: ['user.read', 'leaf.read'],
       async requestHandler(ctx): Promise<Endpoints['/api/v1/user/getHomeTimeline']['result']> {
-        throw new Error('not implemented');
+        const params: Endpoints['/api/v1/user/getHomeTimeline']['query'] = ctx.validateParams(
+          z.object({
+            nextCursor: z.string().length(36).optional(),
+            prevCursor: z.string().length(36).optional(),
+            limit: z.string().regex(/^[+-]?\d*\.?\d+$/, { message: 'invalid numeric string' }).optional(),
+          })
+        );
+        const params2 = {
+          kind: 'home',
+          ...params,
+          limit: Number(params.limit),
+        };
+        const result = await LeafService.fetchTimeline(params2, { userId: ctx.getUser().userId }, ctx.container);
+        return result;
       },
     });
 
