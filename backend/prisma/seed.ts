@@ -23,6 +23,7 @@ async function main() {
       displayName: 'root',
       passwordAuthEnabled: false,
     }, ctx, container);
+    console.log('User "root" has been created.');
   }
   ctx.userId = rootUser.userId;
 
@@ -42,12 +43,9 @@ async function main() {
       tokenKind: "access_token",
       scopes: scopes,
     }, ctx, container);
-  }
 
-  console.log({
-    root: { user: rootUser },
-    public: { user: publicUser },
-  });
+    console.log('User "public" has been created.');
+  }
 }
 main()
   .then(async () => {
