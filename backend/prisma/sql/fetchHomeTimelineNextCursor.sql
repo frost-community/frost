@@ -4,13 +4,14 @@
 
 SELECT
   p.post_id,
+  p.post_kind,
   p.chat_room_id,
   p.user_id,
   p.content,
   p.created_at
 FROM "post" AS p,
   (SELECT x.post_id, x.created_at FROM post AS x WHERE x.post_id = CAST($2 AS UUID)) AS cur
-WHERE p.chat_room_id IS NULL
+WHERE p.post_kind = 'timeline'
   AND CAST($1 AS UUID) = CAST($1 AS UUID)
   -- カーソル値よりも新しいリソースを取得
   AND p.created_at > cur.created_at
