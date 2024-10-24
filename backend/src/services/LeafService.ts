@@ -17,7 +17,7 @@ export async function createLeaf(
       { message: 'content invalid.' },
     ]));
   }
-  const leaf = await LeafRepository.create({
+  const leaf = await LeafRepository.createTimelineLeaf({
     userId: ctx.userId,
     content: params.content,
   }, ctx, container);
@@ -44,6 +44,17 @@ export async function getLeaf(
     throw appError(new ResourceNotFound("Leaf"));
   }
   return leaf;
+}
+
+/**
+ * タイムライン取得
+*/
+export async function fetchTimeline(
+  params: { kind: string, prevCursor?: string, nextCursor?: string, limit?: number },
+  ctx: AccessContext,
+  container: Container,
+): Promise<LeafEntity[]> {
+  return LeafRepository.fetchTimeline(params, ctx, container);
 }
 
 /**
